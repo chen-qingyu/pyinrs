@@ -70,7 +70,7 @@ impl Fraction {
 
     /// Return the absolute value of the copy of this.
     pub fn abs(&self) -> Self {
-        if self.numerator > 0 {
+        if self.numerator >= 0 {
             *self
         } else {
             -*self
