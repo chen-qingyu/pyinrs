@@ -1,5 +1,3 @@
-use std::cmp::Ordering;
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Fraction {
     // Numerator.
@@ -83,9 +81,9 @@ impl Fraction {
 impl PartialOrd for Fraction {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         match self.compare(other) {
-            -1 => Some(Ordering::Less),
-            0 => Some(Ordering::Equal),
-            1 => Some(Ordering::Greater),
+            -1 => Some(std::cmp::Ordering::Less),
+            0 => Some(std::cmp::Ordering::Equal),
+            1 => Some(std::cmp::Ordering::Greater),
             _ => unreachable!(),
         }
     }
