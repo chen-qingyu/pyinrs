@@ -2,8 +2,12 @@
 name = "pyinrs"
 version = "0.1.0"
 edition = "2021"
+license = "GPL-3.0-or-later"
+authors = ["ChenQingYu <chen_qingyu@qq.com>"]
+description = "A Rust type library that is as easy to use as Python built-in types."
+readme = "readme.md"
+homepage = "https://github.com/chen-qingyu/pyinrs"
+keywords = ["type", "python"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
+[dev-dependencies]
 rstest = "0.18.2"
