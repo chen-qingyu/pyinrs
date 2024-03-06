@@ -197,3 +197,9 @@ impl std::fmt::Display for Fraction {
         }
     }
 }
+
+impl Default for Fraction {
+    fn default() -> Self {
+        Self::new()
+    }
+}
