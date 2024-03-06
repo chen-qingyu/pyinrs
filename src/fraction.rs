@@ -81,10 +81,9 @@ impl Fraction {
 impl PartialOrd for Fraction {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         match self.compare(other) {
-            -1 => Some(std::cmp::Ordering::Less),
+            ..=-1 => Some(std::cmp::Ordering::Less),
             0 => Some(std::cmp::Ordering::Equal),
-            1 => Some(std::cmp::Ordering::Greater),
-            _ => unreachable!(),
+            1.. => Some(std::cmp::Ordering::Greater),
         }
     }
 }

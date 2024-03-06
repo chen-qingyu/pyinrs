@@ -49,7 +49,7 @@ Some simple examples:
 use pyinrs::*;
 
 // Fraction addition
-Fraction(1, 2) + Fraction(1, 3) // 5/6
+Fraction::from(1, 2) + Fraction::from(1, 3) // 5/6
 // Fraction modulo
-Fraction(1, 2) % Fraction(1, 3) // 1/6
+Fraction::from(1, 2) % Fraction::from(1, 3) // 1/6
 ```

@@ -45,10 +45,10 @@ fn compare(setup: Fixture) {
     assert!(Fraction::from(1, 4) < Fraction::from(1, 3));
 
     assert!(setup.zero >= setup.zero);
-    assert!(setup.zero >= setup.negative);
+    assert!(setup.positive >= setup.negative);
 
     assert!(setup.zero <= setup.zero);
-    assert!(setup.zero <= setup.positive);
+    assert!(setup.negative <= setup.positive);
 }
 
 #[rstest]
