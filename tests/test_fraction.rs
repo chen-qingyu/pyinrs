@@ -1,20 +1,6 @@
 use pyinrs::Fraction;
 use rstest::{fixture, rstest};
 
-#[rstest]
-#[case::no_panic(1)]
-#[case::no_panic(2)]
-#[should_panic(expected = "Error: Zero denominator.")]
-#[case::panic_with_message(3)]
-fn basics(#[case] case: i32) {
-    match case {
-        1 => Fraction::new(),
-        2 => Fraction::from(2, 3),
-        3 => Fraction::from(1, 0),
-        _ => unreachable!(),
-    };
-}
-
 struct Fixture {
     zero: Fraction,
     positive: Fraction,
@@ -28,6 +14,12 @@ fn setup() -> Fixture {
         positive: Fraction::from(1, 2),
         negative: Fraction::from(-1, 2),
     }
+}
+
+#[rstest]
+#[should_panic(expected = "Error: Zero denominator.")]
+fn basics() {
+    Fraction::from(1, 0);
 }
 
 #[rstest]
