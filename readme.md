@@ -17,7 +17,7 @@ _A Rust type library that is as easy to use as Python built-in types._
 ### 2. Feature
 
 - Simple: Stay simple, stay young. While ensuring usability and robustness, try to be concise and easy to maintain and read.
-- Friendly: Provides many convenient functions. For example, String class provides replace, split, find and other operations like Python's str, and List class and String class both support negative subscript like Python.
+- Friendly: Provides many convenient functions.
 - Robust: A secure expansion mechanism to prevent overflow. There are corresponding checks for the addition, deletion, modification, and inspection of containers. Checking will have an impact on performance, but this library is not pursuing performance, but simplicity, usability, and robustness.
 - Elegance: With my careful design, it can be used as conveniently as Python's built-in types. Very Pythonic.
 
@@ -47,6 +47,11 @@ Some simple examples:
 
 ```rust
 use pyinrs::*;
+
+// List uniquify
+List::from(&[1, 2, 3, 1, 2, 3, 1, 2, 3]).uniquify() // [1, 2, 3]
+// List count
+List::from(&[1, 2, 3, 4, 5]).count(&5) // 1
 
 // Fraction addition
 Fraction::from(1, 2) + Fraction::from(1, 3) // 5/6
