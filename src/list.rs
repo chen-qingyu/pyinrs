@@ -1,3 +1,5 @@
+use crate::utility::{calc_index, check_bounds, check_empty, check_full};
+
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct List<T> {
     data: Vec<T>,
@@ -20,8 +22,8 @@ where
     }
 
     /// Returns the number of elements in the list.
-    pub fn size(&self) -> usize {
-        self.data.len()
+    pub fn size(&self) -> i32 {
+        self.data.len() as i32
     }
 
     /// Returns true if the list contains no elements.
@@ -40,17 +42,25 @@ where
     }
 
     /// Counts the number of occurrence of the specified `element`.
-    pub fn count(&self, element: &T) -> usize {
-        self.data.iter().filter(|&x| x == element).count()
+    pub fn count(&self, element: &T) -> i32 {
+        self.data.iter().filter(|&x| x == element).count() as i32
     }
 
-    /// Inserts an element at position `index` within the list.
-    pub fn insert(&mut self, index: usize, element: T) {
+    /// Inserts an element at position `index (-size() <= index <= size())` within the list.
+    pub fn insert(&mut self, index: i32, element: T) {
+        check_full(self.size(), i32::MAX);
+        check_bounds(index, -self.size(), self.size() + 1);
+
+        let index = calc_index(index, self.data.len());
         self.data.insert(index, element)
     }
 
-    /// Removes and returns the element at position `index` within the list.
-    pub fn remove(&mut self, index: usize) -> T {
+    /// Removes and returns the element at position `index (-size() <= index < size())` within the list.
+    pub fn remove(&mut self, index: i32) -> T {
+        check_empty(self.size());
+        check_bounds(index, -self.size(), self.size());
+
+        let index = calc_index(index, self.data.len());
         self.data.remove(index)
     }
 
@@ -76,8 +86,8 @@ where
 
     /// Eliminate duplicate elements and keep the original relative order of elements.
     pub fn uniquify(&mut self) {
-        let mut buffer = Vec::with_capacity(self.size());
-        for i in 0..self.size() {
+        let mut buffer = Vec::with_capacity(self.data.len());
+        for i in 0..self.data.len() {
             if !buffer.contains(&self.data[i]) {
                 buffer.push(self.data[i].to_owned())
             }
@@ -86,15 +96,27 @@ where
     }
 }
 
-impl<T> std::ops::Index<usize> for List<T> {
+impl<T> std::ops::Index<i32> for List<T>
+where
+    T: Eq + Clone,
+{
     type Output = T;
-    fn index(&self, index: usize) -> &Self::Output {
+    fn index(&self, index: i32) -> &Self::Output {
+        check_bounds(index, -self.size(), self.size());
+
+        let index = calc_index(index, self.data.len());
         &self.data[index]
     }
 }
 
-impl<T> std::ops::IndexMut<usize> for List<T> {
-    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+impl<T> std::ops::IndexMut<i32> for List<T>
+where
+    T: Eq + Clone,
+{
+    fn index_mut(&mut self, index: i32) -> &mut Self::Output {
+        check_bounds(index, -self.size(), self.size());
+
+        let index = calc_index(index, self.data.len());
         &mut self.data[index]
     }
 }

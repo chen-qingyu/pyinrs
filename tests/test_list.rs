@@ -53,12 +53,26 @@ fn compare(setup: Fixture) {
 fn access(mut setup: Fixture) {
     // forward
     for i in 0..setup.some.size() {
-        assert_eq!(setup.some[i], (i + 1).try_into().unwrap());
+        assert_eq!(setup.some[i], i + 1);
+    }
+
+    // backward
+    for i in -1..-setup.some.size() {
+        assert_eq!(setup.some[i], i + 6);
     }
 
     // assignment
     setup.some[0] = 0;
-    assert_eq!(setup.some[0], 0);
+    assert_eq!(setup.some, List::from(&[0, 2, 3, 4, 5]));
+
+    setup.some[-1] = 999;
+    assert_eq!(setup.some, List::from(&[0, 2, 3, 4, 999]));
+}
+
+#[rstest]
+#[should_panic(expected = "Error: Index out of range.")]
+fn bad_access(setup: Fixture) {
+    setup.some[5];
 }
 
 #[rstest]
@@ -83,6 +97,58 @@ fn examination(setup: Fixture) {
     // count
     assert_eq!(setup.some.count(&0), 0);
     assert_eq!(setup.some.count(&1), 1);
+}
+
+#[rstest]
+fn insert(mut setup: Fixture) {
+    setup.empty.insert(0, 233);
+    assert_eq!(setup.empty, List::from(&[233]));
+    setup.empty.insert(0, 1);
+    assert_eq!(setup.empty, List::from(&[1, 233]));
+    setup.empty.insert(2, 999);
+    assert_eq!(setup.empty, List::from(&[1, 233, 999]));
+    setup.empty.insert(1, 5);
+    assert_eq!(setup.empty, List::from(&[1, 5, 233, 999]));
+    setup.empty.insert(-1, -1);
+    assert_eq!(setup.empty, List::from(&[1, 5, 233, -1, 999]));
+}
+
+#[rstest]
+#[should_panic(expected = "Error: Index out of range.")]
+fn bad_insert(mut setup: Fixture) {
+    setup.some.insert(999, 0);
+}
+
+// The test was successful! But the testing time is too long, and comment it out.
+// #[rstest]
+// #[should_panic(expected = "Error: The container has reached the maximum size.")]
+// fn full_insert(mut setup: Fixture) {
+//     for _ in 0..i32::MAX {
+//         setup.empty.insert(setup.empty.size(), 0);
+//     }
+//     assert_eq!(setup.empty.size(), i32::MAX);
+//     setup.empty.insert(setup.empty.size(), 0);
+// }
+
+#[rstest]
+fn remove(mut setup: Fixture) {
+    assert_eq!(setup.some.remove(-2), 4);
+    assert_eq!(setup.some.remove(1), 2);
+    assert_eq!(setup.some.remove(0), 1);
+    assert_eq!(setup.some.remove(0), 3);
+    assert_eq!(setup.some.remove(0), 5);
+}
+
+#[rstest]
+#[should_panic(expected = "Error: Index out of range.")]
+fn bad_remove(mut setup: Fixture) {
+    setup.some.remove(999);
+}
+
+#[rstest]
+#[should_panic(expected = "Error: The container is empty.")]
+fn empty_remove(mut setup: Fixture) {
+    setup.empty.remove(0);
 }
 
 #[rstest]
