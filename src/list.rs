@@ -66,6 +66,7 @@ where
 
     /// Appends an element to the back of the list.
     pub fn push(&mut self, element: T) {
+        check_full(self.size(), i32::MAX);
         self.data.push(element)
     }
 

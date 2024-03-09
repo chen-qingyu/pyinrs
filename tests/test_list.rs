@@ -70,7 +70,7 @@ fn access(mut setup: Fixture) {
 }
 
 #[rstest]
-#[should_panic(expected = "Error: Index out of range.")]
+#[should_panic(expected = "Error: Index out of range: 5 not in -5..5.")]
 fn bad_access(setup: Fixture) {
     setup.some[5];
 }
@@ -114,14 +114,14 @@ fn insert(mut setup: Fixture) {
 }
 
 #[rstest]
-#[should_panic(expected = "Error: Index out of range.")]
+#[should_panic(expected = "Error: Index out of range: 999 not in -5..6.")]
 fn bad_insert(mut setup: Fixture) {
     setup.some.insert(999, 0);
 }
 
 // The test was successful! But the testing time is too long, and comment it out.
 // #[rstest]
-// #[should_panic(expected = "Error: The container has reached the maximum size.")]
+// #[should_panic(expected = "Error: The container has reached the maximum size: 2147483647.")]
 // fn full_insert(mut setup: Fixture) {
 //     for _ in 0..i32::MAX {
 //         setup.empty.insert(setup.empty.size(), 0);
@@ -140,7 +140,7 @@ fn remove(mut setup: Fixture) {
 }
 
 #[rstest]
-#[should_panic(expected = "Error: Index out of range.")]
+#[should_panic(expected = "Error: Index out of range: 999 not in -5..5.")]
 fn bad_remove(mut setup: Fixture) {
     setup.some.remove(999);
 }
