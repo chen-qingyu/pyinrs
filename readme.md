@@ -54,7 +54,7 @@ List::from(&[1, 2, 3, 4, 5])[-1] // 5
 List::from(&[1, 2, 3, 1, 2, 3, 1, 2, 3]).uniquify() // [1, 2, 3]
 
 // Fraction addition
-Fraction::from(1, 2) + Fraction::from(1, 3) // 5/6
+Fraction::from((1, 2)) + Fraction::from((1, 3)) // 5/6
 // Fraction modulo
-Fraction::from(1, 2) % Fraction::from(1, 3) // 1/6
+Fraction::from((1, 2)) % Fraction::from((1, 3)) // 1/6
 ```
