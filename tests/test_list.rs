@@ -11,8 +11,8 @@ struct Fixture {
 fn setup() -> Fixture {
     Fixture {
         empty: List::new(),
-        one: List::from(&[1]),
-        some: List::from(&[1, 2, 3, 4, 5]),
+        one: List::from([1]),
+        some: List::from([1, 2, 3, 4, 5]),
     }
 }
 
@@ -31,7 +31,7 @@ fn basics(setup: Fixture) {
 #[rstest]
 fn compare(setup: Fixture) {
     assert!(List::new() == setup.empty);
-    assert!(List::from(&[1, 2, 3, 4, 5]) == setup.some);
+    assert!(List::from([1, 2, 3, 4, 5]) == setup.some);
 
     assert!(setup.empty != setup.one);
     assert!(setup.one != setup.some);
@@ -63,10 +63,10 @@ fn access(mut setup: Fixture) {
 
     // assignment
     setup.some[0] = 0;
-    assert_eq!(setup.some, List::from(&[0, 2, 3, 4, 5]));
+    assert_eq!(setup.some, List::from([0, 2, 3, 4, 5]));
 
     setup.some[-1] = 999;
-    assert_eq!(setup.some, List::from(&[0, 2, 3, 4, 999]));
+    assert_eq!(setup.some, List::from([0, 2, 3, 4, 999]));
 }
 
 #[rstest]
@@ -102,15 +102,15 @@ fn examination(setup: Fixture) {
 #[rstest]
 fn insert(mut setup: Fixture) {
     setup.empty.insert(0, 233);
-    assert_eq!(setup.empty, List::from(&[233]));
+    assert_eq!(setup.empty, List::from([233]));
     setup.empty.insert(0, 1);
-    assert_eq!(setup.empty, List::from(&[1, 233]));
+    assert_eq!(setup.empty, List::from([1, 233]));
     setup.empty.insert(2, 999);
-    assert_eq!(setup.empty, List::from(&[1, 233, 999]));
+    assert_eq!(setup.empty, List::from([1, 233, 999]));
     setup.empty.insert(1, 5);
-    assert_eq!(setup.empty, List::from(&[1, 5, 233, 999]));
+    assert_eq!(setup.empty, List::from([1, 5, 233, 999]));
     setup.empty.insert(-1, -1);
-    assert_eq!(setup.empty, List::from(&[1, 5, 233, -1, 999]));
+    assert_eq!(setup.empty, List::from([1, 5, 233, -1, 999]));
 }
 
 #[rstest]
@@ -153,20 +153,20 @@ fn empty_remove(mut setup: Fixture) {
 
 #[rstest]
 fn uniquify() {
-    let mut list = List::from(&[1, 2, 2, 3, 3, 3]);
+    let mut list = List::from([1, 2, 2, 3, 3, 3]);
     list.uniquify();
-    assert_eq!(list, List::from(&[1, 2, 3]));
+    assert_eq!(list, List::from([1, 2, 3]));
 
-    let mut list = List::from(&[1, 2, 3, 1, 2, 3, 1, 2, 3]);
+    let mut list = List::from([1, 2, 3, 1, 2, 3, 1, 2, 3]);
     list.uniquify();
-    assert_eq!(list, List::from(&[1, 2, 3]));
+    assert_eq!(list, List::from([1, 2, 3]));
 
     let mut many = List::new();
     for _ in 0..10000 {
         many.push(0);
     }
     many.uniquify();
-    assert_eq!(many, List::from(&[0]));
+    assert_eq!(many, List::from([0]));
 }
 
 #[rstest]
@@ -175,10 +175,10 @@ fn append(mut setup: Fixture) {
     assert_eq!(setup.empty, List::new());
 
     setup.one += setup.one.clone();
-    assert_eq!(setup.one, List::from(&[1, 1]));
+    assert_eq!(setup.one, List::from([1, 1]));
 
     setup.one += setup.one.clone();
-    assert_eq!(setup.one, List::from(&[1, 1, 1, 1]));
+    assert_eq!(setup.one, List::from([1, 1, 1, 1]));
 }
 
 #[rstest]

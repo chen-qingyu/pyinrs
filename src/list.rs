@@ -14,13 +14,6 @@ where
         List { data: Vec::new() }
     }
 
-    /// Allocate a `List<T>` and fill it by cloning `elements`.
-    pub fn from(elements: &[T]) -> Self {
-        List {
-            data: Vec::from(elements),
-        }
-    }
-
     /// Returns the number of elements in the list.
     pub fn size(&self) -> i32 {
         self.data.len() as i32
@@ -94,6 +87,25 @@ where
             }
         }
         self.data = buffer;
+    }
+}
+
+impl<T, const N: usize> From<&[T; N]> for List<T>
+where
+    T: Clone,
+{
+    fn from(value: &[T; N]) -> Self {
+        List {
+            data: Vec::from(value),
+        }
+    }
+}
+
+impl<T, const N: usize> From<[T; N]> for List<T> {
+    fn from(value: [T; N]) -> Self {
+        List {
+            data: Vec::from(value),
+        }
     }
 }
 
