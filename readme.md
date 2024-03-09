@@ -49,9 +49,9 @@ Some simple examples:
 use pyinrs::*;
 
 // List index, supports negative subscript
-List::from(&[1, 2, 3, 4, 5])[-1] // 5
+List::from([1, 2, 3, 4, 5])[-1] // 5
 // List uniquify
-List::from(&[1, 2, 3, 1, 2, 3, 1, 2, 3]).uniquify() // [1, 2, 3]
+List::from([1, 2, 3, 1, 2, 3, 1, 2, 3]).uniquify() // [1, 2, 3]
 
 // Fraction addition
 Fraction::from((1, 2)) + Fraction::from((1, 3)) // 5/6
