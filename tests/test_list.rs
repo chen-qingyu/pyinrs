@@ -78,10 +78,34 @@ fn bad_access(setup: Fixture) {
 #[rstest]
 fn iterator(setup: Fixture) {
     let mut i = 1;
+    for &e in setup.some.iter() {
+        assert_eq!(e, i);
+        i += 1;
+    }
+
+    let mut i = 1;
     for e in setup.some {
         assert_eq!(e, i);
         i += 1;
     }
+}
+
+#[rstest]
+fn map_filter(setup: Fixture) {
+    let doubled: List<i32> = setup.some.iter().map(|x| x * 2).collect();
+    assert_eq!(doubled, List::from([2, 4, 6, 8, 10]));
+
+    let odd: List<i32> = setup.some.into_iter().filter(|x| x & 1 == 1).collect();
+    assert_eq!(odd, List::from([1, 3, 5]));
+}
+
+#[rstest]
+fn convert(setup: Fixture) {
+    let l: List<i32> = vec![1, 2, 3, 4, 5].into();
+    assert_eq!(l, setup.some);
+
+    let v: Vec<i32> = setup.some.into();
+    assert_eq!(v, vec![1, 2, 3, 4, 5]);
 }
 
 #[rstest]

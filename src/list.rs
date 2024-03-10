@@ -24,6 +24,11 @@ where
         self.data.is_empty()
     }
 
+    /// Returns an iterator over the list.
+    pub fn iter(&self) -> std::slice::Iter<T> {
+        self.data.iter()
+    }
+
     /// Return the first occurrence of the specified `element` or `None` in the list.
     pub fn find(&self, element: &T) -> Option<&T> {
         self.data.iter().find(|&x| x == element)
@@ -90,22 +95,33 @@ where
     }
 }
 
-impl<T, const N: usize> From<&[T; N]> for List<T>
-where
-    T: Clone,
-{
-    fn from(value: &[T; N]) -> Self {
+impl<T, const N: usize> From<[T; N]> for List<T> {
+    fn from(value: [T; N]) -> Self {
+        check_full(N as i32, i32::MAX);
         List {
             data: Vec::from(value),
         }
     }
 }
 
-impl<T, const N: usize> From<[T; N]> for List<T> {
-    fn from(value: [T; N]) -> Self {
+impl<T> From<Vec<T>> for List<T> {
+    fn from(value: Vec<T>) -> Self {
+        check_full(value.len() as i32, i32::MAX);
         List {
             data: Vec::from(value),
         }
+    }
+}
+
+impl<T> Into<Vec<T>> for List<T> {
+    fn into(self) -> Vec<T> {
+        self.data
+    }
+}
+
+impl<T> FromIterator<T> for List<T> {
+    fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
+        Self::from(iter.into_iter().collect::<Vec<T>>())
     }
 }
 
