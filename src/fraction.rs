@@ -28,19 +28,6 @@ impl Fraction {
         self.denominator /= a;
     }
 
-    // Compare two fractions.
-    fn compare(&self, that: &Self) -> i32 {
-        // this = a/b; that = c/d;
-        // so, this - that = a/b - c/d = (ad - bc)/(bd)
-        // since bd is always positive, compute (ad-bc) only
-        let a = self.numerator;
-        let b = self.denominator;
-        let c = that.numerator;
-        let d = that.denominator;
-
-        a * d - b * c
-    }
-
     /// Construct a new fraction object.
     pub fn new() -> Self {
         Fraction {
@@ -66,7 +53,15 @@ impl Fraction {
 
 impl PartialOrd for Fraction {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        match self.compare(other) {
+        // self = a/b; other = c/d;
+        // so, self - other = a/b - c/d = (ad - bc)/(bd)
+        // since bd is always positive, compute (ad-bc) only
+        let a = self.numerator;
+        let b = self.denominator;
+        let c = other.numerator;
+        let d = other.denominator;
+
+        match a * d - b * c {
             ..=-1 => Some(std::cmp::Ordering::Less),
             0 => Some(std::cmp::Ordering::Equal),
             1.. => Some(std::cmp::Ordering::Greater),
