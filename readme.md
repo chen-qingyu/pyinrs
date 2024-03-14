@@ -30,7 +30,7 @@ To use it, add the following lines to your `Cargo.toml` file:
 pyinrs = "0"
 ```
 
-There are a total of 8 classes (in plan, 2 for now), refer to the 8 commonly used classes in Python:
+There are a total of 8 classes (in plan), refer to the 8 commonly used classes in Python:
 
 | Type in PyInRs | Type in Python       |     |
 | -------------- | -------------------- | --- |
