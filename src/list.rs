@@ -1,5 +1,3 @@
-use std::fmt::Display;
-
 use crate::{utility, Str};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -99,7 +97,7 @@ where
     /// Convert this `List` to `Str`.
     pub fn to_str(&self) -> Str
     where
-        T: Display,
+        T: std::fmt::Display,
     {
         Str::from(format!("{}", self).as_str())
     }
