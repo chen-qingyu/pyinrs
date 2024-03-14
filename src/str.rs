@@ -91,7 +91,7 @@ impl Str {
     pub fn join(&self, str_list: List<&str>) -> Self {
         let v: Vec<&str> = str_list.into();
         Self {
-            data: String::from(v.join(self.data.as_str())),
+            data: v.join(self.data.as_str()),
         }
     }
 }
@@ -104,10 +104,9 @@ impl From<&str> for Str {
         }
     }
 }
-
-impl Into<String> for Str {
-    fn into(self) -> String {
-        self.data
+impl From<Str> for String {
+    fn from(value: Str) -> Self {
+        value.data
     }
 }
 
@@ -124,5 +123,11 @@ impl std::ops::Index<i32> for Str {
 impl std::fmt::Display for Str {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "\"{}\"", self.data)
+    }
+}
+
+impl Default for Str {
+    fn default() -> Self {
+        Self::new()
     }
 }

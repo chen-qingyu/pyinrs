@@ -107,15 +107,13 @@ impl<T, const N: usize> From<[T; N]> for List<T> {
 impl<T> From<Vec<T>> for List<T> {
     fn from(value: Vec<T>) -> Self {
         utility::check_full(value.len() as i32, i32::MAX);
-        List {
-            data: Vec::from(value),
-        }
+        List { data: value }
     }
 }
 
-impl<T> Into<Vec<T>> for List<T> {
-    fn into(self) -> Vec<T> {
-        self.data
+impl<T> From<List<T>> for Vec<T> {
+    fn from(value: List<T>) -> Self {
+        value.data
     }
 }
 
