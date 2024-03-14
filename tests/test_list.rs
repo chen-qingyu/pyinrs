@@ -211,3 +211,10 @@ fn format(setup: Fixture) {
     assert_eq!(format!("{}", setup.one), "[1]");
     assert_eq!(format!("{}", setup.some), "[1, 2, 3, 4, 5]");
 }
+
+#[rstest]
+fn to_str(setup: Fixture) {
+    assert_eq!(setup.empty.to_str(), "[]".into(),);
+    assert_eq!(setup.one.to_str(), "[1]".into());
+    assert_eq!(setup.some.to_str(), "[1, 2, 3, 4, 5]".into());
+}

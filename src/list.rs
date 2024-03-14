@@ -1,4 +1,6 @@
-use crate::utility;
+use std::fmt::Display;
+
+use crate::{utility, Str};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct List<T> {
@@ -92,6 +94,14 @@ where
             }
         }
         self.data = buffer;
+    }
+
+    /// Convert this `List` to `Str`.
+    pub fn to_str(&self) -> Str
+    where
+        T: Display,
+    {
+        Str::from(format!("{}", self).as_str())
     }
 }
 

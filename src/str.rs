@@ -1,5 +1,4 @@
-use crate::utility;
-use crate::List;
+use crate::{utility, List};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Str {
@@ -104,6 +103,7 @@ impl From<&str> for Str {
         }
     }
 }
+
 impl From<Str> for String {
     fn from(value: Str) -> Self {
         value.data
