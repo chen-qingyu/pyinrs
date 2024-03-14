@@ -36,9 +36,9 @@ There are a total of 8 classes (in plan, 2 for now), refer to the 8 commonly use
 | -------------- | -------------------- | --- |
 | `List<T>`      | `list`               | √   |
 | `Set<T>`       | `set`                |     |
-| `Map<K, V>`    | `dict`               |     |
-| `Integer`      | `int`                |     |
-| `String`       | `str`                |     |
+| `Dict<K, V>`   | `dict`               |     |
+| `Int`          | `int`                |     |
+| `Str`          | `str`                | √   |
 | `Tuple<Ts...>` | `tuple`              |     |
 | `Deque<T>`     | `collections.deque`  |     |
 | `Fraction`     | `fractions.Fraction` | √   |
@@ -52,6 +52,11 @@ use pyinrs::*;
 List::from([1, 2, 3, 4, 5])[-1] // 5
 // List uniquify
 List::from([1, 2, 3, 1, 2, 3, 1, 2, 3]).uniquify() // [1, 2, 3]
+
+// Str split
+Str::from("one, two, three").split(", ") // ["one", "two", "three"]
+// Str join
+Str::from(".").join(["192", "168", "0", "1"].into()) // "192.168.0.1"
 
 // Fraction addition
 Fraction::from((1, 2)) + Fraction::from((1, 3)) // 5/6
