@@ -1,4 +1,4 @@
-use crate::utility::{calc_index, check_bounds, check_empty, check_full};
+use crate::utility;
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct List<T> {
@@ -46,25 +46,25 @@ where
 
     /// Inserts an element at position `index (-size() <= index <= size())` within the list.
     pub fn insert(&mut self, index: i32, element: T) {
-        check_full(self.size(), i32::MAX);
-        check_bounds(index, -self.size(), self.size() + 1);
+        utility::check_full(self.size(), i32::MAX);
+        utility::check_bounds(index, -self.size(), self.size() + 1);
 
-        let index = calc_index(index, self.data.len());
+        let index = utility::calc_index(index, self.data.len());
         self.data.insert(index, element)
     }
 
     /// Removes and returns the element at position `index (-size() <= index < size())` within the list.
     pub fn remove(&mut self, index: i32) -> T {
-        check_empty(self.size());
-        check_bounds(index, -self.size(), self.size());
+        utility::check_empty(self.size());
+        utility::check_bounds(index, -self.size(), self.size());
 
-        let index = calc_index(index, self.data.len());
+        let index = utility::calc_index(index, self.data.len());
         self.data.remove(index)
     }
 
     /// Appends an element to the back of the list.
     pub fn push(&mut self, element: T) {
-        check_full(self.size(), i32::MAX);
+        utility::check_full(self.size(), i32::MAX);
         self.data.push(element)
     }
 
@@ -97,7 +97,7 @@ where
 
 impl<T, const N: usize> From<[T; N]> for List<T> {
     fn from(value: [T; N]) -> Self {
-        check_full(N as i32, i32::MAX);
+        utility::check_full(N as i32, i32::MAX);
         List {
             data: Vec::from(value),
         }
@@ -106,7 +106,7 @@ impl<T, const N: usize> From<[T; N]> for List<T> {
 
 impl<T> From<Vec<T>> for List<T> {
     fn from(value: Vec<T>) -> Self {
-        check_full(value.len() as i32, i32::MAX);
+        utility::check_full(value.len() as i32, i32::MAX);
         List {
             data: Vec::from(value),
         }
@@ -131,9 +131,9 @@ where
 {
     type Output = T;
     fn index(&self, index: i32) -> &Self::Output {
-        check_bounds(index, -self.size(), self.size());
+        utility::check_bounds(index, -self.size(), self.size());
 
-        let index = calc_index(index, self.data.len());
+        let index = utility::calc_index(index, self.data.len());
         &self.data[index]
     }
 }
@@ -143,9 +143,9 @@ where
     T: Eq + Clone,
 {
     fn index_mut(&mut self, index: i32) -> &mut Self::Output {
-        check_bounds(index, -self.size(), self.size());
+        utility::check_bounds(index, -self.size(), self.size());
 
-        let index = calc_index(index, self.data.len());
+        let index = utility::calc_index(index, self.data.len());
         &mut self.data[index]
     }
 }
