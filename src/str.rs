@@ -13,12 +13,12 @@ impl Str {
         }
     }
 
-    /// Returns the size of this `Str`, in bytes.
-    pub fn size(&self) -> i32 {
+    /// Returns the length of this `Str`, in bytes.
+    pub fn len(&self) -> i32 {
         self.data.len() as i32
     }
 
-    /// Returns `true` if this `Str` has a size of 0, and `false` otherwise.
+    /// Returns `true` if this `Str` has a length of 0, and `false` otherwise.
     pub fn is_empty(&self) -> bool {
         self.data.is_empty()
     }
@@ -43,13 +43,13 @@ impl Str {
         self.data.parse().ok()
     }
 
-    /// Return `true` if the string begins with the specified string, otherwise return `false`.
-    pub fn begin_with(&self, pattern: &str) -> bool {
+    /// Return `true` if the string starts with the specified string, otherwise return `false`.
+    pub fn starts_with(&self, pattern: &str) -> bool {
         self.data.starts_with(pattern)
     }
 
     /// Return `true` if the string ends with the specified string, otherwise return `false`.
-    pub fn end_with(&self, pattern: &str) -> bool {
+    pub fn ends_with(&self, pattern: &str) -> bool {
         self.data.ends_with(pattern)
     }
 
@@ -104,6 +104,13 @@ impl From<&str> for Str {
     }
 }
 
+impl From<String> for Str {
+    fn from(value: String) -> Self {
+        utility::check_full(value.len() as i32, i32::MAX);
+        Self { data: value }
+    }
+}
+
 impl From<Str> for String {
     fn from(value: Str) -> Self {
         value.data
@@ -112,8 +119,9 @@ impl From<Str> for String {
 
 impl std::ops::Index<i32> for Str {
     type Output = str;
+
     fn index(&self, index: i32) -> &Self::Output {
-        utility::check_bounds(index, -self.size(), self.size());
+        utility::check_bounds(index, -self.len(), self.len());
 
         let index = utility::calc_index(index, self.data.len());
         &self.data[index..=index]

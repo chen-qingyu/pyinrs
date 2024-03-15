@@ -18,14 +18,14 @@ fn setup() -> Fixture {
 
 #[rstest]
 fn basics(setup: Fixture) {
-    assert_eq!(setup.empty.size(), 0);
-    assert_eq!(setup.empty.is_empty(), true);
+    assert_eq!(setup.empty.len(), 0);
+    assert!(setup.empty.is_empty());
 
-    assert_eq!(setup.one.size(), 1);
-    assert_eq!(setup.one.is_empty(), false);
+    assert_eq!(setup.one.len(), 1);
+    assert!(!setup.one.is_empty());
 
-    assert_eq!(setup.some.size(), 5);
-    assert_eq!(setup.some.is_empty(), false);
+    assert_eq!(setup.some.len(), 5);
+    assert!(!setup.some.is_empty());
 }
 
 #[rstest]
@@ -52,12 +52,12 @@ fn compare(setup: Fixture) {
 #[rstest]
 fn access(mut setup: Fixture) {
     // forward
-    for i in 0..setup.some.size() {
+    for i in 0..setup.some.len() {
         assert_eq!(setup.some[i], i + 1);
     }
 
     // backward
-    for i in -1..-setup.some.size() {
+    for i in -1..-setup.some.len() {
         assert_eq!(setup.some[i], i + 6);
     }
 
@@ -115,8 +115,8 @@ fn examination(setup: Fixture) {
     assert_eq!(setup.some.find(&1), Some(&1));
 
     // contains
-    assert_eq!(setup.some.contains(&0), false);
-    assert_eq!(setup.some.contains(&1), true);
+    assert!(!setup.some.contains(&0));
+    assert!(setup.some.contains(&1));
 
     // count
     assert_eq!(setup.some.count(&0), 0);

@@ -30,7 +30,7 @@ impl Fraction {
 
     /// Construct a new fraction object.
     pub fn new() -> Self {
-        Fraction {
+        Self {
             numerator: 0,
             denominator: 1,
         }
@@ -71,7 +71,7 @@ impl PartialOrd for Fraction {
 
 impl From<i32> for Fraction {
     fn from(value: i32) -> Self {
-        Fraction {
+        Self {
             numerator: value,
             denominator: 1,
         }
@@ -84,7 +84,7 @@ impl From<(i32, i32)> for Fraction {
             panic!("Error: Zero denominator.");
         }
 
-        let mut f = Fraction {
+        let mut f = Self {
             numerator: value.0,
             denominator: value.1,
         };
@@ -94,10 +94,10 @@ impl From<(i32, i32)> for Fraction {
 }
 
 impl std::ops::Neg for Fraction {
-    type Output = Fraction;
+    type Output = Self;
 
     fn neg(self) -> Self::Output {
-        Fraction {
+        Self {
             numerator: -self.numerator,
             denominator: self.denominator,
         }
@@ -105,10 +105,10 @@ impl std::ops::Neg for Fraction {
 }
 
 impl std::ops::Add for Fraction {
-    type Output = Fraction;
+    type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
-        Fraction::from((
+        Self::from((
             self.numerator * rhs.denominator + self.denominator * rhs.numerator,
             self.denominator * rhs.denominator,
         ))
@@ -116,10 +116,10 @@ impl std::ops::Add for Fraction {
 }
 
 impl std::ops::Sub for Fraction {
-    type Output = Fraction;
+    type Output = Self;
 
     fn sub(self, rhs: Self) -> Self::Output {
-        Fraction::from((
+        Self::from((
             self.numerator * rhs.denominator - self.denominator * rhs.numerator,
             self.denominator * rhs.denominator,
         ))
@@ -127,10 +127,10 @@ impl std::ops::Sub for Fraction {
 }
 
 impl std::ops::Mul for Fraction {
-    type Output = Fraction;
+    type Output = Self;
 
     fn mul(self, rhs: Self) -> Self::Output {
-        Fraction::from((
+        Self::from((
             self.numerator * rhs.numerator,
             self.denominator * rhs.denominator,
         ))
@@ -138,10 +138,10 @@ impl std::ops::Mul for Fraction {
 }
 
 impl std::ops::Div for Fraction {
-    type Output = Fraction;
+    type Output = Self;
 
     fn div(self, rhs: Self) -> Self::Output {
-        Fraction::from((
+        Self::from((
             self.numerator * rhs.denominator,
             self.denominator * rhs.numerator,
         ))
@@ -149,14 +149,14 @@ impl std::ops::Div for Fraction {
 }
 
 impl std::ops::Rem for Fraction {
-    type Output = Fraction;
+    type Output = Self;
 
     fn rem(self, rhs: Self) -> Self::Output {
         if rhs.numerator == 0 {
             panic!("Error: Zero denominator.");
         }
 
-        Fraction::from((
+        Self::from((
             (self.numerator * rhs.denominator) % (rhs.numerator * self.denominator),
             self.denominator * rhs.denominator,
         ))

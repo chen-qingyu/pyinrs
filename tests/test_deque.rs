@@ -18,14 +18,14 @@ fn setup() -> Fixture {
 
 #[rstest]
 fn basics(setup: Fixture) {
-    assert_eq!(setup.empty.size(), 0);
-    assert_eq!(setup.empty.is_empty(), true);
+    assert_eq!(setup.empty.len(), 0);
+    assert!(setup.empty.is_empty());
 
-    assert_eq!(setup.one.size(), 1);
-    assert_eq!(setup.one.is_empty(), false);
+    assert_eq!(setup.one.len(), 1);
+    assert!(!setup.one.is_empty());
 
-    assert_eq!(setup.some.size(), 5);
-    assert_eq!(setup.some.is_empty(), false);
+    assert_eq!(setup.some.len(), 5);
+    assert!(!setup.some.is_empty());
 }
 
 #[rstest]
@@ -61,10 +61,10 @@ fn peek(mut setup: Fixture) {
 }
 
 #[rstest]
-fn reverse(mut setup: Fixture) {
-    assert_eq!(setup.empty.reverse(), &Deque::new());
-    assert_eq!(setup.one.reverse(), &Deque::from([1]));
-    assert_eq!(setup.some.reverse(), &Deque::from([5, 4, 3, 2, 1]));
+fn reverse(setup: Fixture) {
+    assert_eq!(setup.empty.reverse(), Deque::new());
+    assert_eq!(setup.one.reverse(), Deque::from([1]));
+    assert_eq!(setup.some.reverse(), Deque::from([5, 4, 3, 2, 1]));
 }
 
 #[rstest]

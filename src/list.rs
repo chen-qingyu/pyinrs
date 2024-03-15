@@ -5,17 +5,14 @@ pub struct List<T> {
     data: Vec<T>,
 }
 
-impl<T> List<T>
-where
-    T: Eq + Clone,
-{
+impl<T> List<T> {
     /// Constructs a new, empty `List<T>`.
     pub fn new() -> Self {
-        List { data: Vec::new() }
+        Self { data: Vec::new() }
     }
 
     /// Returns the number of elements in the list.
-    pub fn size(&self) -> i32 {
+    pub fn len(&self) -> i32 {
         self.data.len() as i32
     }
 
@@ -30,33 +27,42 @@ where
     }
 
     /// Return the first occurrence of the specified `element` or `None` in the list.
-    pub fn find(&self, element: &T) -> Option<&T> {
+    pub fn find(&self, element: &T) -> Option<&T>
+    where
+        T: PartialEq,
+    {
         self.data.iter().find(|&x| x == element)
     }
 
     /// Returns `true` if the list contains `element`.
-    pub fn contains(&self, element: &T) -> bool {
+    pub fn contains(&self, element: &T) -> bool
+    where
+        T: PartialEq,
+    {
         self.data.contains(element)
     }
 
     /// Counts the number of occurrence of the specified `element`.
-    pub fn count(&self, element: &T) -> i32 {
+    pub fn count(&self, element: &T) -> i32
+    where
+        T: PartialEq,
+    {
         self.data.iter().filter(|&x| x == element).count() as i32
     }
 
-    /// Inserts an element at position `index (-size() <= index <= size())` within the list.
+    /// Inserts an element at position `index (-len() <= index <= len())` within the list.
     pub fn insert(&mut self, index: i32, element: T) {
-        utility::check_full(self.size(), i32::MAX);
-        utility::check_bounds(index, -self.size(), self.size() + 1);
+        utility::check_full(self.len(), i32::MAX);
+        utility::check_bounds(index, -self.len(), self.len() + 1);
 
         let index = utility::calc_index(index, self.data.len());
         self.data.insert(index, element)
     }
 
-    /// Removes and returns the element at position `index (-size() <= index < size())` within the list.
+    /// Removes and returns the element at position `index (-len() <= index < len())` within the list.
     pub fn remove(&mut self, index: i32) -> T {
-        utility::check_empty(self.size());
-        utility::check_bounds(index, -self.size(), self.size());
+        utility::check_empty(self.len());
+        utility::check_bounds(index, -self.len(), self.len());
 
         let index = utility::calc_index(index, self.data.len());
         self.data.remove(index)
@@ -64,7 +70,7 @@ where
 
     /// Appends an element to the back of the list.
     pub fn push(&mut self, element: T) {
-        utility::check_full(self.size(), i32::MAX);
+        utility::check_full(self.len(), i32::MAX);
         self.data.push(element)
     }
 
@@ -84,11 +90,14 @@ where
     }
 
     /// Eliminate duplicate elements and keep the original relative order of elements.
-    pub fn uniquify(&mut self) {
+    pub fn uniquify(&mut self)
+    where
+        T: PartialEq + Clone,
+    {
         let mut buffer = Vec::with_capacity(self.data.len());
         for i in 0..self.data.len() {
             if !buffer.contains(&self.data[i]) {
-                buffer.push(self.data[i].to_owned())
+                buffer.push(self.data[i].clone())
             }
         }
         self.data = buffer;
@@ -99,14 +108,14 @@ where
     where
         T: std::fmt::Display,
     {
-        Str::from(format!("{}", self).as_str())
+        Str::from(self.to_string())
     }
 }
 
 impl<T, const N: usize> From<[T; N]> for List<T> {
     fn from(value: [T; N]) -> Self {
         utility::check_full(N as i32, i32::MAX);
-        List {
+        Self {
             data: Vec::from(value),
         }
     }
@@ -115,7 +124,7 @@ impl<T, const N: usize> From<[T; N]> for List<T> {
 impl<T> From<Vec<T>> for List<T> {
     fn from(value: Vec<T>) -> Self {
         utility::check_full(value.len() as i32, i32::MAX);
-        List { data: value }
+        Self { data: value }
     }
 }
 
@@ -131,25 +140,20 @@ impl<T> FromIterator<T> for List<T> {
     }
 }
 
-impl<T> std::ops::Index<i32> for List<T>
-where
-    T: Eq + Clone,
-{
+impl<T> std::ops::Index<i32> for List<T> {
     type Output = T;
+
     fn index(&self, index: i32) -> &Self::Output {
-        utility::check_bounds(index, -self.size(), self.size());
+        utility::check_bounds(index, -self.len(), self.len());
 
         let index = utility::calc_index(index, self.data.len());
         &self.data[index]
     }
 }
 
-impl<T> std::ops::IndexMut<i32> for List<T>
-where
-    T: Eq + Clone,
-{
+impl<T> std::ops::IndexMut<i32> for List<T> {
     fn index_mut(&mut self, index: i32) -> &mut Self::Output {
-        utility::check_bounds(index, -self.size(), self.size());
+        utility::check_bounds(index, -self.len(), self.len());
 
         let index = utility::calc_index(index, self.data.len());
         &mut self.data[index]
@@ -165,6 +169,7 @@ impl<T> std::ops::AddAssign for List<T> {
 impl<T> IntoIterator for List<T> {
     type Item = T;
     type IntoIter = std::vec::IntoIter<T>;
+
     fn into_iter(self) -> Self::IntoIter {
         self.data.into_iter()
     }
@@ -186,10 +191,7 @@ where
     }
 }
 
-impl<T> Default for List<T>
-where
-    T: Eq + Clone,
-{
+impl<T> Default for List<T> {
     fn default() -> Self {
         Self::new()
     }
