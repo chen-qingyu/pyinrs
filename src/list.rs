@@ -97,7 +97,7 @@ impl<T> List<T> {
         let mut buffer = Vec::with_capacity(self.data.len());
         for i in 0..self.data.len() {
             if !buffer.contains(&self.data[i]) {
-                buffer.push(self.data[i].clone())
+                buffer.push(self.data[i].clone());
             }
         }
         self.data = buffer;
