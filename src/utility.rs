@@ -13,7 +13,7 @@ pub fn check_empty(size: i32) {
 }
 
 #[inline]
-pub fn check_full(size: i32, capacity: i32) {
+pub fn check_full(size: usize, capacity: usize) {
     if size >= capacity {
         panic!("Error: The container has reached the maximum size: {}.", capacity);
     }

@@ -100,7 +100,7 @@ Construct
 
 impl From<&str> for Str {
     fn from(value: &str) -> Self {
-        utility::check_full(value.len() as i32, i32::MAX);
+        utility::check_full(value.len(), i32::MAX as usize);
         Self { data: String::from(value) }
     }
 }
@@ -181,7 +181,7 @@ Transform
 
 impl From<String> for Str {
     fn from(value: String) -> Self {
-        utility::check_full(value.len() as i32, i32::MAX);
+        utility::check_full(value.len(), i32::MAX as usize);
         Self { data: value }
     }
 }

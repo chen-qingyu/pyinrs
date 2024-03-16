@@ -52,7 +52,7 @@ impl<T> List<T> {
 
     /// Inserts an element at position `index (-len() <= index <= len())` within the list.
     pub fn insert(&mut self, index: i32, element: T) {
-        utility::check_full(self.len(), i32::MAX);
+        utility::check_full(self.data.len(), i32::MAX as usize);
         utility::check_bounds(index, -self.len(), self.len() + 1);
 
         let index = utility::calc_index(index, self.data.len());
@@ -70,7 +70,7 @@ impl<T> List<T> {
 
     /// Appends an element to the back of the list.
     pub fn push(&mut self, element: T) {
-        utility::check_full(self.len(), i32::MAX);
+        utility::check_full(self.data.len(), i32::MAX as usize);
         self.data.push(element)
     }
 
@@ -110,7 +110,7 @@ Construct
 
 impl<T, const N: usize> From<[T; N]> for List<T> {
     fn from(value: [T; N]) -> Self {
-        utility::check_full(N as i32, i32::MAX);
+        utility::check_full(N, i32::MAX as usize);
         Self { data: Vec::from(value) }
     }
 }
@@ -210,7 +210,7 @@ Transform
 
 impl<T> From<Vec<T>> for List<T> {
     fn from(value: Vec<T>) -> Self {
-        utility::check_full(value.len() as i32, i32::MAX);
+        utility::check_full(value.len(), i32::MAX as usize);
         Self { data: value }
     }
 }
