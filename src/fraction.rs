@@ -30,15 +30,7 @@ impl Fraction {
 
     /// Construct a new fraction object.
     pub fn new() -> Self {
-        Self {
-            numerator: 0,
-            denominator: 1,
-        }
-    }
-
-    /// Convert this fraction to decimal.
-    pub fn to_decimal(&self) -> f64 {
-        self.numerator as f64 / self.denominator as f64
+        Self { numerator: 0, denominator: 1 }
     }
 
     /// Return the absolute value of the copy of this.
@@ -51,23 +43,9 @@ impl Fraction {
     }
 }
 
-impl PartialOrd for Fraction {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        // self = a/b; other = c/d;
-        // so, self - other = a/b - c/d = (ad - bc)/(bd)
-        // since bd is always positive, compute (ad-bc) only
-        let a = self.numerator;
-        let b = self.denominator;
-        let c = other.numerator;
-        let d = other.denominator;
-
-        match a * d - b * c {
-            ..=-1 => Some(std::cmp::Ordering::Less),
-            0 => Some(std::cmp::Ordering::Equal),
-            1.. => Some(std::cmp::Ordering::Greater),
-        }
-    }
-}
+/*
+Construct
+*/
 
 impl From<i32> for Fraction {
     fn from(value: i32) -> Self {
@@ -90,6 +68,28 @@ impl From<(i32, i32)> for Fraction {
         };
         f.simplify();
         f
+    }
+}
+
+/*
+Function
+*/
+
+impl PartialOrd for Fraction {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        // self = a/b; other = c/d;
+        // so, self - other = a/b - c/d = (ad - bc)/(bd)
+        // since bd is always positive, compute (ad-bc) only
+        let a = self.numerator;
+        let b = self.denominator;
+        let c = other.numerator;
+        let d = other.denominator;
+
+        match a * d - b * c {
+            ..=-1 => Some(std::cmp::Ordering::Less),
+            0 => Some(std::cmp::Ordering::Equal),
+            1.. => Some(std::cmp::Ordering::Greater),
+        }
     }
 }
 
@@ -130,10 +130,7 @@ impl std::ops::Mul for Fraction {
     type Output = Self;
 
     fn mul(self, rhs: Self) -> Self::Output {
-        Self::from((
-            self.numerator * rhs.numerator,
-            self.denominator * rhs.denominator,
-        ))
+        Self::from((self.numerator * rhs.numerator, self.denominator * rhs.denominator))
     }
 }
 
@@ -141,10 +138,7 @@ impl std::ops::Div for Fraction {
     type Output = Self;
 
     fn div(self, rhs: Self) -> Self::Output {
-        Self::from((
-            self.numerator * rhs.denominator,
-            self.denominator * rhs.numerator,
-        ))
+        Self::from((self.numerator * rhs.denominator, self.denominator * rhs.numerator))
     }
 }
 
@@ -193,6 +187,10 @@ impl std::ops::RemAssign for Fraction {
     }
 }
 
+/*
+Display
+*/
+
 impl std::fmt::Display for Fraction {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.denominator == 1 {
@@ -203,8 +201,32 @@ impl std::fmt::Display for Fraction {
     }
 }
 
+/*
+Default
+*/
+
 impl Default for Fraction {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+/*
+Convert between std
+*/
+
+impl From<Fraction> for f64 {
+    fn from(value: Fraction) -> Self {
+        value.numerator as f64 / value.denominator as f64
+    }
+}
+
+/*
+Convert to pyinrs
+*/
+
+impl From<Fraction> for crate::Str {
+    fn from(value: Fraction) -> Self {
+        crate::Str::from(value.to_string())
     }
 }

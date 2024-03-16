@@ -1,4 +1,4 @@
-use crate::{utility, Str};
+use crate::utility;
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct List<T> {
@@ -102,43 +102,22 @@ impl<T> List<T> {
         }
         self.data = buffer;
     }
-
-    /// Convert this `List` to `Str`.
-    pub fn to_str(&self) -> Str
-    where
-        T: std::fmt::Display,
-    {
-        Str::from(self.to_string())
-    }
 }
+
+/*
+Construct
+*/
 
 impl<T, const N: usize> From<[T; N]> for List<T> {
     fn from(value: [T; N]) -> Self {
         utility::check_full(N as i32, i32::MAX);
-        Self {
-            data: Vec::from(value),
-        }
+        Self { data: Vec::from(value) }
     }
 }
 
-impl<T> From<Vec<T>> for List<T> {
-    fn from(value: Vec<T>) -> Self {
-        utility::check_full(value.len() as i32, i32::MAX);
-        Self { data: value }
-    }
-}
-
-impl<T> From<List<T>> for Vec<T> {
-    fn from(value: List<T>) -> Self {
-        value.data
-    }
-}
-
-impl<T> FromIterator<T> for List<T> {
-    fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
-        Self::from(iter.into_iter().collect::<Vec<T>>())
-    }
-}
+/*
+Function
+*/
 
 impl<T> std::ops::Index<i32> for List<T> {
     type Output = T;
@@ -166,19 +145,11 @@ impl<T> std::ops::AddAssign for List<T> {
     }
 }
 
-impl<T> IntoIterator for List<T> {
-    type Item = T;
-    type IntoIter = std::vec::IntoIter<T>;
+/*
+Display
+*/
 
-    fn into_iter(self) -> Self::IntoIter {
-        self.data.into_iter()
-    }
-}
-
-impl<T> std::fmt::Display for List<T>
-where
-    T: std::fmt::Display,
-{
+impl<T: std::fmt::Display> std::fmt::Display for List<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "[")?;
         for i in 0..self.data.len() {
@@ -191,8 +162,71 @@ where
     }
 }
 
+/*
+Default
+*/
+
 impl<T> Default for List<T> {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+/*
+Iterator
+*/
+
+impl<T> FromIterator<T> for List<T> {
+    fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
+        let data = iter.into_iter().collect();
+        Self { data }
+    }
+}
+
+impl<T> IntoIterator for List<T> {
+    type Item = T;
+    type IntoIter = std::vec::IntoIter<T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.data.into_iter()
+    }
+}
+
+/*
+Convert between std
+*/
+
+impl<T> From<Vec<T>> for List<T> {
+    fn from(value: Vec<T>) -> Self {
+        utility::check_full(value.len() as i32, i32::MAX);
+        Self { data: value }
+    }
+}
+
+impl<T> From<List<T>> for Vec<T> {
+    fn from(value: List<T>) -> Self {
+        value.data
+    }
+}
+
+/*
+Convert to pyinrs
+*/
+
+impl<T> From<List<T>> for crate::Deque<T> {
+    fn from(value: List<T>) -> Self {
+        value.into_iter().collect()
+    }
+}
+
+impl<T: Ord> From<List<T>> for crate::Set<T> {
+    fn from(value: List<T>) -> Self {
+        value.into_iter().collect()
+    }
+}
+
+impl<T: std::fmt::Display> From<List<T>> for crate::Str {
+    fn from(value: List<T>) -> Self {
+        crate::Str::from(value.to_string())
     }
 }

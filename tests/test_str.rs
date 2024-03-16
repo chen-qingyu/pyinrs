@@ -84,25 +84,16 @@ fn to_decimal() {
 
 #[rstest]
 fn split() {
-    assert_eq!(
-        Str::from("one, two, three").split(", "),
-        List::from(["one", "two", "three"])
-    );
+    assert_eq!(Str::from("one, two, three").split(", "), List::from(["one", "two", "three"]));
     assert_eq!(Str::from("aaa").split("a"), List::from(["", "", "", ""]));
-    assert_eq!(
-        Str::from("192.168.0.1").split("."),
-        List::from(["192", "168", "0", "1"])
-    );
+    assert_eq!(Str::from("192.168.0.1").split("."), List::from(["192", "168", "0", "1"]));
 }
 
 #[rstest]
 fn join() {
     assert_eq!(Str::from(", ").join([""].into()), Str::from(""));
     assert_eq!(Str::from(", ").join(["a", "b"].into()), Str::from("a, b"));
-    assert_eq!(
-        Str::from(".").join(["192", "168", "0", "1"].into()),
-        Str::from("192.168.0.1")
-    );
+    assert_eq!(Str::from(".").join(["192", "168", "0", "1"].into()), Str::from("192.168.0.1"));
 }
 
 #[rstest]

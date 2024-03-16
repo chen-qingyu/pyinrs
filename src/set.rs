@@ -57,6 +57,10 @@ impl<T: Ord> Set<T> {
     }
 }
 
+/*
+Construct
+*/
+
 impl<T: Ord, const N: usize> From<[T; N]> for Set<T> {
     fn from(value: [T; N]) -> Self {
         Self {
@@ -65,28 +69,13 @@ impl<T: Ord, const N: usize> From<[T; N]> for Set<T> {
     }
 }
 
-impl<T: Ord> FromIterator<T> for Set<T> {
-    fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
-        let data = iter.into_iter().collect();
-        Self { data }
-    }
-}
-
-impl<T> IntoIterator for Set<T> {
-    type Item = T;
-    type IntoIter = std::collections::btree_set::IntoIter<T>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.data.into_iter()
-    }
-}
+/*
+Function
+*/
 
 impl<T: Ord> std::cmp::PartialOrd for Set<T> {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        match (
-            self.data.is_subset(&other.data),
-            self.data.is_superset(&other.data),
-        ) {
+        match (self.data.is_subset(&other.data), self.data.is_superset(&other.data)) {
             (true, true) => Some(std::cmp::Ordering::Equal),
             (true, false) => Some(std::cmp::Ordering::Less),
             (false, true) => Some(std::cmp::Ordering::Greater),
@@ -95,43 +84,35 @@ impl<T: Ord> std::cmp::PartialOrd for Set<T> {
     }
 }
 
-impl<T: Ord + Clone> std::ops::BitAnd<&Set<T>> for &Set<T> {
-    type Output = Set<T>;
+impl<T: Ord + Clone> std::ops::BitAnd for Set<T> {
+    type Output = Self;
 
-    fn bitand(self, rhs: &Set<T>) -> Self::Output {
-        Set {
-            data: &self.data & &rhs.data,
-        }
+    fn bitand(self, rhs: Self) -> Self::Output {
+        Set { data: &self.data & &rhs.data }
     }
 }
 
-impl<T: Ord + Clone> std::ops::BitOr<&Set<T>> for &Set<T> {
-    type Output = Set<T>;
+impl<T: Ord + Clone> std::ops::BitOr for Set<T> {
+    type Output = Self;
 
-    fn bitor(self, rhs: &Set<T>) -> Self::Output {
-        Set {
-            data: &self.data | &rhs.data,
-        }
+    fn bitor(self, rhs: Self) -> Self::Output {
+        Set { data: &self.data | &rhs.data }
     }
 }
 
-impl<T: Ord + Clone> std::ops::BitXor<&Set<T>> for &Set<T> {
-    type Output = Set<T>;
+impl<T: Ord + Clone> std::ops::BitXor for Set<T> {
+    type Output = Self;
 
-    fn bitxor(self, rhs: &Set<T>) -> Self::Output {
-        Set {
-            data: &self.data ^ &rhs.data,
-        }
+    fn bitxor(self, rhs: Self) -> Self::Output {
+        Set { data: &self.data ^ &rhs.data }
     }
 }
 
-impl<T: Ord + Clone> std::ops::Sub<&Set<T>> for &Set<T> {
-    type Output = Set<T>;
+impl<T: Ord + Clone> std::ops::Sub for Set<T> {
+    type Output = Self;
 
-    fn sub(self, rhs: &Set<T>) -> Self::Output {
-        Set {
-            data: &self.data - &rhs.data,
-        }
+    fn sub(self, rhs: Self) -> Self::Output {
+        Set { data: &self.data - &rhs.data }
     }
 }
 
@@ -159,6 +140,10 @@ impl<T: Ord + Clone> std::ops::SubAssign for Set<T> {
     }
 }
 
+/*
+Display
+*/
+
 impl<T: std::fmt::Display> std::fmt::Display for Set<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.data.is_empty() {
@@ -177,8 +162,70 @@ impl<T: std::fmt::Display> std::fmt::Display for Set<T> {
     }
 }
 
+/*
+Default
+*/
+
 impl<T: Ord> Default for Set<T> {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+/*
+Iterator
+*/
+
+impl<T: Ord> FromIterator<T> for Set<T> {
+    fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
+        let data = iter.into_iter().collect();
+        Self { data }
+    }
+}
+
+impl<T> IntoIterator for Set<T> {
+    type Item = T;
+    type IntoIter = std::collections::btree_set::IntoIter<T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.data.into_iter()
+    }
+}
+
+/*
+Convert between std
+*/
+
+impl<T> From<std::collections::BTreeSet<T>> for Set<T> {
+    fn from(value: std::collections::BTreeSet<T>) -> Self {
+        Self { data: value }
+    }
+}
+
+impl<T> From<Set<T>> for std::collections::BTreeSet<T> {
+    fn from(value: Set<T>) -> Self {
+        value.data
+    }
+}
+
+/*
+Convert to pyinrs
+*/
+
+impl<T> From<Set<T>> for crate::Deque<T> {
+    fn from(value: Set<T>) -> Self {
+        value.into_iter().collect()
+    }
+}
+
+impl<T> From<Set<T>> for crate::List<T> {
+    fn from(value: Set<T>) -> Self {
+        value.into_iter().collect()
+    }
+}
+
+impl<T: std::fmt::Display> From<Set<T>> for crate::Str {
+    fn from(value: Set<T>) -> Self {
+        crate::Str::from(value.to_string())
     }
 }

@@ -1,4 +1,4 @@
-use crate::{utility, List};
+use crate::utility;
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Str {
@@ -8,9 +8,7 @@ pub struct Str {
 impl Str {
     /// Creates a new empty `Str`.
     pub fn new() -> Self {
-        Self {
-            data: String::new(),
-        }
+        Self { data: String::new() }
     }
 
     /// Returns the length of this `Str`, in bytes.
@@ -21,6 +19,11 @@ impl Str {
     /// Returns `true` if this `Str` has a length of 0, and `false` otherwise.
     pub fn is_empty(&self) -> bool {
         self.data.is_empty()
+    }
+
+    /// Returns an iterator over the chars of a string.
+    pub fn chars(&self) -> std::str::Chars<'_> {
+        self.data.chars()
     }
 
     /// Returns the byte index of the first character of this string that matches the pattern.
@@ -55,16 +58,12 @@ impl Str {
 
     /// Returns the lowercase equivalent of this string, as a new `Str`.
     pub fn lower(&self) -> Self {
-        Self {
-            data: self.data.to_lowercase(),
-        }
+        Self { data: self.data.to_lowercase() }
     }
 
     /// Returns the uppercase equivalent of this string, as a new `Str`.
     pub fn upper(&self) -> Self {
-        Self {
-            data: self.data.to_uppercase(),
-        }
+        Self { data: self.data.to_uppercase() }
     }
 
     /// Replaces all matches of a pattern with another string.
@@ -82,12 +81,12 @@ impl Str {
     }
 
     /// Split string with separator.
-    pub fn split(&self, separator: &str) -> List<&str> {
-        List::from(self.data.split(separator).collect::<Vec<&str>>())
+    pub fn split(&self, separator: &str) -> crate::List<&str> {
+        crate::List::from(self.data.split(separator).collect::<Vec<&str>>())
     }
 
     /// Return a string which is the concatenation of the strings in str_list.
-    pub fn join(&self, str_list: List<&str>) -> Self {
+    pub fn join(&self, str_list: crate::List<&str>) -> Self {
         let v: Vec<&str> = str_list.into();
         Self {
             data: v.join(self.data.as_str()),
@@ -95,27 +94,20 @@ impl Str {
     }
 }
 
+/*
+Construct
+*/
+
 impl From<&str> for Str {
     fn from(value: &str) -> Self {
         utility::check_full(value.len() as i32, i32::MAX);
-        Self {
-            data: String::from(value),
-        }
+        Self { data: String::from(value) }
     }
 }
 
-impl From<String> for Str {
-    fn from(value: String) -> Self {
-        utility::check_full(value.len() as i32, i32::MAX);
-        Self { data: value }
-    }
-}
-
-impl From<Str> for String {
-    fn from(value: Str) -> Self {
-        value.data
-    }
-}
+/*
+Function
+*/
 
 impl std::ops::Index<i32> for Str {
     type Output = str;
@@ -128,14 +120,50 @@ impl std::ops::Index<i32> for Str {
     }
 }
 
+/*
+Display
+*/
+
 impl std::fmt::Display for Str {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "\"{}\"", self.data)
     }
 }
 
+/*
+Default
+*/
+
 impl Default for Str {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+/*
+Iterator
+*/
+
+impl FromIterator<char> for Str {
+    fn from_iter<I: IntoIterator<Item = char>>(iter: I) -> Self {
+        let data = iter.into_iter().collect();
+        Self { data }
+    }
+}
+
+/*
+Convert between std
+*/
+
+impl From<String> for Str {
+    fn from(value: String) -> Self {
+        utility::check_full(value.len() as i32, i32::MAX);
+        Self { data: value }
+    }
+}
+
+impl From<Str> for String {
+    fn from(value: Str) -> Self {
+        value.data
     }
 }

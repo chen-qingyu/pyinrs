@@ -11,6 +11,16 @@ impl<T> Deque<T> {
         }
     }
 
+    /// Returns the length of the deque.
+    pub fn len(&self) -> usize {
+        self.data.len()
+    }
+
+    /// Returns `true` if the deque is empty.
+    pub fn is_empty(&self) -> bool {
+        self.data.is_empty()
+    }
+
     /// Provides a forward iterator.
     pub fn iter(&self) -> std::collections::linked_list::Iter<T> {
         self.data.iter()
@@ -34,16 +44,6 @@ impl<T> Deque<T> {
     /// Provides a mutable reference to the front element, or `None` if the deque is empty.
     pub fn front_mut(&mut self) -> Option<&mut T> {
         self.data.front_mut()
-    }
-
-    /// Returns the length of the deque.
-    pub fn len(&self) -> usize {
-        self.data.len()
-    }
-
-    /// Returns `true` if the deque is empty.
-    pub fn is_empty(&self) -> bool {
-        self.data.is_empty()
     }
 
     /// Appends an element to the back of the deque.
@@ -70,19 +70,11 @@ impl<T> Deque<T> {
     pub fn clear(&mut self) {
         self.data.clear()
     }
-
-    /// Consumes the deque and return the reversed deque.
-    pub fn reverse(self) -> Self {
-        Self {
-            data: self.data.into_iter().rev().collect(),
-        }
-    }
-
-    /// Consumes the deque and convert it to `List`.
-    pub fn to_list(self) -> crate::List<T> {
-        crate::List::from(self.data.into_iter().collect::<Vec<T>>())
-    }
 }
+
+/*
+Construct
+*/
 
 impl<T, const N: usize> From<[T; N]> for Deque<T> {
     fn from(value: [T; N]) -> Self {
@@ -91,6 +83,10 @@ impl<T, const N: usize> From<[T; N]> for Deque<T> {
         }
     }
 }
+
+/*
+Function
+*/
 
 impl<T> std::ops::ShlAssign<usize> for Deque<T> {
     fn shl_assign(&mut self, mut rhs: usize) {
@@ -120,10 +116,11 @@ impl<T> std::ops::ShrAssign<usize> for Deque<T> {
     }
 }
 
-impl<T> std::fmt::Display for Deque<T>
-where
-    T: std::fmt::Display,
-{
+/*
+Display
+*/
+
+impl<T: std::fmt::Display> std::fmt::Display for Deque<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.data.is_empty() {
             return write!(f, "<>");
@@ -141,8 +138,70 @@ where
     }
 }
 
+/*
+Default
+*/
+
 impl<T> Default for Deque<T> {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+/*
+Iterator
+*/
+
+impl<T> FromIterator<T> for Deque<T> {
+    fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
+        let data = iter.into_iter().collect();
+        Self { data }
+    }
+}
+
+impl<T> IntoIterator for Deque<T> {
+    type Item = T;
+    type IntoIter = std::collections::linked_list::IntoIter<T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.data.into_iter()
+    }
+}
+
+/*
+Convert between std
+*/
+
+impl<T> From<std::collections::LinkedList<T>> for Deque<T> {
+    fn from(value: std::collections::LinkedList<T>) -> Self {
+        Self { data: value }
+    }
+}
+
+impl<T> From<Deque<T>> for std::collections::LinkedList<T> {
+    fn from(value: Deque<T>) -> Self {
+        value.data
+    }
+}
+
+/*
+Convert to pyinrs
+*/
+
+impl<T> From<Deque<T>> for crate::List<T> {
+    fn from(value: Deque<T>) -> Self {
+        value.into_iter().collect()
+    }
+}
+
+impl<T: Ord> From<Deque<T>> for crate::Set<T> {
+    fn from(value: Deque<T>) -> Self {
+        value.into_iter().collect()
+    }
+}
+
+impl<T: std::fmt::Display> From<Deque<T>> for crate::Str {
+    fn from(value: Deque<T>) -> Self {
+        crate::Str::from(value.to_string())
     }
 }

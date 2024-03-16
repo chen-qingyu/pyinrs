@@ -51,11 +51,11 @@ fn copy(mut setup: Fixture) {
 }
 
 #[rstest]
-fn to_decimal() {
-    assert_eq!(Fraction::from((0, 2)).to_decimal(), 0.0);
-    assert_eq!(Fraction::from((1, 2)).to_decimal(), 0.5);
-    assert_eq!(Fraction::from((2, 3)).to_decimal(), 2.0 / 3.0);
-    assert_eq!(Fraction::from((1, -2)).to_decimal(), -0.5);
+fn into_f64() {
+    assert_eq!(f64::from(Fraction::from((0, 2))), 0.0);
+    assert_eq!(f64::from(Fraction::from((1, 2))), 0.5);
+    assert_eq!(f64::from(Fraction::from((2, 3))), 2.0 / 3.0);
+    assert_eq!(f64::from(Fraction::from((1, -2))), -0.5);
 }
 
 #[rstest]

@@ -61,13 +61,6 @@ fn peek(mut setup: Fixture) {
 }
 
 #[rstest]
-fn reverse(setup: Fixture) {
-    assert_eq!(setup.empty.reverse(), Deque::new());
-    assert_eq!(setup.one.reverse(), Deque::from([1]));
-    assert_eq!(setup.some.reverse(), Deque::from([5, 4, 3, 2, 1]));
-}
-
-#[rstest]
 fn rotate(mut setup: Fixture) {
     setup.empty >>= 1;
     assert_eq!(setup.empty, Deque::new());
@@ -111,7 +104,7 @@ fn rotate(mut setup: Fixture) {
 
 #[rstest]
 fn to_list(setup: Fixture) {
-    assert_eq!(setup.some.to_list(), pyinrs::List::from([1, 2, 3, 4, 5]));
+    assert_eq!(pyinrs::List::from(setup.some), pyinrs::List::from([1, 2, 3, 4, 5]));
 }
 
 #[rstest]
