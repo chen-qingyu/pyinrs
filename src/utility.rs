@@ -6,7 +6,7 @@ pub fn check_bounds(pos: i32, begin: i32, end: i32) {
 }
 
 #[inline]
-pub fn check_empty(size: i32) {
+pub fn check_empty(size: usize) {
     if size == 0 {
         panic!("Error: The container is empty.");
     }

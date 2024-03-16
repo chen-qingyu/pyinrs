@@ -61,7 +61,7 @@ impl<T> List<T> {
 
     /// Removes and returns the element at position `index (-len() <= index < len())` within the list.
     pub fn remove(&mut self, index: i32) -> T {
-        utility::check_empty(self.len());
+        utility::check_empty(self.data.len());
         utility::check_bounds(index, -self.len(), self.len());
 
         let index = utility::calc_index(index, self.data.len());
