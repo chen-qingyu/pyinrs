@@ -115,6 +115,18 @@ impl<T, const N: usize> From<[T; N]> for List<T> {
     }
 }
 
+impl<T> From<crate::Deque<T>> for List<T> {
+    fn from(value: crate::Deque<T>) -> Self {
+        value.into_iter().collect()
+    }
+}
+
+impl<T> From<crate::Set<T>> for List<T> {
+    fn from(value: crate::Set<T>) -> Self {
+        value.into_iter().collect()
+    }
+}
+
 /*
 Function
 */
@@ -206,27 +218,5 @@ impl<T> From<Vec<T>> for List<T> {
 impl<T> From<List<T>> for Vec<T> {
     fn from(value: List<T>) -> Self {
         value.data
-    }
-}
-
-/*
-Convert to pyinrs
-*/
-
-impl<T> From<List<T>> for crate::Deque<T> {
-    fn from(value: List<T>) -> Self {
-        value.into_iter().collect()
-    }
-}
-
-impl<T: Ord> From<List<T>> for crate::Set<T> {
-    fn from(value: List<T>) -> Self {
-        value.into_iter().collect()
-    }
-}
-
-impl<T: std::fmt::Display> From<List<T>> for crate::Str {
-    fn from(value: List<T>) -> Self {
-        crate::Str::from(value.to_string())
     }
 }

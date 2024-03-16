@@ -80,12 +80,12 @@ impl Str {
         }
     }
 
-    /// Split string with separator.
+    /// Split string with `separator`.
     pub fn split(&self, separator: &str) -> crate::List<&str> {
         crate::List::from(self.data.split(separator).collect::<Vec<&str>>())
     }
 
-    /// Return a string which is the concatenation of the strings in str_list.
+    /// Return a string which is the concatenation of the strings in `str_list`.
     pub fn join(&self, str_list: crate::List<&str>) -> Self {
         let v: Vec<&str> = str_list.into();
         Self {
@@ -102,6 +102,30 @@ impl From<&str> for Str {
     fn from(value: &str) -> Self {
         utility::check_full(value.len() as i32, i32::MAX);
         Self { data: String::from(value) }
+    }
+}
+
+impl<T: std::fmt::Display> From<crate::Deque<T>> for Str {
+    fn from(value: crate::Deque<T>) -> Self {
+        Self::from(value.to_string())
+    }
+}
+
+impl From<crate::Fraction> for Str {
+    fn from(value: crate::Fraction) -> Self {
+        Str::from(value.to_string())
+    }
+}
+
+impl<T: std::fmt::Display> From<crate::List<T>> for Str {
+    fn from(value: crate::List<T>) -> Self {
+        Str::from(value.to_string())
+    }
+}
+
+impl<T: std::fmt::Display> From<crate::Set<T>> for Str {
+    fn from(value: crate::Set<T>) -> Self {
+        Str::from(value.to_string())
     }
 }
 

@@ -220,13 +220,3 @@ impl From<Fraction> for f64 {
         value.numerator as f64 / value.denominator as f64
     }
 }
-
-/*
-Convert to pyinrs
-*/
-
-impl From<Fraction> for crate::Str {
-    fn from(value: Fraction) -> Self {
-        crate::Str::from(value.to_string())
-    }
-}
