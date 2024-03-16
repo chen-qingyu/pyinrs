@@ -113,19 +113,19 @@ impl<T: std::fmt::Display> From<crate::Deque<T>> for Str {
 
 impl From<crate::Fraction> for Str {
     fn from(value: crate::Fraction) -> Self {
-        Str::from(value.to_string())
+        Self::from(value.to_string())
     }
 }
 
 impl<T: std::fmt::Display> From<crate::List<T>> for Str {
     fn from(value: crate::List<T>) -> Self {
-        Str::from(value.to_string())
+        Self::from(value.to_string())
     }
 }
 
 impl<T: std::fmt::Display> From<crate::Set<T>> for Str {
     fn from(value: crate::Set<T>) -> Self {
-        Str::from(value.to_string())
+        Self::from(value.to_string())
     }
 }
 
