@@ -181,7 +181,7 @@ impl<T> IntoIterator for Deque<T> {
 }
 
 /*
-Convert between std
+Transform
 */
 
 impl<T> From<std::collections::LinkedList<T>> for Deque<T> {

@@ -176,7 +176,7 @@ impl FromIterator<char> for Str {
 }
 
 /*
-Convert between std
+Transform
 */
 
 impl From<String> for Str {

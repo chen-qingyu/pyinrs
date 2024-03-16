@@ -205,7 +205,7 @@ impl<T> IntoIterator for List<T> {
 }
 
 /*
-Convert between std
+Transform
 */
 
 impl<T> From<Vec<T>> for List<T> {

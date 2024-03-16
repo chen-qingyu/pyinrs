@@ -212,7 +212,7 @@ impl Default for Fraction {
 }
 
 /*
-Convert between std
+Transform
 */
 
 impl From<Fraction> for f64 {

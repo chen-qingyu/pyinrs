@@ -205,7 +205,7 @@ impl<T> IntoIterator for Set<T> {
 }
 
 /*
-Convert between std
+Transform
 */
 
 impl<T> From<std::collections::BTreeSet<T>> for Set<T> {
