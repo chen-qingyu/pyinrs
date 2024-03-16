@@ -51,14 +51,6 @@ fn copy(mut setup: Fixture) {
 }
 
 #[rstest]
-fn into_f64() {
-    assert_eq!(f64::from(Fraction::from((0, 2))), 0.0);
-    assert_eq!(f64::from(Fraction::from((1, 2))), 0.5);
-    assert_eq!(f64::from(Fraction::from((2, 3))), 2.0 / 3.0);
-    assert_eq!(f64::from(Fraction::from((1, -2))), -0.5);
-}
-
-#[rstest]
 fn unary(setup: Fixture) {
     assert_eq!(-setup.positive, Fraction::from((-1, 2)));
     assert_eq!(setup.positive.abs(), Fraction::from((1, 2)));
@@ -174,6 +166,14 @@ fn rem(setup: Fixture, #[case] case: i32) {
         4 => setup.zero % setup.zero,
         _ => unreachable!(),
     };
+}
+
+#[rstest]
+fn transform() {
+    assert_eq!(f64::from(Fraction::from((0, 2))), 0.0);
+    assert_eq!(f64::from(Fraction::from((1, 2))), 0.5);
+    assert_eq!(f64::from(Fraction::from((2, 3))), 2.0 / 3.0);
+    assert_eq!(f64::from(Fraction::from((1, -2))), -0.5);
 }
 
 #[rstest]

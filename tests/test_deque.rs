@@ -50,6 +50,13 @@ fn compare(setup: Fixture) {
 }
 
 #[rstest]
+fn iterator(setup: Fixture) {
+    assert_eq!(setup.empty.into_iter().rev().collect::<Deque<i32>>(), Deque::new());
+    assert_eq!(setup.one.into_iter().rev().collect::<Deque<i32>>(), Deque::from([1]));
+    assert_eq!(setup.some.into_iter().rev().collect::<Deque<i32>>(), Deque::from([5, 4, 3, 2, 1]));
+}
+
+#[rstest]
 fn peek(mut setup: Fixture) {
     assert_eq!(setup.some.back(), Some(&5));
     assert_eq!(setup.some.front(), Some(&1));
@@ -100,11 +107,6 @@ fn rotate(mut setup: Fixture) {
     assert_eq!(setup.empty, Deque::from([3, 4, 5, 1, 2]));
     setup.empty <<= 233;
     assert_eq!(setup.empty, Deque::from([1, 2, 3, 4, 5]));
-}
-
-#[rstest]
-fn to_list(setup: Fixture) {
-    assert_eq!(pyinrs::List::from(setup.some), pyinrs::List::from([1, 2, 3, 4, 5]));
 }
 
 #[rstest]

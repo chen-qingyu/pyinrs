@@ -1,4 +1,4 @@
-use pyinrs::{List, Str};
+use pyinrs::Str;
 use rstest::{fixture, rstest};
 
 struct Fixture {
@@ -84,9 +84,9 @@ fn to_decimal() {
 
 #[rstest]
 fn split() {
-    assert_eq!(Str::from("one, two, three").split(", "), List::from(["one", "two", "three"]));
-    assert_eq!(Str::from("aaa").split("a"), List::from(["", "", "", ""]));
-    assert_eq!(Str::from("192.168.0.1").split("."), List::from(["192", "168", "0", "1"]));
+    assert_eq!(Str::from("one, two, three").split(", "), pyinrs::List::from(["one", "two", "three"]));
+    assert_eq!(Str::from("aaa").split("a"), pyinrs::List::from(["", "", "", ""]));
+    assert_eq!(Str::from("192.168.0.1").split("."), pyinrs::List::from(["192", "168", "0", "1"]));
 }
 
 #[rstest]
