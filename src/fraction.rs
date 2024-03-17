@@ -1,4 +1,4 @@
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Fraction {
     // Numerator.
     numerator: i32,
@@ -68,6 +68,12 @@ impl From<(i32, i32)> for Fraction {
         };
         f.simplify();
         f
+    }
+}
+
+impl Default for Fraction {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -198,16 +204,6 @@ impl std::fmt::Display for Fraction {
         } else {
             write!(f, "{}/{}", self.numerator, self.denominator)
         }
-    }
-}
-
-/*
-Default
-*/
-
-impl Default for Fraction {
-    fn default() -> Self {
-        Self::new()
     }
 }
 

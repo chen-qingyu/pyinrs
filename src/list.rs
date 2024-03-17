@@ -1,6 +1,6 @@
 use crate::utility;
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
 pub struct List<T> {
     data: Vec<T>,
 }
@@ -171,16 +171,6 @@ impl<T: std::fmt::Display> std::fmt::Display for List<T> {
             write!(f, "{}", self.data[i])?;
         }
         write!(f, "]")
-    }
-}
-
-/*
-Default
-*/
-
-impl<T> Default for List<T> {
-    fn default() -> Self {
-        Self::new()
     }
 }
 

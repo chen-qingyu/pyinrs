@@ -1,6 +1,6 @@
 use crate::utility;
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
 pub struct Str {
     data: String,
 }
@@ -151,16 +151,6 @@ Display
 impl std::fmt::Display for Str {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "\"{}\"", self.data)
-    }
-}
-
-/*
-Default
-*/
-
-impl Default for Str {
-    fn default() -> Self {
-        Self::new()
     }
 }
 

@@ -1,4 +1,4 @@
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
 pub struct Deque<T> {
     data: std::collections::LinkedList<T>,
 }
@@ -147,16 +147,6 @@ impl<T: std::fmt::Display> std::fmt::Display for Deque<T> {
             }
             write!(f, ", ")?;
         }
-    }
-}
-
-/*
-Default
-*/
-
-impl<T> Default for Deque<T> {
-    fn default() -> Self {
-        Self::new()
     }
 }
 

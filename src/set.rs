@@ -1,4 +1,4 @@
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Default, Hash)]
 pub struct Set<T> {
     data: std::collections::BTreeSet<T>,
 }
@@ -171,16 +171,6 @@ impl<T: std::fmt::Display> std::fmt::Display for Set<T> {
             }
             write!(f, ", ")?;
         }
-    }
-}
-
-/*
-Default
-*/
-
-impl<T: Ord> Default for Set<T> {
-    fn default() -> Self {
-        Self::new()
     }
 }
 
