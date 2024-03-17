@@ -36,7 +36,7 @@ There are a total of 8 classes (in plan), refer to the 8 commonly used classes i
 | -------------- | -------------------- | --- |
 | `List<T>`      | `list`               | √   |
 | `Set<T>`       | `set`                | √   |
-| `Dict<K, V>`   | `dict`               |     |
+| `Dict<K, V>`   | `dict`               | √   |
 | `Int`          | `int`                |     |
 | `Str`          | `str`                | √   |
 | `Tuple<Ts...>` | `tuple`              |     |
@@ -57,6 +57,11 @@ List::from([1, 2, 3, 1, 2, 3, 1, 2, 3]).uniquify() // [1, 2, 3]
 Set::from([1, 2, 3, 4]).add(5) // {1, 2, 3, 4, 5}
 // Intersection of Sets, supports intersection, union, difference, and symmetric difference
 Set::from([1, 2, 3, 4, 5]) & Set::from([1, 3, 5, 7, 9]) // {1, 3, 5}
+
+// Dict assign value for key
+Dict::from([("one", 1), ("two", 2), ("three", 3)])[&"one"] = 1111 // {one: 1111, three: 3, two: 2}
+// Dict get values
+Dict::from([("one", 1), ("two", 2), ("three", 3)]).values() // {1, 2, 3}
 
 // Str split
 Str::from("one, two, three").split(", ") // ["one", "two", "three"]
