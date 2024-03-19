@@ -117,6 +117,12 @@ impl From<crate::Fraction> for Str {
     }
 }
 
+impl From<crate::Int> for Str {
+    fn from(value: crate::Int) -> Self {
+        Self::from(value.to_string())
+    }
+}
+
 impl<T: std::fmt::Display> From<crate::List<T>> for Str {
     fn from(value: crate::List<T>) -> Self {
         Self::from(value.to_string())
