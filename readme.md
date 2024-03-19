@@ -63,9 +63,9 @@ Dict::from([("one", 1), ("two", 2), ("three", 3)])[&"one"] = 1111 // {one: 1111,
 // Dict get values
 Dict::from([("one", 1), ("two", 2), ("three", 3)]).values() // {1, 2, 3}
 
-// Integer modular power, very fast
+// Int modular power, very fast
 Int::from("1024").pow(&"1024".into(), &"100".into()) // 76
-// Integer factorial
+// Int factorial
 Int::from("5").factorial().factorial() // 668950291344912705758811805409037258675274633313802981029567135230163355...
 
 // Str split
