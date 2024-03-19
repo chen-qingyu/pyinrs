@@ -37,7 +37,7 @@ There are a total of 8 classes (in plan), refer to the 8 commonly used classes i
 | `List<T>`      | `list`               | √   |
 | `Set<T>`       | `set`                | √   |
 | `Dict<K, V>`   | `dict`               | √   |
-| `Int`          | `int`                |     |
+| `Int`          | `int`                | √   |
 | `Str`          | `str`                | √   |
 | `Tuple<Ts...>` | `tuple`              |     |
 | `Deque<T>`     | `collections.deque`  | √   |
@@ -62,6 +62,11 @@ Set::from([1, 2, 3, 4, 5]) & Set::from([1, 3, 5, 7, 9]) // {1, 3, 5}
 Dict::from([("one", 1), ("two", 2), ("three", 3)])[&"one"] = 1111 // {one: 1111, three: 3, two: 2}
 // Dict get values
 Dict::from([("one", 1), ("two", 2), ("three", 3)]).values() // {1, 2, 3}
+
+// Integer modular powers, very fast
+Int::from("1024").pow(&"1024".into(), &"100".into()) // 76
+// Integer factorial
+Int::from("5").factorial().factorial() // 668950291344912705758811805409037258675274633313802981029567135230163355...
 
 // Str split
 Str::from("one, two, three").split(", ") // ["one", "two", "three"]
