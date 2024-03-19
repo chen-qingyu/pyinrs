@@ -42,7 +42,7 @@ impl Int {
             }
         }
 
-        return true;
+        true
     }
 
     // Construct an integer with given characters.
@@ -106,7 +106,11 @@ impl Int {
 
     /// Count the number of digits in the integer (based 10).
     pub fn digits(&self) -> usize {
-        return if self.sign == 0 { 0 } else { self.digits.len() };
+        if self.sign == 0 {
+            0
+        } else {
+            self.digits.len()
+        }
     }
 
     /// Determine whether the integer is zero quickly.
@@ -166,7 +170,11 @@ impl Int {
 
     /// Return the absolute value of self.
     pub fn abs(&self) -> Self {
-        return if self.sign == -1 { -self } else { self.clone() };
+        if self.sign == -1 {
+            -self
+        } else {
+            self.clone()
+        }
     }
 
     /// Return (self**exp) % module (module = 0 means does not perform module).
@@ -245,7 +253,7 @@ impl Int {
             a = t;
         }
 
-        return a; // a is GCD
+        a // a is GCD
     }
 
     /// Calculate the least common multiple of two integers.
@@ -254,7 +262,7 @@ impl Int {
             return Int::new();
         }
 
-        return (int1 * int2) / Int::gcd(int1, int2); // LCM = (int1 * int2) / GCD
+        (int1 * int2) / Int::gcd(int1, int2) // LCM = (int1 * int2) / GCD
     }
 }
 
@@ -360,7 +368,7 @@ impl std::cmp::PartialOrd for Int {
             }
         }
 
-        return Some(Ordering::Equal);
+        Some(Ordering::Equal)
     }
 }
 
@@ -440,7 +448,7 @@ impl Add for Int {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
-        return &self + &rhs;
+        &self + &rhs
     }
 }
 
@@ -454,9 +462,7 @@ impl Sub<&Int> for &Int {
         }
 
         // if the operands are of opposite signs, perform addition
-        if self.sign == 1 && rhs.sign == -1 {
-            return self + &-rhs;
-        } else if self.sign == -1 && rhs.sign == 1 {
+        if self.sign != rhs.sign {
             return self + &-rhs;
         }
 
@@ -511,7 +517,7 @@ impl Sub for Int {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self::Output {
-        return &self - &rhs;
+        &self - &rhs
     }
 }
 
@@ -557,7 +563,7 @@ impl Mul for Int {
     type Output = Self;
 
     fn mul(self, rhs: Self) -> Self::Output {
-        return &self * &rhs;
+        &self * &rhs
     }
 }
 
@@ -594,7 +600,7 @@ impl Div<&Int> for &Int {
         let b = &rhs.digits;
         let c = &mut result.digits;
         for i in (0..size).rev() {
-            tmp.digits = Vec::from([0].repeat(i));
+            tmp.digits = [0].repeat(i);
             tmp.digits.append(&mut b.clone()); // tmp = rhs * 10^i in O(N)
 
             // <= 9 loops, so O(1)
@@ -617,7 +623,7 @@ impl Div for Int {
     type Output = Self;
 
     fn div(self, rhs: Self) -> Self::Output {
-        return &self / &rhs;
+        &self / &rhs
     }
 }
 
@@ -625,7 +631,7 @@ impl Rem<&Int> for &Int {
     type Output = Int;
 
     fn rem(self, rhs: &Int) -> Self::Output {
-        return self - &(&(self / rhs) * rhs);
+        self - &(&(self / rhs) * rhs)
     }
 }
 
@@ -633,7 +639,7 @@ impl Rem for Int {
     type Output = Self;
 
     fn rem(self, rhs: Self) -> Self::Output {
-        return &self % &rhs;
+        &self % &rhs
     }
 }
 
