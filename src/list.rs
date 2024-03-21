@@ -1,4 +1,9 @@
-use crate::utility;
+use std::{
+    fmt::Display,
+    ops::{AddAssign, Index, IndexMut},
+};
+
+use crate::{utility, Deque, Set};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
 pub struct List<T> {
@@ -50,6 +55,20 @@ impl<T> List<T> {
         self.data.iter().filter(|&x| x == element).count() as i32
     }
 
+    /// Return a list that eliminates duplicate elements and keep the original relative order of elements.
+    pub fn uniquify(&self) -> Self
+    where
+        T: PartialEq + Clone,
+    {
+        let mut buffer = Vec::with_capacity(self.data.len());
+        for i in 0..self.data.len() {
+            if !buffer.contains(&self.data[i]) {
+                buffer.push(self.data[i].clone());
+            }
+        }
+        Self { data: buffer }
+    }
+
     /// Inserts an element at position `index (-len() <= index <= len())` within the list.
     pub fn insert(&mut self, index: i32, element: T) {
         utility::check_full(self.data.len(), i32::MAX as usize);
@@ -88,20 +107,6 @@ impl<T> List<T> {
     pub fn reverse(&mut self) {
         self.data.reverse()
     }
-
-    /// Eliminate duplicate elements and keep the original relative order of elements.
-    pub fn uniquify(&mut self)
-    where
-        T: PartialEq + Clone,
-    {
-        let mut buffer = Vec::with_capacity(self.data.len());
-        for i in 0..self.data.len() {
-            if !buffer.contains(&self.data[i]) {
-                buffer.push(self.data[i].clone());
-            }
-        }
-        self.data = buffer;
-    }
 }
 
 /*
@@ -115,14 +120,14 @@ impl<T, const N: usize> From<[T; N]> for List<T> {
     }
 }
 
-impl<T> From<crate::Deque<T>> for List<T> {
-    fn from(value: crate::Deque<T>) -> Self {
+impl<T> From<Deque<T>> for List<T> {
+    fn from(value: Deque<T>) -> Self {
         value.into_iter().collect()
     }
 }
 
-impl<T> From<crate::Set<T>> for List<T> {
-    fn from(value: crate::Set<T>) -> Self {
+impl<T> From<Set<T>> for List<T> {
+    fn from(value: Set<T>) -> Self {
         value.into_iter().collect()
     }
 }
@@ -131,7 +136,7 @@ impl<T> From<crate::Set<T>> for List<T> {
 Function
 */
 
-impl<T> std::ops::Index<i32> for List<T> {
+impl<T> Index<i32> for List<T> {
     type Output = T;
 
     fn index(&self, index: i32) -> &Self::Output {
@@ -142,7 +147,7 @@ impl<T> std::ops::Index<i32> for List<T> {
     }
 }
 
-impl<T> std::ops::IndexMut<i32> for List<T> {
+impl<T> IndexMut<i32> for List<T> {
     fn index_mut(&mut self, index: i32) -> &mut Self::Output {
         utility::check_bounds(index, -self.len(), self.len());
 
@@ -151,7 +156,7 @@ impl<T> std::ops::IndexMut<i32> for List<T> {
     }
 }
 
-impl<T> std::ops::AddAssign for List<T> {
+impl<T> AddAssign for List<T> {
     fn add_assign(&mut self, rhs: Self) {
         self.data.extend(rhs.data)
     }
@@ -161,7 +166,7 @@ impl<T> std::ops::AddAssign for List<T> {
 Display
 */
 
-impl<T: std::fmt::Display> std::fmt::Display for List<T> {
+impl<T: Display> Display for List<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "[")?;
         for i in 0..self.data.len() {

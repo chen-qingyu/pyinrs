@@ -1,14 +1,19 @@
+use std::{
+    cmp::Ordering,
+    collections::BTreeMap,
+    fmt::Display,
+    ops::{Index, IndexMut},
+};
+
 #[derive(Debug, Clone, PartialEq, Eq, Default, Hash)]
 pub struct Dict<K, V> {
-    data: std::collections::BTreeMap<K, V>,
+    data: BTreeMap<K, V>,
 }
 
 impl<K: Ord, V> Dict<K, V> {
     /// Makes a new, empty `Dict`.
     pub fn new() -> Self {
-        Self {
-            data: std::collections::BTreeMap::new(),
-        }
+        Self { data: BTreeMap::new() }
     }
 
     /// Returns the number of elements in the dict.
@@ -88,9 +93,7 @@ Construct
 
 impl<K: Ord, V, const N: usize> From<[(K, V); N]> for Dict<K, V> {
     fn from(value: [(K, V); N]) -> Self {
-        Self {
-            data: std::collections::BTreeMap::from(value),
-        }
+        Self { data: BTreeMap::from(value) }
     }
 }
 
@@ -98,13 +101,13 @@ impl<K: Ord, V, const N: usize> From<[(K, V); N]> for Dict<K, V> {
 Function
 */
 
-impl<K: Ord + Clone, V: PartialEq> std::cmp::PartialOrd for Dict<K, V> {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+impl<K: Ord + Clone, V: PartialEq> PartialOrd for Dict<K, V> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         self.keys().partial_cmp(&other.keys())
     }
 }
 
-impl<K: Ord, V> std::ops::Index<&K> for Dict<K, V> {
+impl<K: Ord, V> Index<&K> for Dict<K, V> {
     type Output = V;
 
     fn index(&self, key: &K) -> &Self::Output {
@@ -116,7 +119,7 @@ impl<K: Ord, V> std::ops::Index<&K> for Dict<K, V> {
     }
 }
 
-impl<K: Ord, V> std::ops::IndexMut<&K> for Dict<K, V> {
+impl<K: Ord, V> IndexMut<&K> for Dict<K, V> {
     fn index_mut(&mut self, key: &K) -> &mut Self::Output {
         if !self.contains(key) {
             panic!("Error: Key is not found in the dict.");
@@ -130,7 +133,7 @@ impl<K: Ord, V> std::ops::IndexMut<&K> for Dict<K, V> {
 Display
 */
 
-impl<K: std::fmt::Display, V: std::fmt::Display> std::fmt::Display for Dict<K, V> {
+impl<K: Display, V: Display> Display for Dict<K, V> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.data.is_empty() {
             return write!(f, "{{}}");
@@ -173,13 +176,13 @@ impl<K, V> IntoIterator for Dict<K, V> {
 Transform
 */
 
-impl<K, V> From<std::collections::BTreeMap<K, V>> for Dict<K, V> {
-    fn from(value: std::collections::BTreeMap<K, V>) -> Self {
+impl<K, V> From<BTreeMap<K, V>> for Dict<K, V> {
+    fn from(value: BTreeMap<K, V>) -> Self {
         Self { data: value }
     }
 }
 
-impl<K, V> From<Dict<K, V>> for std::collections::BTreeMap<K, V> {
+impl<K, V> From<Dict<K, V>> for BTreeMap<K, V> {
     fn from(value: Dict<K, V>) -> Self {
         value.data
     }

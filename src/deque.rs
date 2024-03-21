@@ -1,14 +1,20 @@
+use std::{
+    collections::LinkedList,
+    fmt::Display,
+    ops::{Shl, ShlAssign, Shr, ShrAssign},
+};
+
+use crate::{List, Set};
+
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
 pub struct Deque<T> {
-    data: std::collections::LinkedList<T>,
+    data: LinkedList<T>,
 }
 
 impl<T> Deque<T> {
     /// Creates an empty `Deque`.
     pub fn new() -> Self {
-        Deque {
-            data: std::collections::LinkedList::new(),
-        }
+        Deque { data: LinkedList::new() }
     }
 
     /// Returns the length of the deque.
@@ -47,13 +53,15 @@ impl<T> Deque<T> {
     }
 
     /// Appends an element to the back of the deque.
-    pub fn push_back(&mut self, element: T) {
-        self.data.push_back(element)
+    pub fn push_back(&mut self, element: T) -> &Self {
+        self.data.push_back(element);
+        self
     }
 
     /// Adds an element first in the deque.
-    pub fn push_front(&mut self, element: T) {
-        self.data.push_front(element)
+    pub fn push_front(&mut self, element: T) -> &Self {
+        self.data.push_front(element);
+        self
     }
 
     /// Removes the last element and returns it, or `None` if the deque is empty.
@@ -78,20 +86,18 @@ Construct
 
 impl<T, const N: usize> From<[T; N]> for Deque<T> {
     fn from(value: [T; N]) -> Self {
-        Self {
-            data: std::collections::LinkedList::from(value),
-        }
+        Self { data: LinkedList::from(value) }
     }
 }
 
-impl<T> From<crate::List<T>> for Deque<T> {
-    fn from(value: crate::List<T>) -> Self {
+impl<T> From<List<T>> for Deque<T> {
+    fn from(value: List<T>) -> Self {
         value.into_iter().collect()
     }
 }
 
-impl<T> From<crate::Set<T>> for Deque<T> {
-    fn from(value: crate::Set<T>) -> Self {
+impl<T> From<Set<T>> for Deque<T> {
+    fn from(value: Set<T>) -> Self {
         value.into_iter().collect()
     }
 }
@@ -100,7 +106,7 @@ impl<T> From<crate::Set<T>> for Deque<T> {
 Function
 */
 
-impl<T> std::ops::ShlAssign<usize> for Deque<T> {
+impl<T> ShlAssign<usize> for Deque<T> {
     fn shl_assign(&mut self, mut rhs: usize) {
         if self.data.len() <= 1 || rhs == 0 {
             return;
@@ -114,7 +120,7 @@ impl<T> std::ops::ShlAssign<usize> for Deque<T> {
     }
 }
 
-impl<T> std::ops::ShrAssign<usize> for Deque<T> {
+impl<T> ShrAssign<usize> for Deque<T> {
     fn shr_assign(&mut self, mut rhs: usize) {
         if self.data.len() <= 1 || rhs == 0 {
             return;
@@ -128,11 +134,29 @@ impl<T> std::ops::ShrAssign<usize> for Deque<T> {
     }
 }
 
+impl<T> Shl<usize> for Deque<T> {
+    type Output = Self;
+
+    fn shl(mut self, rhs: usize) -> Self::Output {
+        self <<= rhs;
+        self
+    }
+}
+
+impl<T> Shr<usize> for Deque<T> {
+    type Output = Self;
+
+    fn shr(mut self, rhs: usize) -> Self::Output {
+        self >>= rhs;
+        self
+    }
+}
+
 /*
 Display
 */
 
-impl<T: std::fmt::Display> std::fmt::Display for Deque<T> {
+impl<T: Display> Display for Deque<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.data.is_empty() {
             return write!(f, "<>");
@@ -174,13 +198,13 @@ impl<T> IntoIterator for Deque<T> {
 Transform
 */
 
-impl<T> From<std::collections::LinkedList<T>> for Deque<T> {
-    fn from(value: std::collections::LinkedList<T>) -> Self {
+impl<T> From<LinkedList<T>> for Deque<T> {
+    fn from(value: LinkedList<T>) -> Self {
         Self { data: value }
     }
 }
 
-impl<T> From<Deque<T>> for std::collections::LinkedList<T> {
+impl<T> From<Deque<T>> for LinkedList<T> {
     fn from(value: Deque<T>) -> Self {
         value.data
     }

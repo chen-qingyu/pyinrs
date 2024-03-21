@@ -1,3 +1,10 @@
+use std::{
+    cmp::Ordering,
+    fmt::Display,
+    ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Rem, RemAssign, Sub, SubAssign},
+    str::FromStr,
+};
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Fraction {
     // Numerator.
@@ -71,6 +78,26 @@ impl From<(i32, i32)> for Fraction {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
+pub struct ParseFractionError;
+
+impl FromStr for Fraction {
+    type Err = ParseFractionError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if let Ok(numerator) = s.trim().parse::<i32>() {
+            return Ok(Fraction { numerator, denominator: 1 });
+        }
+
+        let (numerator, denominator) = s.trim().split_once('/').ok_or(ParseFractionError)?;
+
+        let numerator = numerator.parse::<i32>().map_err(|_| ParseFractionError)?;
+        let denominator = denominator.parse::<i32>().map_err(|_| ParseFractionError)?;
+
+        Ok(Fraction::from((numerator, denominator)))
+    }
+}
+
 impl Default for Fraction {
     fn default() -> Self {
         Self::new()
@@ -82,7 +109,7 @@ Function
 */
 
 impl PartialOrd for Fraction {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         // self = a/b; other = c/d;
         // so, self - other = a/b - c/d = (ad - bc)/(bd)
         // since bd is always positive, compute (ad-bc) only
@@ -92,14 +119,14 @@ impl PartialOrd for Fraction {
         let d = other.denominator;
 
         match a * d - b * c {
-            ..=-1 => Some(std::cmp::Ordering::Less),
-            0 => Some(std::cmp::Ordering::Equal),
-            1.. => Some(std::cmp::Ordering::Greater),
+            ..=-1 => Some(Ordering::Less),
+            0 => Some(Ordering::Equal),
+            1.. => Some(Ordering::Greater),
         }
     }
 }
 
-impl std::ops::Neg for Fraction {
+impl Neg for Fraction {
     type Output = Self;
 
     fn neg(self) -> Self::Output {
@@ -110,7 +137,7 @@ impl std::ops::Neg for Fraction {
     }
 }
 
-impl std::ops::Add for Fraction {
+impl Add for Fraction {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
@@ -121,7 +148,7 @@ impl std::ops::Add for Fraction {
     }
 }
 
-impl std::ops::Sub for Fraction {
+impl Sub for Fraction {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self::Output {
@@ -132,7 +159,7 @@ impl std::ops::Sub for Fraction {
     }
 }
 
-impl std::ops::Mul for Fraction {
+impl Mul for Fraction {
     type Output = Self;
 
     fn mul(self, rhs: Self) -> Self::Output {
@@ -140,7 +167,7 @@ impl std::ops::Mul for Fraction {
     }
 }
 
-impl std::ops::Div for Fraction {
+impl Div for Fraction {
     type Output = Self;
 
     fn div(self, rhs: Self) -> Self::Output {
@@ -148,7 +175,7 @@ impl std::ops::Div for Fraction {
     }
 }
 
-impl std::ops::Rem for Fraction {
+impl Rem for Fraction {
     type Output = Self;
 
     fn rem(self, rhs: Self) -> Self::Output {
@@ -163,31 +190,31 @@ impl std::ops::Rem for Fraction {
     }
 }
 
-impl std::ops::AddAssign for Fraction {
+impl AddAssign for Fraction {
     fn add_assign(&mut self, rhs: Self) {
         *self = *self + rhs;
     }
 }
 
-impl std::ops::SubAssign for Fraction {
+impl SubAssign for Fraction {
     fn sub_assign(&mut self, rhs: Self) {
         *self = *self - rhs;
     }
 }
 
-impl std::ops::MulAssign for Fraction {
+impl MulAssign for Fraction {
     fn mul_assign(&mut self, rhs: Self) {
         *self = *self * rhs;
     }
 }
 
-impl std::ops::DivAssign for Fraction {
+impl DivAssign for Fraction {
     fn div_assign(&mut self, rhs: Self) {
         *self = *self / rhs;
     }
 }
 
-impl std::ops::RemAssign for Fraction {
+impl RemAssign for Fraction {
     fn rem_assign(&mut self, rhs: Self) {
         *self = *self % rhs;
     }
@@ -197,7 +224,7 @@ impl std::ops::RemAssign for Fraction {
 Display
 */
 
-impl std::fmt::Display for Fraction {
+impl Display for Fraction {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.denominator == 1 {
             write!(f, "{}", self.numerator)

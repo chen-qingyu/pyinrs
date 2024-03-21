@@ -182,3 +182,16 @@ fn format(setup: Fixture) {
     assert_eq!(format!("{}", setup.positive), "1/2");
     assert_eq!(format!("{}", setup.negative), "-1/2");
 }
+
+#[rstest]
+fn parse(setup: Fixture) {
+    assert_eq!(setup.zero, "0".parse().unwrap());
+    assert_eq!(setup.positive, "1/2".parse().unwrap());
+    assert_eq!(setup.negative, "-1/2".parse().unwrap());
+
+    assert_eq!(setup.zero, "  000\n\n".parse().unwrap());
+    assert_eq!(setup.positive, "  -2/-4\t\n".parse().unwrap());
+    assert_eq!(setup.negative, "\t3/-6\n\n".parse().unwrap());
+
+    assert!("hello".parse::<Fraction>().is_err());
+}

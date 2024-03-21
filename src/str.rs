@@ -1,4 +1,6 @@
-use crate::utility;
+use std::{fmt::Display, ops::Index, str::FromStr, string::ParseError};
+
+use crate::{utility, Deque, Dict, Fraction, Int, List, Set};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
 pub struct Str {
@@ -22,7 +24,7 @@ impl Str {
     }
 
     /// Returns an iterator over the chars of a string.
-    pub fn chars(&self) -> std::str::Chars<'_> {
+    pub fn chars(&self) -> std::str::Chars {
         self.data.chars()
     }
 
@@ -81,12 +83,12 @@ impl Str {
     }
 
     /// Split string with `separator`.
-    pub fn split(&self, separator: &str) -> crate::List<&str> {
-        crate::List::from(self.data.split(separator).collect::<Vec<&str>>())
+    pub fn split(&self, separator: &str) -> List<&str> {
+        self.data.split(separator).collect::<List<&str>>()
     }
 
     /// Return a string which is the concatenation of the strings in `str_list`.
-    pub fn join(&self, str_list: crate::List<&str>) -> Self {
+    pub fn join(&self, str_list: List<&str>) -> Self {
         let v: Vec<&str> = str_list.into();
         Self {
             data: v.join(self.data.as_str()),
@@ -105,33 +107,46 @@ impl From<&str> for Str {
     }
 }
 
-impl<T: std::fmt::Display> From<crate::Deque<T>> for Str {
-    fn from(value: crate::Deque<T>) -> Self {
+impl<T: Display> From<Deque<T>> for Str {
+    fn from(value: Deque<T>) -> Self {
         Self::from(value.to_string())
     }
 }
 
-impl From<crate::Fraction> for Str {
-    fn from(value: crate::Fraction) -> Self {
+impl<K: Display, V: Display> From<Dict<K, V>> for Str {
+    fn from(value: Dict<K, V>) -> Self {
         Self::from(value.to_string())
     }
 }
 
-impl From<crate::Int> for Str {
-    fn from(value: crate::Int) -> Self {
+impl From<Fraction> for Str {
+    fn from(value: Fraction) -> Self {
         Self::from(value.to_string())
     }
 }
 
-impl<T: std::fmt::Display> From<crate::List<T>> for Str {
-    fn from(value: crate::List<T>) -> Self {
+impl From<Int> for Str {
+    fn from(value: Int) -> Self {
         Self::from(value.to_string())
     }
 }
 
-impl<T: std::fmt::Display> From<crate::Set<T>> for Str {
-    fn from(value: crate::Set<T>) -> Self {
+impl<T: Display> From<List<T>> for Str {
+    fn from(value: List<T>) -> Self {
         Self::from(value.to_string())
+    }
+}
+
+impl<T: Display> From<Set<T>> for Str {
+    fn from(value: Set<T>) -> Self {
+        Self::from(value.to_string())
+    }
+}
+
+impl FromStr for Str {
+    type Err = ParseError;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(Str { data: s.to_string() })
     }
 }
 
@@ -139,7 +154,7 @@ impl<T: std::fmt::Display> From<crate::Set<T>> for Str {
 Function
 */
 
-impl std::ops::Index<i32> for Str {
+impl Index<i32> for Str {
     type Output = str;
 
     fn index(&self, index: i32) -> &Self::Output {
@@ -154,7 +169,7 @@ impl std::ops::Index<i32> for Str {
 Display
 */
 
-impl std::fmt::Display for Str {
+impl Display for Str {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "\"{}\"", self.data)
     }

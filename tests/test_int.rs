@@ -326,3 +326,16 @@ fn format(setup: Fixture) {
     assert_eq!(format!("{}", setup.positive), "18446744073709551617");
     assert_eq!(format!("{}", setup.negative), "-18446744073709551617");
 }
+
+#[rstest]
+fn parse(setup: Fixture) {
+    assert_eq!(setup.zero, "0".parse().unwrap());
+    assert_eq!(setup.positive, "18446744073709551617".parse().unwrap());
+    assert_eq!(setup.negative, "-18446744073709551617".parse().unwrap());
+
+    assert_eq!(setup.zero, "\t0000  \n".parse().unwrap());
+    assert_eq!(setup.positive, "  18446744073709551617 \n\n".parse().unwrap());
+    assert_eq!(setup.negative, "  -18446744073709551617 \n\n".parse().unwrap());
+
+    assert!("hello".parse::<Int>().is_err());
+}

@@ -102,3 +102,10 @@ fn format(setup: Fixture) {
     assert_eq!(format!("{}", setup.one), "\"1\"");
     assert_eq!(format!("{}", setup.some), "\"12345\"");
 }
+
+#[rstest]
+fn parse(setup: Fixture) {
+    assert_eq!(setup.empty, "".parse().unwrap());
+    assert_eq!(setup.one, "1".parse().unwrap());
+    assert_eq!(setup.some, "12345".parse().unwrap());
+}

@@ -2,7 +2,10 @@ use std::{
     cmp::Ordering,
     fmt::Display,
     ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Rem, RemAssign, Sub, SubAssign},
+    str::FromStr,
 };
+
+use crate::Str;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Int {
@@ -278,8 +281,8 @@ impl From<&str> for Int {
     }
 }
 
-impl From<crate::Str> for Int {
-    fn from(value: crate::Str) -> Self {
+impl From<Str> for Int {
+    fn from(value: Str) -> Self {
         let len = value.len() as usize;
         let mut obj = Self { digits: [].to_vec(), sign: 0 };
         obj.construct(String::from(value).as_str(), len);
@@ -305,6 +308,23 @@ impl From<i32> for Int {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
+pub struct ParseIntError;
+
+impl FromStr for Int {
+    type Err = ParseIntError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let s = s.trim();
+
+        if !Self::is_integer(s, s.len()) {
+            return Err(ParseIntError);
+        }
+
+        Ok(Int::from(s))
+    }
+}
+
 impl Default for Int {
     fn default() -> Self {
         Self::new()
@@ -315,7 +335,7 @@ impl Default for Int {
 Function
 */
 
-impl std::cmp::PartialOrd for Int {
+impl PartialOrd for Int {
     fn partial_cmp(&self, that: &Self) -> Option<Ordering> {
         if self.sign != that.sign {
             // self is +, that is - or 0

@@ -1,14 +1,21 @@
+use std::{
+    cmp::Ordering,
+    collections::BTreeSet,
+    fmt::Display,
+    ops::{BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Sub, SubAssign},
+};
+
+use crate::{Deque, List};
+
 #[derive(Debug, Clone, PartialEq, Eq, Default, Hash)]
 pub struct Set<T> {
-    data: std::collections::BTreeSet<T>,
+    data: BTreeSet<T>,
 }
 
 impl<T: Ord> Set<T> {
     /// Makes a new, empty `Set`.
     pub fn new() -> Self {
-        Self {
-            data: std::collections::BTreeSet::new(),
-        }
+        Self { data: BTreeSet::new() }
     }
 
     /// Returns the number of elements in the set.
@@ -36,14 +43,16 @@ impl<T: Ord> Set<T> {
         self.data.is_disjoint(&other.data)
     }
 
-    /// Adds a value to the set. Returns whether the value was newly inserted.
-    pub fn add(&mut self, value: T) -> bool {
-        self.data.insert(value)
+    /// Adds a value to the set.
+    pub fn add(&mut self, value: T) -> &Self {
+        self.data.insert(value);
+        self
     }
 
-    /// Removes a value from the set and drops it. Returns whether such an element was present.
-    pub fn remove(&mut self, value: &T) -> bool {
-        self.data.remove(value)
+    /// Removes a value from the set and drops it.
+    pub fn remove(&mut self, value: &T) -> &Self {
+        self.data.remove(value);
+        self
     }
 
     /// Removes the first element from the set and returns it, if any.
@@ -63,20 +72,18 @@ Construct
 
 impl<T: Ord, const N: usize> From<[T; N]> for Set<T> {
     fn from(value: [T; N]) -> Self {
-        Self {
-            data: std::collections::BTreeSet::from(value),
-        }
+        Self { data: BTreeSet::from(value) }
     }
 }
 
-impl<T: Ord> From<crate::Deque<T>> for Set<T> {
-    fn from(value: crate::Deque<T>) -> Self {
+impl<T: Ord> From<Deque<T>> for Set<T> {
+    fn from(value: Deque<T>) -> Self {
         value.into_iter().collect()
     }
 }
 
-impl<T: Ord> From<crate::List<T>> for Set<T> {
-    fn from(value: crate::List<T>) -> Self {
+impl<T: Ord> From<List<T>> for Set<T> {
+    fn from(value: List<T>) -> Self {
         value.into_iter().collect()
     }
 }
@@ -85,18 +92,18 @@ impl<T: Ord> From<crate::List<T>> for Set<T> {
 Function
 */
 
-impl<T: Ord> std::cmp::PartialOrd for Set<T> {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+impl<T: Ord> PartialOrd for Set<T> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         match (self.data.is_subset(&other.data), self.data.is_superset(&other.data)) {
-            (true, true) => Some(std::cmp::Ordering::Equal),
-            (true, false) => Some(std::cmp::Ordering::Less),
-            (false, true) => Some(std::cmp::Ordering::Greater),
+            (true, true) => Some(Ordering::Equal),
+            (true, false) => Some(Ordering::Less),
+            (false, true) => Some(Ordering::Greater),
             _ => unreachable!(),
         }
     }
 }
 
-impl<T: Ord + Clone> std::ops::BitAnd for Set<T> {
+impl<T: Ord + Clone> BitAnd for Set<T> {
     type Output = Self;
 
     fn bitand(self, rhs: Self) -> Self::Output {
@@ -104,7 +111,7 @@ impl<T: Ord + Clone> std::ops::BitAnd for Set<T> {
     }
 }
 
-impl<T: Ord + Clone> std::ops::BitOr for Set<T> {
+impl<T: Ord + Clone> BitOr for Set<T> {
     type Output = Self;
 
     fn bitor(self, rhs: Self) -> Self::Output {
@@ -112,7 +119,7 @@ impl<T: Ord + Clone> std::ops::BitOr for Set<T> {
     }
 }
 
-impl<T: Ord + Clone> std::ops::BitXor for Set<T> {
+impl<T: Ord + Clone> BitXor for Set<T> {
     type Output = Self;
 
     fn bitxor(self, rhs: Self) -> Self::Output {
@@ -120,7 +127,7 @@ impl<T: Ord + Clone> std::ops::BitXor for Set<T> {
     }
 }
 
-impl<T: Ord + Clone> std::ops::Sub for Set<T> {
+impl<T: Ord + Clone> Sub for Set<T> {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self::Output {
@@ -128,25 +135,25 @@ impl<T: Ord + Clone> std::ops::Sub for Set<T> {
     }
 }
 
-impl<T: Ord + Clone> std::ops::BitAndAssign for Set<T> {
+impl<T: Ord + Clone> BitAndAssign for Set<T> {
     fn bitand_assign(&mut self, rhs: Self) {
         self.data = &self.data & &rhs.data;
     }
 }
 
-impl<T: Ord + Clone> std::ops::BitOrAssign for Set<T> {
+impl<T: Ord + Clone> BitOrAssign for Set<T> {
     fn bitor_assign(&mut self, rhs: Self) {
         self.data = &self.data | &rhs.data;
     }
 }
 
-impl<T: Ord + Clone> std::ops::BitXorAssign for Set<T> {
+impl<T: Ord + Clone> BitXorAssign for Set<T> {
     fn bitxor_assign(&mut self, rhs: Self) {
         self.data = &self.data ^ &rhs.data;
     }
 }
 
-impl<T: Ord + Clone> std::ops::SubAssign for Set<T> {
+impl<T: Ord + Clone> SubAssign for Set<T> {
     fn sub_assign(&mut self, rhs: Self) {
         self.data = &self.data - &rhs.data;
     }
@@ -156,7 +163,7 @@ impl<T: Ord + Clone> std::ops::SubAssign for Set<T> {
 Display
 */
 
-impl<T: std::fmt::Display> std::fmt::Display for Set<T> {
+impl<T: Display> Display for Set<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.data.is_empty() {
             return write!(f, "{{}}");
@@ -198,13 +205,13 @@ impl<T> IntoIterator for Set<T> {
 Transform
 */
 
-impl<T> From<std::collections::BTreeSet<T>> for Set<T> {
-    fn from(value: std::collections::BTreeSet<T>) -> Self {
+impl<T> From<BTreeSet<T>> for Set<T> {
+    fn from(value: BTreeSet<T>) -> Self {
         Self { data: value }
     }
 }
 
-impl<T> From<Set<T>> for std::collections::BTreeSet<T> {
+impl<T> From<Set<T>> for BTreeSet<T> {
     fn from(value: Set<T>) -> Self {
         value.data
     }

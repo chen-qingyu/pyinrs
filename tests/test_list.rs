@@ -165,20 +165,9 @@ fn empty_remove(mut setup: Fixture) {
 
 #[rstest]
 fn uniquify() {
-    let mut list = List::from([1, 2, 2, 3, 3, 3]);
-    list.uniquify();
-    assert_eq!(list, List::from([1, 2, 3]));
-
-    let mut list = List::from([1, 2, 3, 1, 2, 3, 1, 2, 3]);
-    list.uniquify();
-    assert_eq!(list, List::from([1, 2, 3]));
-
-    let mut many = List::new();
-    for _ in 0..10000 {
-        many.push(0);
-    }
-    many.uniquify();
-    assert_eq!(many, List::from([0]));
+    assert_eq!(List::from([1, 2, 2, 3, 3, 3]).uniquify(), List::from([1, 2, 3]));
+    assert_eq!(List::from([1, 2, 3, 1, 2, 3, 1, 2, 3]).uniquify(), List::from([1, 2, 3]));
+    assert_eq!(List::from([0].repeat(10000)).uniquify(), List::from([0]));
 }
 
 #[rstest]
