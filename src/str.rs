@@ -1,4 +1,9 @@
-use std::{fmt::Display, ops::Index, str::FromStr, string::ParseError};
+use std::{
+    fmt::Display,
+    ops::{Add, Index, Mul},
+    str::FromStr,
+    string::ParseError,
+};
 
 use crate::{utility, Deque, Dict, Fraction, Int, List, Set};
 
@@ -26,6 +31,14 @@ impl Str {
     /// Returns an iterator over the chars of a string.
     pub fn chars(&self) -> std::str::Chars {
         self.data.chars()
+    }
+
+    /// Extracts the `i`th character of the string. Index can be negative, like Python's str: str[-1] gets the last element.
+    pub fn char_at(&self, mut index: i32) -> Option<char> {
+        if index < 0 {
+            index += self.data.chars().count() as i32;
+        }
+        self.data.chars().nth(index as usize)
     }
 
     /// Returns the byte index of the first character of this string that matches the pattern.
@@ -155,13 +168,29 @@ Function
 */
 
 impl Index<i32> for Str {
-    type Output = str;
+    type Output = u8;
 
     fn index(&self, index: i32) -> &Self::Output {
         utility::check_bounds(index, -self.len(), self.len());
 
         let index = utility::calc_index(index, self.data.len());
-        &self.data[index..=index]
+        &self.data.as_bytes()[index]
+    }
+}
+
+impl Add for Str {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        (self.data + &rhs.data).into()
+    }
+}
+
+impl Mul<usize> for Str {
+    type Output = Self;
+
+    fn mul(self, rhs: usize) -> Self::Output {
+        self.data.repeat(rhs).into()
     }
 }
 

@@ -53,19 +53,52 @@ fn compare(setup: Fixture) {
 fn access(setup: Fixture) {
     // forward
     for i in 0..setup.some.len() {
-        assert_eq!(setup.some[i], (i + 1).to_string());
+        assert_eq!(setup.some[i], i as u8 + 1 + b'0');
     }
 
     // backward
-    for i in -1..-setup.some.len() {
-        assert_eq!(setup.some[i], (i + 6).to_string());
+    for i in (-setup.some.len()..=-1).rev() {
+        assert_eq!(setup.some[i], (i as i8 + 6 + b'0' as i8) as u8);
     }
+
+    assert_eq!(setup.one[0], b'1');
+    assert_eq!(setup.one[-1], b'1');
+    assert_eq!(setup.one.char_at(0), Some('1'));
+    assert_eq!(setup.one.char_at(-1), Some('1'));
+    assert_eq!(setup.one.char_at(1), None);
+
+    let sparkle_heart = Str::from("💖");
+    assert_eq!(sparkle_heart[0], 240);
+    assert_eq!(sparkle_heart[1], 159);
+    assert_eq!(sparkle_heart[2], 146);
+    assert_eq!(sparkle_heart[3], 150);
+    assert_eq!(sparkle_heart[-1], 150);
+    assert_eq!(sparkle_heart[-2], 146);
+    assert_eq!(sparkle_heart[-3], 159);
+    assert_eq!(sparkle_heart[-4], 240);
+    assert_eq!(sparkle_heart.char_at(0), Some('💖'));
+    assert_eq!(sparkle_heart.char_at(-1), Some('💖'));
+    assert_eq!(sparkle_heart.char_at(1), None);
 }
 
 #[rstest]
-#[should_panic(expected = "Error: Index out of range: 5 not in -5..5.")]
+#[should_panic(expected = "Error: Index out of range: 1 not in -1..1.")]
 fn bad_access(setup: Fixture) {
-    setup.some[5].to_string();
+    setup.one[1];
+}
+
+#[rstest]
+fn add(setup: Fixture) {
+    assert_eq!(setup.some + setup.one, "123451".into());
+    assert_eq!(Str::from("hello") + Str::from(" world"), "hello world".into());
+}
+
+#[rstest]
+fn mul(setup: Fixture) {
+    assert_eq!(setup.one.clone() * 0, "".into());
+    assert_eq!(setup.one.clone() * 1, "1".into());
+    assert_eq!(setup.one.clone() * 2, "11".into());
+    assert_eq!(setup.one.clone() * 3, "111".into());
 }
 
 #[rstest]
