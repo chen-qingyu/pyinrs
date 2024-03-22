@@ -2,7 +2,7 @@
 
 _A Rust type library that is as easy to use as Python built-in types._
 
-### 1. Attribute
+## 1. Attribute
 
 - Name: PyInRs.
 - Language: Rust, requires version rustc >= `1.75.0`.
@@ -13,14 +13,14 @@ _A Rust type library that is as easy to use as Python built-in types._
 - Security: There is no `unsafe` code block.
 - Document: Using `cargo doc --open` to open documents.
 
-### 2. Feature
+## 2. Feature
 
 - Simple: Stay simple, stay young. While ensuring friendly and robust, try to be concise and easy to maintain and read.
 - Friendly: Provides many convenient functions. For example, `List` and `Str` both support negative subscript like Python.
 - Robust: There are corresponding checks for the addition, deletion, modification, and inspection of containers.
 - Elegance: With careful design, it can be used as conveniently as Python's built-in types. Very Pythonic.
 
-### 3. Usage
+## 3. Usage
 
 To use it, add the following lines to your `Cargo.toml` file:
 
