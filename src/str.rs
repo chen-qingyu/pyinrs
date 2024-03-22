@@ -37,6 +37,9 @@ impl Str {
     pub fn char_at(&self, mut index: i32) -> Option<char> {
         if index < 0 {
             index += self.data.chars().count() as i32;
+            if index < 0 {
+                return None;
+            }
         }
         self.data.chars().nth(index as usize)
     }
