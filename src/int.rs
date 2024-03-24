@@ -104,7 +104,7 @@ impl Int {
 
     /// Construct a new integer object.
     pub fn new() -> Self {
-        Self { digits: [0].to_vec(), sign: 0 }
+        Self { digits: Vec::from([0]), sign: 0 }
     }
 
     /// Count the number of digits in the integer (based 10).
@@ -275,7 +275,7 @@ Construct
 
 impl From<&str> for Int {
     fn from(value: &str) -> Self {
-        let mut obj = Self { digits: [].to_vec(), sign: 0 };
+        let mut obj = Self { digits: Vec::new(), sign: 0 };
         obj.construct(value, value.len());
         obj
     }
@@ -284,7 +284,7 @@ impl From<&str> for Int {
 impl From<Str> for Int {
     fn from(value: Str) -> Self {
         let len = value.len() as usize;
-        let mut obj = Self { digits: [].to_vec(), sign: 0 };
+        let mut obj = Self { digits: Vec::new(), sign: 0 };
         obj.construct(String::from(value).as_str(), len);
         obj
     }
@@ -297,7 +297,7 @@ impl From<i32> for Int {
         }
 
         // value != 0
-        let mut obj = Self { digits: [].to_vec(), sign: 0 };
+        let mut obj = Self { digits: Vec::new(), sign: 0 };
         obj.sign = if value > 0 { 1 } else { -1 };
         value = value.abs();
         while value > 0 {
@@ -442,7 +442,7 @@ impl Add<&Int> for &Int {
         num2.add_leading_zeros(size - 1 - num2.digits.len());
 
         let mut result = Int {
-            digits: [0].to_vec(),
+            digits: Vec::from([0]),
             sign: self.sign,
         };
 
@@ -498,7 +498,7 @@ impl Sub<&Int> for &Int {
         num2.add_leading_zeros(size - num2.digits.len());
 
         let mut result = Int {
-            digits: [0].to_vec(),
+            digits: Vec::from([0]),
             sign: self.sign,
         };
 
@@ -556,7 +556,7 @@ impl Mul<&Int> for &Int {
         let size = self.digits.len() + rhs.digits.len();
 
         let mut result = Int {
-            digits: [0].to_vec(),
+            digits: Vec::from([0]),
             sign: if self.sign == rhs.sign { 1 } else { -1 }, // the sign is depends on the sign of operands
         };
         result.add_leading_zeros(size - 1); // result initially has a 0
@@ -608,10 +608,10 @@ impl Div<&Int> for &Int {
 
         let mut num1 = self.clone().abs();
 
-        let mut tmp = Int { digits: [0].to_vec(), sign: 1 }; // intermediate variable for rhs * 10^i
+        let mut tmp = Int { digits: Vec::from([0]), sign: 1 }; // intermediate variable for rhs * 10^i
 
         let mut result = Int {
-            digits: [0].to_vec(),
+            digits: Vec::from([0]),
             sign: if self.sign == rhs.sign { 1 } else { -1 },
         };
         result.add_leading_zeros(size - 1); // result initially has a 0
