@@ -1,5 +1,5 @@
 use std::{
-    collections::LinkedList,
+    collections::VecDeque,
     fmt::Display,
     ops::{Shl, ShlAssign, Shr, ShrAssign},
 };
@@ -8,13 +8,20 @@ use crate::{List, Set};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
 pub struct Deque<T> {
-    data: LinkedList<T>,
+    data: VecDeque<T>,
 }
 
 impl<T> Deque<T> {
     /// Creates an empty `Deque`.
     pub fn new() -> Self {
-        Deque { data: LinkedList::new() }
+        Deque { data: VecDeque::new() }
+    }
+
+    /// Creates an empty deque with space for at least `capacity` elements.
+    pub fn with_capacity(capacity: usize) -> Self {
+        Deque {
+            data: VecDeque::with_capacity(capacity),
+        }
     }
 
     /// Returns the length of the deque.
@@ -28,7 +35,7 @@ impl<T> Deque<T> {
     }
 
     /// Provides a forward iterator.
-    pub fn iter(&self) -> std::collections::linked_list::Iter<T> {
+    pub fn iter(&self) -> std::collections::vec_deque::Iter<T> {
         self.data.iter()
     }
 
@@ -78,6 +85,11 @@ impl<T> Deque<T> {
     pub fn clear(&mut self) {
         self.data.clear()
     }
+
+    /// Reserves capacity for at least `additional` more elements to be inserted in the given deque.
+    pub fn reserve(&mut self, additional: usize) {
+        self.data.reserve(additional)
+    }
 }
 
 /*
@@ -86,7 +98,7 @@ Construct
 
 impl<T, const N: usize> From<[T; N]> for Deque<T> {
     fn from(value: [T; N]) -> Self {
-        Self { data: LinkedList::from(value) }
+        Self { data: VecDeque::from(value) }
     }
 }
 
@@ -187,7 +199,7 @@ impl<T> FromIterator<T> for Deque<T> {
 
 impl<T> IntoIterator for Deque<T> {
     type Item = T;
-    type IntoIter = std::collections::linked_list::IntoIter<T>;
+    type IntoIter = std::collections::vec_deque::IntoIter<T>;
 
     fn into_iter(self) -> Self::IntoIter {
         self.data.into_iter()
@@ -198,13 +210,13 @@ impl<T> IntoIterator for Deque<T> {
 Transform
 */
 
-impl<T> From<LinkedList<T>> for Deque<T> {
-    fn from(value: LinkedList<T>) -> Self {
+impl<T> From<VecDeque<T>> for Deque<T> {
+    fn from(value: VecDeque<T>) -> Self {
         Self { data: value }
     }
 }
 
-impl<T> From<Deque<T>> for LinkedList<T> {
+impl<T> From<Deque<T>> for VecDeque<T> {
     fn from(value: Deque<T>) -> Self {
         value.data
     }
