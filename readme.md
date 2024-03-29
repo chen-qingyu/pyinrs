@@ -91,3 +91,5 @@ dict.len(); // 3;
 dict.keys(); // {"first", "second", "third"}
 dict[&"third".into()][-1].factorial(); // 120
 ```
+
+If you want to use a similar library in C++, please see: [PyInCpp](https://github.com/chen-qingyu/pyincpp).
