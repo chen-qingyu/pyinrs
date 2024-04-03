@@ -93,3 +93,27 @@ dict[&"third".into()][-1].factorial(); // 120
 ```
 
 If you want to use a similar library in C++, please see: [PyInCpp](https://github.com/chen-qingyu/pyincpp).
+
+### 4. Advantage
+
+The advantage of PyInRs is that it combines the high performance of Rust with the ease of use of Python, and can also be easily combined with other libraries, for example:
+
+```rust
+/*
+Using pyinrs::Fraction in mymatrix to display accurate matrix operation results.
+*/
+use mymatrix::Matrix;
+
+let a = Matrix::from([[1, 2], [3, 4]]);
+let b = Matrix::create(2, 2, 0.into());
+let c = Matrix::create(2, 2, 1.into());
+let d = Matrix::eye(2);
+
+println!("{}", ((a + b) * (c + d)).inv().unwrap());
+/*
+[[
+-11/6 5/6;
+5/3 -2/3;
+]]
+*/
+```

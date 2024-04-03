@@ -11,3 +11,4 @@ keywords = ["type", "python"]
 
 [dev-dependencies]
 rstest = "0.18.2"
+mymatrix = "0"    # for doc tests
