@@ -5,8 +5,6 @@ use std::{
     ops::{BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Sub, SubAssign},
 };
 
-use crate::{Deque, List};
-
 #[derive(Debug, Clone, PartialEq, Eq, Default, Hash)]
 pub struct Set<T> {
     data: BTreeSet<T>,
@@ -66,18 +64,6 @@ Construct
 impl<T: Ord, const N: usize> From<[T; N]> for Set<T> {
     fn from(value: [T; N]) -> Self {
         Self { data: BTreeSet::from(value) }
-    }
-}
-
-impl<T: Ord> From<Deque<T>> for Set<T> {
-    fn from(value: Deque<T>) -> Self {
-        value.into_iter().collect()
-    }
-}
-
-impl<T: Ord> From<List<T>> for Set<T> {
-    fn from(value: List<T>) -> Self {
-        value.into_iter().collect()
     }
 }
 

@@ -5,8 +5,6 @@ use std::{
     str::FromStr,
 };
 
-use crate::Str;
-
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Int {
     // List of digits, represent absolute value of the integer.
@@ -46,25 +44,6 @@ impl Int {
         }
 
         true
-    }
-
-    // Construct an integer with given characters.
-    fn construct(&mut self, chars: &str, len: usize) {
-        if !Self::is_integer(chars, len) {
-            panic!("Error: Wrong integer literal.");
-        }
-
-        self.sign = if chars.as_bytes()[0] == b'-' { -1 } else { 1 };
-        let s = (chars.as_bytes()[0] == b'+') || (chars.as_bytes()[0] == b'-'); // skip symbol
-        for i in (usize::from(s)..len).rev() {
-            self.digits.push((chars.as_bytes()[i] - b'0') as i8);
-        }
-
-        self.remove_leading_zeros();
-
-        if self.digits.len() == 1 && self.digits[0] == 0 {
-            self.sign = 0;
-        }
     }
 
     // Increment the absolute value by 1 quickly.
@@ -276,16 +255,21 @@ Construct
 impl From<&str> for Int {
     fn from(value: &str) -> Self {
         let mut obj = Self { digits: Vec::new(), sign: 0 };
-        obj.construct(value, value.len());
-        obj
-    }
-}
+        if !Self::is_integer(value, value.len()) {
+            panic!("Error: Wrong integer literal.");
+        }
 
-impl From<Str> for Int {
-    fn from(value: Str) -> Self {
-        let len = value.len() as usize;
-        let mut obj = Self { digits: Vec::new(), sign: 0 };
-        obj.construct(String::from(value).as_str(), len);
+        obj.sign = if value.as_bytes()[0] == b'-' { -1 } else { 1 };
+        let s = (value.as_bytes()[0] == b'+') || (value.as_bytes()[0] == b'-'); // skip symbol
+        for i in (usize::from(s)..value.len()).rev() {
+            obj.digits.push((value.as_bytes()[i] - b'0') as i8);
+        }
+
+        obj.remove_leading_zeros();
+
+        if obj.digits.len() == 1 && obj.digits[0] == 0 {
+            obj.sign = 0;
+        }
         obj
     }
 }

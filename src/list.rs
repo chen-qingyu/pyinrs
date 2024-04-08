@@ -3,7 +3,7 @@ use std::{
     ops::{AddAssign, Index, IndexMut},
 };
 
-use crate::{utility, Deque, Set};
+use crate::utility;
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
 pub struct List<T> {
@@ -117,18 +117,6 @@ impl<T, const N: usize> From<[T; N]> for List<T> {
     fn from(value: [T; N]) -> Self {
         utility::check_full(N, i32::MAX as usize);
         Self { data: Vec::from(value) }
-    }
-}
-
-impl<T> From<Deque<T>> for List<T> {
-    fn from(value: Deque<T>) -> Self {
-        value.into_iter().collect()
-    }
-}
-
-impl<T> From<Set<T>> for List<T> {
-    fn from(value: Set<T>) -> Self {
-        value.into_iter().collect()
     }
 }
 

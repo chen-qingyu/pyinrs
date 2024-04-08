@@ -5,7 +5,7 @@ use std::{
     string::ParseError,
 };
 
-use crate::{utility, Deque, Dict, Fraction, Int, List, Set};
+use crate::{utility, List};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
 pub struct Str {
@@ -123,44 +123,9 @@ impl From<&str> for Str {
     }
 }
 
-impl<T: Display> From<Deque<T>> for Str {
-    fn from(value: Deque<T>) -> Self {
-        Self::from(value.to_string())
-    }
-}
-
-impl<K: Display, V: Display> From<Dict<K, V>> for Str {
-    fn from(value: Dict<K, V>) -> Self {
-        Self::from(value.to_string())
-    }
-}
-
-impl From<Fraction> for Str {
-    fn from(value: Fraction) -> Self {
-        Self::from(value.to_string())
-    }
-}
-
-impl From<Int> for Str {
-    fn from(value: Int) -> Self {
-        Self::from(value.to_string())
-    }
-}
-
-impl<T: Display> From<List<T>> for Str {
-    fn from(value: List<T>) -> Self {
-        Self::from(value.to_string())
-    }
-}
-
-impl<T: Display> From<Set<T>> for Str {
-    fn from(value: Set<T>) -> Self {
-        Self::from(value.to_string())
-    }
-}
-
 impl FromStr for Str {
     type Err = ParseError;
+
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         Ok(Str { data: s.to_string() })
     }

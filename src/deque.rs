@@ -4,8 +4,6 @@ use std::{
     ops::{Shl, ShlAssign, Shr, ShrAssign},
 };
 
-use crate::{List, Set};
-
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
 pub struct Deque<T> {
     data: VecDeque<T>,
@@ -99,18 +97,6 @@ Construct
 impl<T, const N: usize> From<[T; N]> for Deque<T> {
     fn from(value: [T; N]) -> Self {
         Self { data: VecDeque::from(value) }
-    }
-}
-
-impl<T> From<List<T>> for Deque<T> {
-    fn from(value: List<T>) -> Self {
-        value.into_iter().collect()
-    }
-}
-
-impl<T> From<Set<T>> for Deque<T> {
-    fn from(value: Set<T>) -> Self {
-        value.into_iter().collect()
     }
 }
 
