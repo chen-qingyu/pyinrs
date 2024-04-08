@@ -52,7 +52,7 @@ List::from([1, 2, 3, 4, 5])[-1]; // 5
 List::from([1, 2, 3, 1, 2, 3, 1, 2, 3]).uniquify(); // [1, 2, 3]
 
 // Adding elements to Set
-Set::from([1, 2, 3, 4]).add(5); // {1, 2, 3, 4, 5}
+Set::from([1, 2, 3, 4]).insert(5); // true
 // Intersection of Sets, supports intersection, union, difference, and symmetric difference
 Set::from([1, 2, 3, 4, 5]) & Set::from([1, 3, 5, 7, 9]); // {1, 3, 5}
 

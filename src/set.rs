@@ -43,21 +43,14 @@ impl<T: Ord> Set<T> {
         self.data.is_disjoint(&other.data)
     }
 
-    /// Adds a value to the set.
-    pub fn add(&mut self, value: T) -> &Self {
-        self.data.insert(value);
-        self
+    /// Adds a value to the set. Returns whether the value was newly inserted.
+    pub fn insert(&mut self, value: T) -> bool {
+        self.data.insert(value)
     }
 
-    /// Removes a value from the set and drops it.
-    pub fn remove(&mut self, value: &T) -> &Self {
-        self.data.remove(value);
-        self
-    }
-
-    /// Removes the first element from the set and returns it, if any.
-    pub fn pop(&mut self) -> Option<T> {
-        self.data.pop_first()
+    /// Removes a value from the set. Returns whether such an element was present.
+    pub fn remove(&mut self, value: &T) -> bool {
+        self.data.remove(value)
     }
 
     /// Clears the set, removing all elements.
