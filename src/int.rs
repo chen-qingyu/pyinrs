@@ -23,11 +23,8 @@ impl Int {
     }
 
     // Add leading zeros.
-    fn add_leading_zeros(&mut self, mut n: usize) {
-        while n > 0 {
-            n -= 1;
-            self.digits.push(0);
-        }
+    fn add_leading_zeros(&mut self, n: usize) {
+        self.digits.extend([0].repeat(n));
     }
 
     // Test whether the characters represent an integer.
@@ -126,9 +123,7 @@ impl Int {
             self.abs_inc();
         } else if self.sign == -1 {
             self.abs_dec();
-        }
-        // self.sign == 0
-        else {
+        } else {
             self.sign = 1;
             self.digits[0] = 1;
         }
@@ -141,9 +136,7 @@ impl Int {
             self.abs_dec();
         } else if self.sign == -1 {
             self.abs_inc();
-        }
-        // self.sign == 0
-        else {
+        } else {
             self.sign = -1;
             self.digits[0] = 1;
         }
@@ -261,9 +254,7 @@ impl From<&str> for Int {
 
         obj.sign = if value.as_bytes()[0] == b'-' { -1 } else { 1 };
         let s = (value.as_bytes()[0] == b'+') || (value.as_bytes()[0] == b'-'); // skip symbol
-        for i in (usize::from(s)..value.len()).rev() {
-            obj.digits.push((value.as_bytes()[i] - b'0') as i8);
-        }
+        obj.digits = value.as_bytes().into_iter().skip(usize::from(s)).map(|d| (d - b'0') as i8).rev().collect();
 
         obj.remove_leading_zeros();
 
@@ -605,7 +596,7 @@ impl Div<&Int> for &Int {
         let c = &mut result.digits;
         for i in (0..size).rev() {
             tmp.digits = [0].repeat(i);
-            tmp.digits.append(&mut b.clone()); // tmp = rhs * 10^i in O(N)
+            tmp.digits.extend(b.clone()); // tmp = rhs * 10^i in O(N)
 
             // <= 9 loops, so O(1)
             while num1 >= tmp {
