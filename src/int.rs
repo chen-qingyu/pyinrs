@@ -267,7 +267,7 @@ impl From<&str> for Int {
 
         obj.sign = if value.as_bytes()[0] == b'-' { -1 } else { 1 };
         let s = (value.as_bytes()[0] == b'+') || (value.as_bytes()[0] == b'-'); // skip symbol
-        obj.digits = value.as_bytes().into_iter().skip(usize::from(s)).map(|d| (d - b'0') as i8).rev().collect();
+        obj.digits = value.as_bytes().iter().skip(usize::from(s)).map(|d| (d - b'0') as i8).rev().collect();
 
         obj.remove_leading_zeros();
 
