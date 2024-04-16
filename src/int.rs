@@ -217,8 +217,8 @@ impl Int {
     }
 
     /// Convert this integer object to some integer of type T.
-    pub fn to_integer<T: Default + Mul + AddAssign + MulAssign + std::convert::From<i8>>(&self) -> T {
-        let mut result: T = Default::default();
+    pub fn to_integer<T: AddAssign + MulAssign + std::convert::From<i8>>(&self) -> T {
+        let mut result: T = 0.into();
 
         for i in (0..self.digits.len()).rev() {
             result *= 10.into();
