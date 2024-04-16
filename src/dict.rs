@@ -11,37 +11,37 @@ pub struct Dict<K, V> {
 }
 
 impl<K: Ord, V> Dict<K, V> {
-    /// Makes a new, empty `Dict`.
+    /// Creates a new empty dictionary.
     pub fn new() -> Self {
         Self { data: BTreeMap::new() }
     }
 
-    /// Returns the number of elements in the dict.
+    /// Returns the number of elements in the dictionary.
     pub fn len(&self) -> usize {
         self.data.len()
     }
 
-    /// Returns `true` if the dict contains no elements.
+    /// Returns `true` if the dictionary contains no elements.
     pub fn is_empty(&self) -> bool {
         self.data.is_empty()
     }
 
-    /// Gets an iterator over the entries of the dict, sorted by key.
+    /// Gets an iterator over the entries of the dictionary, sorted by key.
     pub fn iter(&self) -> std::collections::btree_map::Iter<K, V> {
         self.data.iter()
     }
 
-    /// Returns `true` if the dict contains a value for the specified key.
+    /// Returns `true` if the dictionary contains a value for the specified key.
     pub fn contains(&self, key: &K) -> bool {
         self.data.contains_key(key)
     }
 
-    /// Return a reference of the value for key if key is in the dick, else default value.
+    /// Return a reference of the value for key if key is in the dictionary, else default value.
     pub fn get<'a>(&'a self, key: &K, default: &'a V) -> &V {
         self.data.get(key).unwrap_or(default)
     }
 
-    /// Return a new set of the dict's keys.
+    /// Return a new set of the dictionary's keys.
     pub fn keys(&self) -> crate::Set<K>
     where
         K: Clone,
@@ -49,7 +49,7 @@ impl<K: Ord, V> Dict<K, V> {
         self.data.keys().cloned().collect()
     }
 
-    /// Return a new set of the dict's values.
+    /// Return a new set of the dictionary's values.
     pub fn values(&self) -> crate::Set<V>
     where
         V: Ord + Clone,
@@ -57,7 +57,7 @@ impl<K: Ord, V> Dict<K, V> {
         self.data.values().cloned().collect()
     }
 
-    /// Return a new set of the dict's items.
+    /// Return a new set of the dictionary's items.
     pub fn items(&self) -> crate::Set<(K, V)>
     where
         K: Clone,
@@ -66,22 +66,22 @@ impl<K: Ord, V> Dict<K, V> {
         self.data.clone().into_iter().collect()
     }
 
-    /// Adds a value to the dict. Returns whether the value was newly inserted.
+    /// Adds a value to the dictionary. Returns whether the value was newly inserted.
     pub fn add(&mut self, key: K, value: V) -> bool {
         self.data.insert(key, value).is_none()
     }
 
-    /// Removes a key from the dict, returning the value at the key if the key was previously in the dict.
+    /// Removes a key from the dictionary, returning the value at the key if the key was previously in the dictionary.
     pub fn remove(&mut self, key: &K) -> Option<V> {
         self.data.remove(key)
     }
 
-    /// Removes the first element from the dict and returns it, if any.
+    /// Removes the first element from the dictionary and returns it, if any.
     pub fn pop(&mut self) -> Option<(K, V)> {
         self.data.pop_first()
     }
 
-    /// Clears the dict, removing all elements.
+    /// Clears the dictionary, removing all elements.
     pub fn clear(&mut self) {
         self.data.clear()
     }

@@ -11,7 +11,7 @@ pub struct List<T> {
 }
 
 impl<T> List<T> {
-    /// Constructs a new, empty `List`.
+    /// Creates a new empty list.
     pub fn new() -> Self {
         Self { data: Vec::new() }
     }

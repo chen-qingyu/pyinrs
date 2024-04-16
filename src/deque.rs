@@ -10,7 +10,7 @@ pub struct Deque<T> {
 }
 
 impl<T> Deque<T> {
-    /// Creates an empty `Deque`.
+    /// Creates a new empty deque.
     pub fn new() -> Self {
         Deque { data: VecDeque::new() }
     }

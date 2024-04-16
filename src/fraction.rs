@@ -35,12 +35,12 @@ impl Fraction {
         self.denominator /= a;
     }
 
-    /// Construct a new fraction object.
+    /// Creates a new zero fraction.
     pub fn new() -> Self {
         Self { numerator: 0, denominator: 1 }
     }
 
-    /// Return the absolute value of the copy of this.
+    /// Return the absolute value of the fraction.
     pub fn abs(&self) -> Self {
         if self.numerator >= 0 {
             *self

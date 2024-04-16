@@ -13,22 +13,22 @@ pub struct Str {
 }
 
 impl Str {
-    /// Creates a new empty `Str`.
+    /// Creates a new empty string.
     pub fn new() -> Self {
         Self { data: String::new() }
     }
 
-    /// Returns the length of this `Str`, in bytes.
+    /// Returns the length of the string, in bytes.
     pub fn len(&self) -> i32 {
         self.data.len() as i32
     }
 
-    /// Returns `true` if this `Str` has a length of 0, and `false` otherwise.
+    /// Returns `true` if the string has a length of 0, and `false` otherwise.
     pub fn is_empty(&self) -> bool {
         self.data.is_empty()
     }
 
-    /// Returns an iterator over the chars of a string.
+    /// Returns an iterator over the chars of the string.
     pub fn chars(&self) -> std::str::Chars {
         self.data.chars()
     }
@@ -44,12 +44,12 @@ impl Str {
         self.data.chars().nth(index as usize)
     }
 
-    /// Returns the byte index of the first character of this string that matches the pattern.
+    /// Returns the byte index of the first character of the string that matches the pattern.
     pub fn find(&self, pattern: &str) -> Option<usize> {
         self.data.find(pattern)
     }
 
-    /// Returns `true` if the given pattern matches a sub-slice of this string.
+    /// Returns `true` if the given pattern matches a sub-string of the string.
     pub fn contains(&self, pattern: &str) -> bool {
         self.data.contains(pattern)
     }
@@ -79,12 +79,12 @@ impl Str {
         self.data.ends_with(pattern)
     }
 
-    /// Returns the lowercase equivalent of this string, as a new `Str`.
+    /// Returns the lowercase equivalent of the string.
     pub fn lower(&self) -> Self {
         Self { data: self.data.to_lowercase() }
     }
 
-    /// Returns the uppercase equivalent of this string, as a new `Str`.
+    /// Returns the uppercase equivalent of the string.
     pub fn upper(&self) -> Self {
         Self { data: self.data.to_uppercase() }
     }

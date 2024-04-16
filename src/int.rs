@@ -78,7 +78,7 @@ impl Int {
         self.sign = if self.digits.len() == 1 && self.digits[0] == 0 { 0 } else { self.sign };
     }
 
-    /// Construct a new integer object.
+    /// Creates a new zero integer.
     pub fn new() -> Self {
         Self { digits: Vec::from([0]), sign: 0 }
     }
@@ -216,7 +216,7 @@ impl Int {
         cur_sqrt
     }
 
-    /// Convert this integer object to some integer of type T.
+    /// Convert the integer to some integer of type T.
     pub fn to_integer<T: AddAssign + MulAssign + std::convert::From<i8>>(&self) -> T {
         let mut result: T = 0.into();
 

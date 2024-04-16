@@ -11,7 +11,7 @@ pub struct Set<T> {
 }
 
 impl<T: Ord> Set<T> {
-    /// Makes a new, empty `Set`.
+    /// Creates a new empty set.
     pub fn new() -> Self {
         Self { data: BTreeSet::new() }
     }
