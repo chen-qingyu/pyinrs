@@ -321,6 +321,13 @@ fn bad_sqrt() {
 }
 
 #[rstest]
+fn to_integer(setup: Fixture) {
+    assert_eq!(setup.zero.to_integer::<i32>(), 0);
+    assert_eq!(setup.positive.to_integer::<i128>(), 18446744073709551617);
+    assert_eq!(setup.negative.to_integer::<i128>(), -18446744073709551617);
+}
+
+#[rstest]
 fn format(setup: Fixture) {
     assert_eq!(format!("{}", setup.zero), "0");
     assert_eq!(format!("{}", setup.positive), "18446744073709551617");

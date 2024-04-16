@@ -216,6 +216,19 @@ impl Int {
         cur_sqrt
     }
 
+    /// Convert this integer object to some integer of type T.
+    pub fn to_integer<T: Default + Mul + AddAssign + MulAssign + std::convert::From<i8>>(&self) -> T {
+        let mut result: T = Default::default();
+
+        for i in (0..self.digits.len()).rev() {
+            result *= 10.into();
+            result += self.digits[i].into();
+        }
+
+        result *= self.sign.into();
+        result
+    }
+
     /// Calculate the greatest common divisor of two integers using Euclidean algorithm.
     pub fn gcd(int1: &Int, int2: &Int) -> Int {
         let mut a = int1.clone();
