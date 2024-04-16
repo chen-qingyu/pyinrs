@@ -5,7 +5,7 @@ use std::{
     string::ParseError,
 };
 
-use crate::{utility, List};
+use crate::{utility, Int, List};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
 pub struct Str {
@@ -61,6 +61,11 @@ impl Str {
 
     /// Convert the string to a double-precision floating-point decimal number.
     pub fn to_decimal(&self) -> Option<f64> {
+        self.data.parse().ok()
+    }
+
+    /// Convert the string to an Int object.
+    pub fn to_integer(&self) -> Option<Int> {
         self.data.parse().ok()
     }
 
