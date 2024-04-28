@@ -16,9 +16,9 @@ _A Rust type library that is as easy to use as Python built-in types._
 ### 2. Feature
 
 - Simple: Stay simple, stay young. While ensuring friendly and robust, try to be concise and easy to maintain and read.
-- Friendly: Provides many convenient functions. For example, `List` and `Str` both support negative subscript like Python.
+- Friendly: With my careful design, it can be used as conveniently as Python's built-in types. Very Pythonic.
 - Robust: There are corresponding checks for the addition, deletion, modification, and inspection of containers.
-- Elegance: With careful design, it can be used as conveniently as Python's built-in types. Very Pythonic.
+- Efficiency: The performance of the parts with the same function as the standard library is almost the same.
 
 ### 3. Usage
 
