@@ -53,6 +53,9 @@ fn compare(setup: Fixture) {
     // operator>=
     assert!(setup.some >= setup.some);
     assert!(setup.one >= setup.empty);
+
+    // neither a subset nor a superset
+    assert!(Set::from([0, 1]).partial_cmp(&Set::from([2, 3])).is_none());
 }
 
 #[rstest]

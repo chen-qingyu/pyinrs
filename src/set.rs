@@ -77,7 +77,7 @@ impl<T: Ord> PartialOrd for Set<T> {
             (true, true) => Some(Ordering::Equal),
             (true, false) => Some(Ordering::Less),
             (false, true) => Some(Ordering::Greater),
-            _ => unreachable!(),
+            (false, false) => None,
         }
     }
 }
