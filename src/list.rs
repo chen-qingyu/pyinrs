@@ -156,15 +156,8 @@ Display
 */
 
 impl<T: Display> Display for List<T> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "[")?;
-        for i in 0..self.data.len() {
-            if i > 0 {
-                write!(f, ", ")?;
-            }
-            write!(f, "{}", self.data[i])?;
-        }
-        write!(f, "]")
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        utility::print(f, self.iter(), '[', ']')
     }
 }
 

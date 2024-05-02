@@ -4,6 +4,8 @@ use std::{
     ops::{Index, IndexMut},
 };
 
+use crate::utility;
+
 /// A Dict object maps keys to arbitrary values.
 #[derive(Debug, Clone, PartialEq, Eq, Default, Hash)]
 pub struct Dict<K, V> {
@@ -132,22 +134,17 @@ impl<K: Ord, V> IndexMut<&K> for Dict<K, V> {
 Display
 */
 
-impl<K: Display, V: Display> Display for Dict<K, V> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        if self.data.is_empty() {
-            return write!(f, "{{}}");
-        }
+struct Pair<K, V>(K, V); // workaround for the orphan rule
 
-        let mut it = self.data.iter().peekable();
-        write!(f, "{{")?;
-        loop {
-            let item = it.next().unwrap();
-            write!(f, "{}: {}", item.0, item.1)?;
-            if it.peek().is_none() {
-                return write!(f, "}}");
-            }
-            write!(f, ", ")?;
-        }
+impl<K: Display, V: Display> Display for Pair<K, V> {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}: {}", self.0, self.1)
+    }
+}
+
+impl<K: Display, V: Display> Display for Dict<K, V> {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        utility::print(f, self.data.iter().map(|p| Pair(p.0, p.1)), '{', '}')
     }
 }
 

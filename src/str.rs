@@ -173,7 +173,7 @@ Display
 */
 
 impl Display for Str {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "\"{}\"", self.data)
     }
 }

@@ -226,7 +226,7 @@ Display
 */
 
 impl Display for Fraction {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         if self.denominator == 1 {
             write!(f, "{}", self.numerator)
         } else {

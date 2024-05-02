@@ -180,20 +180,8 @@ Display
 */
 
 impl<T: Display> Display for Deque<T> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        if self.data.is_empty() {
-            return write!(f, "<>");
-        }
-
-        let mut it = self.data.iter().peekable();
-        write!(f, "<")?;
-        loop {
-            write!(f, "{}", it.next().unwrap())?;
-            if it.peek().is_none() {
-                return write!(f, ">");
-            }
-            write!(f, ", ")?;
-        }
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        utility::print(f, self.iter(), '<', '>')
     }
 }
 
