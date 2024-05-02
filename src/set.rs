@@ -45,12 +45,12 @@ impl<T: Ord> Set<T> {
 
     /// Get the smallest item of the set, or `None` if the set is empty.
     pub fn min(&self) -> Option<&T> {
-        self.data.iter().min()
+        self.data.first()
     }
 
     /// Get the largest item of the set, or `None` if the set is empty.
     pub fn max(&self) -> Option<&T> {
-        self.data.iter().max()
+        self.data.last()
     }
 
     /// Returns `true` if `self` has no elements in common with `other`.
