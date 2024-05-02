@@ -1,9 +1,14 @@
 use std::{
     collections::VecDeque,
     fmt::Display,
-    ops::{Shl, ShlAssign, Shr, ShrAssign},
+    ops::{Index, IndexMut, Shl, ShlAssign, Shr, ShrAssign},
 };
 
+use crate::utility;
+
+/// Deque is generalization of stack and queue.
+///
+/// Deque supports memory efficient pushes and pops from either side of the deque with approximately the same O(1) performance in either direction.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
 pub struct Deque<T> {
     data: VecDeque<T>,
@@ -23,8 +28,8 @@ impl<T> Deque<T> {
     }
 
     /// Returns the length of the deque.
-    pub fn len(&self) -> usize {
-        self.data.len()
+    pub fn len(&self) -> i32 {
+        self.data.len() as i32
     }
 
     /// Returns `true` if the deque is empty.
@@ -59,12 +64,16 @@ impl<T> Deque<T> {
 
     /// Appends an element to the back of the deque.
     pub fn push_back(&mut self, element: T) -> &Self {
+        utility::check_full(self.data.len(), i32::MAX as usize);
+
         self.data.push_back(element);
         self
     }
 
     /// Adds an element first in the deque.
     pub fn push_front(&mut self, element: T) -> &Self {
+        utility::check_full(self.data.len(), i32::MAX as usize);
+
         self.data.push_front(element);
         self
     }
@@ -104,6 +113,26 @@ impl<T, const N: usize> From<[T; N]> for Deque<T> {
 Function
 */
 
+impl<T> Index<i32> for Deque<T> {
+    type Output = T;
+
+    fn index(&self, index: i32) -> &Self::Output {
+        utility::check_bounds(index, -self.len(), self.len());
+
+        let index = utility::calc_index(index, self.data.len());
+        &self.data[index]
+    }
+}
+
+impl<T> IndexMut<i32> for Deque<T> {
+    fn index_mut(&mut self, index: i32) -> &mut Self::Output {
+        utility::check_bounds(index, -self.len(), self.len());
+
+        let index = utility::calc_index(index, self.data.len());
+        &mut self.data[index]
+    }
+}
+
 impl<T> ShlAssign<usize> for Deque<T> {
     fn shl_assign(&mut self, mut rhs: usize) {
         if self.data.len() <= 1 || rhs == 0 {
@@ -119,16 +148,12 @@ impl<T> ShlAssign<usize> for Deque<T> {
 }
 
 impl<T> ShrAssign<usize> for Deque<T> {
-    fn shr_assign(&mut self, mut rhs: usize) {
+    fn shr_assign(&mut self, rhs: usize) {
         if self.data.len() <= 1 || rhs == 0 {
             return;
         }
 
-        rhs %= self.data.len();
-
-        let mut tail = self.data.split_off(self.data.len() - rhs);
-        tail.append(&mut self.data);
-        self.data = tail;
+        self.shl_assign(self.data.len() - rhs % self.data.len()); // avoid to subtract with overflow
     }
 }
 

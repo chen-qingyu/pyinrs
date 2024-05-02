@@ -5,6 +5,7 @@ use std::{
     str::FromStr,
 };
 
+/// Fraction provides support for rational number arithmetic.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Fraction {
     // Numerator.

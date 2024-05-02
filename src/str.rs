@@ -7,6 +7,7 @@ use std::{
 
 use crate::{utility, Int, List};
 
+/// Str is immutable sequence of characters.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
 pub struct Str {
     data: String,

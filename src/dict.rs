@@ -1,10 +1,10 @@
 use std::{
-    cmp::Ordering,
     collections::BTreeMap,
     fmt::Display,
     ops::{Index, IndexMut},
 };
 
+/// A Dict object maps keys to arbitrary values.
 #[derive(Debug, Clone, PartialEq, Eq, Default, Hash)]
 pub struct Dict<K, V> {
     data: BTreeMap<K, V>,
@@ -29,6 +29,11 @@ impl<K: Ord, V> Dict<K, V> {
     /// Gets an iterator over the entries of the dictionary, sorted by key.
     pub fn iter(&self) -> std::collections::btree_map::Iter<K, V> {
         self.data.iter()
+    }
+
+    /// Return the key-value pair of the specified `key`, or `None` if the dictionary does not contain the key.
+    pub fn find(&self, key: &K) -> Option<(&K, &V)> {
+        self.data.iter().find(|p| p.0 == key)
     }
 
     /// Returns `true` if the dictionary contains a value for the specified key.
@@ -71,9 +76,9 @@ impl<K: Ord, V> Dict<K, V> {
         self.data.insert(key, value).is_none()
     }
 
-    /// Removes a key from the dictionary, returning the value at the key if the key was previously in the dictionary.
-    pub fn remove(&mut self, key: &K) -> Option<V> {
-        self.data.remove(key)
+    /// Removes a `key` from the dictionary. Returns `true` if such an `key` was present.
+    pub fn remove(&mut self, key: &K) -> bool {
+        self.data.remove(key).is_some()
     }
 
     /// Removes the first element from the dictionary and returns it, if any.
@@ -100,12 +105,6 @@ impl<K: Ord, V, const N: usize> From<[(K, V); N]> for Dict<K, V> {
 /*
 Function
 */
-
-impl<K: Ord + Clone, V: PartialEq> PartialOrd for Dict<K, V> {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        self.keys().partial_cmp(&other.keys())
-    }
-}
 
 impl<K: Ord, V> Index<&K> for Dict<K, V> {
     type Output = V;

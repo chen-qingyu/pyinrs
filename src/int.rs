@@ -5,9 +5,16 @@ use std::{
     str::FromStr,
 };
 
+/// Int provides support for big integer arithmetic.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Int {
     // List of digits, represent absolute value of the integer.
+    // Base 10, little endian.
+    // Example: `12345000`
+    // ```
+    // digit: 0 0 0 5 4 3 2 1
+    // index: 0 1 2 3 4 5 6 7
+    // ```
     digits: Vec<i8>,
 
     // Sign of integer, 1 is positive, -1 is negative, and 0 is zero.
@@ -17,9 +24,11 @@ pub struct Int {
 impl Int {
     // Remove leading zeros.
     fn remove_leading_zeros(&mut self) {
-        while self.digits.len() > 1 && self.digits.last().unwrap() == &0 {
-            self.digits.pop();
+        let mut i = self.digits() - 1; // i = -1 if is zero, ok
+        while i >= 0 && self.digits[i as usize] == 0 {
+            i -= 1;
         }
+        self.digits.truncate((i + 1) as usize);
     }
 
     // Add leading zeros.
@@ -35,7 +44,7 @@ impl Int {
         }
 
         for i in usize::from(have_sign)..len {
-            if !chars.chars().nth(i).unwrap().is_ascii_digit() {
+            if !chars.as_bytes()[i].is_ascii_digit() {
                 return false;
             }
         }
@@ -75,21 +84,17 @@ impl Int {
         self.remove_leading_zeros();
 
         // if result is zero, set sign to 0
-        self.sign = if self.digits.len() == 1 && self.digits[0] == 0 { 0 } else { self.sign };
+        self.sign = if self.digits.is_empty() { 0 } else { self.sign };
     }
 
     /// Creates a new zero integer.
     pub fn new() -> Self {
-        Self { digits: Vec::from([0]), sign: 0 }
+        Self { digits: Vec::new(), sign: 0 }
     }
 
     /// Count the number of digits in the integer (based 10).
-    pub fn digits(&self) -> usize {
-        if self.sign == 0 {
-            0
-        } else {
-            self.digits.len()
-        }
+    pub fn digits(&self) -> i32 {
+        self.digits.len() as i32
     }
 
     /// Determine whether the integer is zero quickly.
@@ -109,12 +114,20 @@ impl Int {
 
     /// Determine whether the integer is even quickly.
     pub fn is_even(&self) -> bool {
-        self.digits[0] % 2 == 0
+        if self.is_zero() {
+            true
+        } else {
+            self.digits[0] % 2 == 0
+        }
     }
 
     /// Determine whether the integer is odd quickly.
     pub fn is_odd(&self) -> bool {
-        self.digits[0] % 2 == 1
+        if self.is_zero() {
+            false
+        } else {
+            self.digits[0] % 2 == 1
+        }
     }
 
     /// Increment the value by 1 quickly.
@@ -125,7 +138,7 @@ impl Int {
             self.abs_dec();
         } else {
             self.sign = 1;
-            self.digits[0] = 1;
+            self.digits.push(1);
         }
         self
     }
@@ -138,7 +151,7 @@ impl Int {
             self.abs_inc();
         } else {
             self.sign = -1;
-            self.digits[0] = 1;
+            self.digits.push(1);
         }
         self
     }
@@ -271,9 +284,8 @@ impl From<&str> for Int {
 
         obj.remove_leading_zeros();
 
-        if obj.digits.len() == 1 && obj.digits[0] == 0 {
-            obj.sign = 0;
-        }
+        // if result is zero, set sign to 0
+        obj.sign = if obj.digits.is_empty() { 0 } else { obj.sign };
         obj
     }
 }
@@ -429,12 +441,9 @@ impl Add<&Int> for &Int {
         let mut num2 = rhs.clone();
         num2.add_leading_zeros(size - 1 - num2.digits.len());
 
-        let mut result = Int {
-            digits: Vec::from([0]),
-            sign: self.sign,
-        };
-
-        result.add_leading_zeros(size - 1); // result initially has a 0
+        let mut result = Int::new();
+        result.sign = self.sign; // the signs are same
+        result.add_leading_zeros(size);
 
         // simulate the vertical calculation
         let a = &num1.digits;
@@ -485,17 +494,15 @@ impl Sub<&Int> for &Int {
         let mut num2 = rhs.clone();
         num2.add_leading_zeros(size - num2.digits.len());
 
-        let mut result = Int {
-            digits: Vec::from([0]),
-            sign: self.sign,
-        };
+        let mut result = Int::new();
+        result.sign = self.sign; // the signs are same
 
         // let num1.abs() >= num2.abs()
         if if self.sign == 1 { num1 < num2 } else { num1 > num2 } {
             std::mem::swap(&mut num1, &mut num2);
-            result = -result;
+            result.sign = -result.sign;
         }
-        result.add_leading_zeros(size - 1); // result initially has a 0
+        result.add_leading_zeros(size);
 
         // simulate the vertical calculation, assert a >= b
         let a = &mut num1.digits;
@@ -514,7 +521,7 @@ impl Sub<&Int> for &Int {
         result.remove_leading_zeros();
 
         // if result is zero, set sign to 0
-        result.sign = if result.digits.len() == 1 && result.digits[0] == 0 { 0 } else { result.sign };
+        result.sign = if result.digits.is_empty() { 0 } else { result.sign };
 
         // return result
         result
@@ -543,11 +550,9 @@ impl Mul<&Int> for &Int {
         // prepare variables
         let size = self.digits.len() + rhs.digits.len();
 
-        let mut result = Int {
-            digits: Vec::from([0]),
-            sign: if self.sign == rhs.sign { 1 } else { -1 }, // the sign is depends on the sign of operands
-        };
-        result.add_leading_zeros(size - 1); // result initially has a 0
+        let mut result = Int::new();
+        result.sign = if self.sign == rhs.sign { 1 } else { -1 }; // the sign is depends on the sign of operands
+        result.add_leading_zeros(size);
 
         // simulate the vertical calculation
         let a = &self.digits;
@@ -594,15 +599,13 @@ impl Div<&Int> for &Int {
         // prepare variables
         let size = self.digits.len() - rhs.digits.len() + 1;
 
-        let mut num1 = self.clone().abs();
+        let mut num1 = self.abs();
 
-        let mut tmp = Int { digits: Vec::from([0]), sign: 1 }; // intermediate variable for rhs * 10^i
+        let mut tmp = Int { digits: Vec::new(), sign: 1 }; // intermediate variable for rhs * 10^i, positive
 
-        let mut result = Int {
-            digits: Vec::from([0]),
-            sign: if self.sign == rhs.sign { 1 } else { -1 },
-        };
-        result.add_leading_zeros(size - 1); // result initially has a 0
+        let mut result = Int::new();
+        result.sign = if self.sign == rhs.sign { 1 } else { -1 }; // the sign is depends on the sign of operands
+        result.add_leading_zeros(size);
 
         // calculation
         let b = &rhs.digits;
@@ -618,11 +621,13 @@ impl Div<&Int> for &Int {
             }
         }
 
-        // if result is zero, set sign to 0
-        result.sign = if result.digits.len() == 1 && result.digits[0] == 0 { 0 } else { result.sign };
-
-        // remove leading zeros and return
+        // remove leading zeros
         result.remove_leading_zeros();
+
+        // if result is zero, set sign to 0
+        result.sign = if result.digits.is_empty() { 0 } else { result.sign };
+
+        // return result
         result
     }
 }
@@ -687,6 +692,10 @@ Display
 
 impl Display for Int {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if self.sign == 0 {
+            return write!(f, "0");
+        }
+
         if self.sign == -1 {
             write!(f, "-")?;
         }

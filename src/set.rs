@@ -5,6 +5,8 @@ use std::{
     ops::{BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Sub, SubAssign},
 };
 
+/// Set is a collection of distinct objects.
+/// Common uses include membership testing, removing duplicates from a sequence, and computing mathematical operations.
 #[derive(Debug, Clone, PartialEq, Eq, Default, Hash)]
 pub struct Set<T> {
     data: BTreeSet<T>,
@@ -31,9 +33,24 @@ impl<T: Ord> Set<T> {
         self.data.iter()
     }
 
+    /// Return the element of the specified `value`, or `None` if the set does not contain the element.
+    pub fn find(&self, value: &T) -> Option<&T> {
+        self.data.iter().find(|&e| e == value)
+    }
+
     /// Returns `true` if the set contains an element equal to the value.
     pub fn contains(&self, value: &T) -> bool {
         self.data.contains(value)
+    }
+
+    /// Get the smallest item of the set, or `None` if the set is empty.
+    pub fn min(&self) -> Option<&T> {
+        self.data.iter().min()
+    }
+
+    /// Get the largest item of the set, or `None` if the set is empty.
+    pub fn max(&self) -> Option<&T> {
+        self.data.iter().max()
     }
 
     /// Returns `true` if `self` has no elements in common with `other`.
@@ -42,13 +59,18 @@ impl<T: Ord> Set<T> {
     }
 
     /// Adds a value to the set. Returns whether the value was newly inserted.
-    pub fn insert(&mut self, value: T) -> bool {
+    pub fn add(&mut self, value: T) -> bool {
         self.data.insert(value)
     }
 
     /// Removes a value from the set. Returns whether such an element was present.
     pub fn remove(&mut self, value: &T) -> bool {
         self.data.remove(value)
+    }
+
+    /// Removes the first element from the set and returns it, if any.
+    pub fn pop(&mut self) -> Option<T> {
+        self.data.pop_first()
     }
 
     /// Clears the set, removing all elements.

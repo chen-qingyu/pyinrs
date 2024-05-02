@@ -5,6 +5,7 @@ use std::{
 
 use crate::utility;
 
+/// Lists are mutable sequences, typically used to store collections of homogeneous items.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
 pub struct List<T> {
     data: Vec<T>,
@@ -48,11 +49,11 @@ impl<T> List<T> {
     }
 
     /// Counts the number of occurrence of the specified `element`.
-    pub fn count(&self, element: &T) -> i32
+    pub fn count(&self, element: &T) -> usize
     where
         T: PartialEq,
     {
-        self.data.iter().filter(|&x| x == element).count() as i32
+        self.data.iter().filter(|&x| x == element).count()
     }
 
     /// Return a list that eliminates duplicate elements and keep the original relative order of elements.
