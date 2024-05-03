@@ -193,5 +193,9 @@ fn parse(setup: Fixture) {
     assert_eq!(setup.positive, "  -2/-4\t\n".parse().unwrap());
     assert_eq!(setup.negative, "\t3/-6\n\n".parse().unwrap());
 
-    assert!("hello".parse::<Fraction>().is_err());
+    assert!("z1/2".parse::<Fraction>().is_err());
+    assert!("1z/2".parse::<Fraction>().is_err());
+    assert!("1/z2".parse::<Fraction>().is_err());
+    assert!("1/2z".parse::<Fraction>().is_err());
+    assert!("1|2".parse::<Fraction>().is_err());
 }

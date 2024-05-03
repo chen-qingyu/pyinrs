@@ -20,14 +20,15 @@ fn setup() -> Fixture {
 fn basics() {
     let int1 = Int::new();
     assert_eq!(int1.digits(), 0);
+    assert!(int1.is_zero());
 
-    let int2 = Int::from("123456789");
-    assert_eq!(int2.digits(), 9);
+    let int2 = Int::from("123456789000");
+    assert_eq!(int2.digits(), 12);
+    assert!(!int2.is_zero());
 
     let int3 = Int::from(123456789);
     assert_eq!(int3.digits(), 9);
-
-    assert!(int2 == int3);
+    assert!(!int3.is_zero());
 }
 
 #[rstest]
@@ -322,7 +323,8 @@ fn bad_sqrt() {
 
 #[rstest]
 fn to_integer(setup: Fixture) {
-    assert_eq!(setup.zero.to_integer::<i32>(), 0);
+    assert_eq!(setup.zero.to_integer::<i32>(), 0i32);
+    assert_eq!(setup.zero.to_integer::<i8>(), 0i8);
     assert_eq!(setup.positive.to_integer::<i128>(), 18446744073709551617);
     assert_eq!(setup.negative.to_integer::<i128>(), -18446744073709551617);
 }

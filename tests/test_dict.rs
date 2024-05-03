@@ -29,12 +29,43 @@ fn basics(setup: Fixture) {
 }
 
 #[rstest]
+fn compare(setup: Fixture) {
+    // ==
+    assert!(Dict::new() == setup.empty);
+    assert!(Dict::from([(1, "one"), (2, "two"), (3, "three")]) == setup.some);
+
+    // !=
+    assert!(Dict::from([(1, "one")]) != setup.empty);
+    assert!(Dict::from([(1, "one"), (2, "two"), (3, "three!")]) != setup.some);
+}
+
+#[rstest]
+fn iterator(setup: Fixture) {
+    for (k, v) in Dict::from([(1, 1), (2, 4), (3, 9)]) {
+        assert_eq!(k * k, v);
+    }
+
+    let mapped: Dict<i32, &str> = setup.some.iter().map(|(&k, &v)| (k - 1, v)).collect();
+    assert_eq!(mapped, Dict::from([(0, "one"), (1, "two"), (2, "three")]));
+
+    let filtered: Dict<i32, &str> = setup.some.clone().into_iter().filter(|p| p.1.len() > 3).collect();
+    assert_eq!(filtered, Dict::from([(3, "three")]));
+
+    assert_eq!(setup.empty.into_iter().rev().collect::<Dict<i32, &str>>(), Dict::new());
+    assert_eq!(setup.one.into_iter().rev().collect::<Dict<i32, &str>>(), Dict::from([(1, "one")]));
+    assert_eq!(
+        setup.some.into_iter().rev().collect::<Dict<i32, &str>>(),
+        Dict::from([(1, "one"), (2, "two"), (3, "three")])
+    );
+}
+
+#[rstest]
 fn access() {
     let mut dict = Dict::from([("one", 1), ("two", 2), ("three", 3)]);
 
     // get
-    assert_eq!(dict.get(&"one", &0), &1);
-    assert_eq!(dict.get(&"not exist", &0), &0);
+    assert_eq!(dict.get(&"one", &233), &1);
+    assert_eq!(dict.get(&"not exist", &233), &233);
 
     // access
     assert_eq!(dict[&"one"], 1);
@@ -53,10 +84,63 @@ fn bad_access(setup: Fixture) {
 }
 
 #[rstest]
+fn examination(setup: Fixture) {
+    assert_eq!(setup.some.find(&1), Some((&1, &"one")));
+    assert_eq!(setup.some.find(&0), None);
+
+    assert_eq!(setup.some.contains(&1), true);
+    assert_eq!(setup.some.contains(&0), false);
+}
+
+#[rstest]
 fn keys_values_items(setup: Fixture) {
     assert_eq!(setup.some.keys(), pyinrs::Set::from([1, 2, 3]));
     assert_eq!(setup.some.values(), pyinrs::Set::from(["one", "two", "three"]));
     assert_eq!(setup.some.items(), pyinrs::Set::from([(1, "one"), (2, "two"), (3, "three")]));
+}
+
+#[rstest]
+fn add(mut setup: Fixture) {
+    assert_eq!(setup.empty.add(3, "three"), true);
+    assert_eq!(setup.empty.add(1, "one"), true);
+    assert_eq!(setup.empty.add(2, "two"), true);
+
+    assert_eq!(setup.empty, Dict::from([(1, "one"), (2, "two"), (3, "three")]));
+
+    assert_eq!(setup.empty.add(3, "three"), false);
+    assert_eq!(setup.empty.add(1, "one"), false);
+    assert_eq!(setup.empty.add(2, "two"), false);
+
+    assert_eq!(setup.empty, Dict::from([(1, "one"), (2, "two"), (3, "three")]));
+}
+
+#[rstest]
+fn remove(mut setup: Fixture) {
+    assert_eq!(setup.some.remove(&3), true);
+    assert_eq!(setup.some.remove(&1), true);
+    assert_eq!(setup.some.remove(&2), true);
+
+    assert_eq!(setup.some, Dict::new());
+
+    assert_eq!(setup.some.remove(&2), false);
+    assert_eq!(setup.some.remove(&1), false);
+    assert_eq!(setup.some.remove(&3), false);
+
+    assert_eq!(setup.some, Dict::new());
+}
+
+#[rstest]
+fn pop(mut setup: Fixture) {
+    assert_eq!(setup.some.pop(), Some((1, "one")));
+    assert_eq!(setup.some.pop(), Some((2, "two")));
+    assert_eq!(setup.some.pop(), Some((3, "three")));
+    assert_eq!(setup.some.pop(), None);
+}
+
+#[rstest]
+fn clear(mut setup: Fixture) {
+    setup.some.clear();
+    assert_eq!(setup.some, setup.empty);
 }
 
 #[rstest]

@@ -50,6 +50,32 @@ fn compare(setup: Fixture) {
 }
 
 #[rstest]
+fn iterator(setup: Fixture) {
+    let mut i = 0;
+    for e in setup.some.clone() {
+        i += 1;
+        assert_eq!(e, i);
+    }
+    assert_eq!(i, 5);
+
+    for &e in setup.some.iter().rev() {
+        assert_eq!(e, i);
+        i -= 1;
+    }
+    assert_eq!(i, 0);
+
+    let mapped: List<i32> = setup.some.iter().map(|x| x * 2).collect();
+    assert_eq!(mapped, List::from([2, 4, 6, 8, 10]));
+
+    let filtered: List<i32> = setup.some.clone().into_iter().filter(|x| x & 1 == 1).collect();
+    assert_eq!(filtered, List::from([1, 3, 5]));
+
+    assert_eq!(setup.empty.into_iter().rev().collect::<List<i32>>(), List::new());
+    assert_eq!(setup.one.into_iter().rev().collect::<List<i32>>(), List::from([1]));
+    assert_eq!(setup.some.into_iter().rev().collect::<List<i32>>(), List::from([5, 4, 3, 2, 1]));
+}
+
+#[rstest]
 fn access(mut setup: Fixture) {
     // forward
     for i in 0..setup.some.len() {
@@ -73,27 +99,6 @@ fn access(mut setup: Fixture) {
 #[should_panic(expected = "Error: Index out of range: 5 not in -5..5.")]
 fn bad_access(setup: Fixture) {
     setup.some[5];
-}
-
-#[rstest]
-fn iterator(setup: Fixture) {
-    let mut i = 1;
-    for &e in setup.some.iter() {
-        assert_eq!(e, i);
-        i += 1;
-    }
-
-    let mut i = 1;
-    for e in setup.some.clone() {
-        assert_eq!(e, i);
-        i += 1;
-    }
-
-    let doubled: List<i32> = setup.some.iter().map(|x| x * 2).collect();
-    assert_eq!(doubled, List::from([2, 4, 6, 8, 10]));
-
-    let odd: List<i32> = setup.some.into_iter().filter(|x| x & 1 == 1).collect();
-    assert_eq!(odd, List::from([1, 3, 5]));
 }
 
 #[rstest]
@@ -180,6 +185,12 @@ fn append(mut setup: Fixture) {
 
     setup.one += setup.one.clone();
     assert_eq!(setup.one, List::from([1, 1, 1, 1]));
+}
+
+#[rstest]
+fn clear(mut setup: Fixture) {
+    setup.some.clear();
+    assert_eq!(setup.some, setup.empty);
 }
 
 #[rstest]

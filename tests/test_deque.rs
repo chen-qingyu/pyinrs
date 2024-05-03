@@ -51,20 +51,50 @@ fn compare(setup: Fixture) {
 
 #[rstest]
 fn iterator(setup: Fixture) {
+    let mut i = 0;
+    for e in setup.some.clone() {
+        i += 1;
+        assert_eq!(e, i);
+    }
+    assert_eq!(i, 5);
+
+    for &e in setup.some.iter().rev() {
+        assert_eq!(e, i);
+        i -= 1;
+    }
+    assert_eq!(i, 0);
+
+    let mapped: Deque<i32> = setup.some.iter().map(|x| x * 2).collect();
+    assert_eq!(mapped, Deque::from([2, 4, 6, 8, 10]));
+
+    let filtered: Deque<i32> = setup.some.clone().into_iter().filter(|x| x & 1 == 1).collect();
+    assert_eq!(filtered, Deque::from([1, 3, 5]));
+
     assert_eq!(setup.empty.into_iter().rev().collect::<Deque<i32>>(), Deque::new());
     assert_eq!(setup.one.into_iter().rev().collect::<Deque<i32>>(), Deque::from([1]));
     assert_eq!(setup.some.into_iter().rev().collect::<Deque<i32>>(), Deque::from([5, 4, 3, 2, 1]));
 }
 
 #[rstest]
-fn peek(mut setup: Fixture) {
-    assert_eq!(setup.some.back(), Some(&5));
-    assert_eq!(setup.some.front(), Some(&1));
+fn access(mut setup: Fixture) {
+    assert_eq!(setup.empty.back(), None);
+    assert_eq!(setup.empty.front(), None);
 
     *setup.some.back_mut().unwrap() += 1;
     *setup.some.front_mut().unwrap() -= 1;
     assert_eq!(setup.some.back(), Some(&6));
     assert_eq!(setup.some.front(), Some(&0));
+
+    setup.some[-1] += 1;
+    setup.some[0] -= 1;
+    assert_eq!(setup.some[-1], 7);
+    assert_eq!(setup.some[0], -1);
+}
+
+#[rstest]
+#[should_panic(expected = "Error: Index out of range: 0 not in 0..0.")]
+fn bad_access(setup: Fixture) {
+    setup.empty[0];
 }
 
 #[rstest]
@@ -107,6 +137,12 @@ fn rotate(mut setup: Fixture) {
     assert_eq!(setup.empty, Deque::from([3, 4, 5, 1, 2]));
     setup.empty <<= 233;
     assert_eq!(setup.empty, Deque::from([1, 2, 3, 4, 5]));
+}
+
+#[rstest]
+fn clear(mut setup: Fixture) {
+    setup.some.clear();
+    assert_eq!(setup.some, setup.empty);
 }
 
 #[rstest]
