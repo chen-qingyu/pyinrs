@@ -111,9 +111,8 @@ impl Str {
 
     /// Return a string which is the concatenation of the strings in `str_list`.
     pub fn join(&self, str_list: List<&str>) -> Self {
-        let v: Vec<&str> = str_list.into();
         Self {
-            data: v.join(self.data.as_str()),
+            data: str_list.data.join(self.data.as_str()),
         }
     }
 }
@@ -126,6 +125,13 @@ impl From<&str> for Str {
     fn from(value: &str) -> Self {
         utility::check_full(value.len(), i32::MAX as usize);
         Self { data: String::from(value) }
+    }
+}
+
+impl From<String> for Str {
+    fn from(value: String) -> Self {
+        utility::check_full(value.len(), i32::MAX as usize);
+        Self { data: value }
     }
 }
 
@@ -186,22 +192,5 @@ impl FromIterator<char> for Str {
     fn from_iter<I: IntoIterator<Item = char>>(iter: I) -> Self {
         let data = iter.into_iter().collect();
         Self { data }
-    }
-}
-
-/*
-Transform
-*/
-
-impl From<String> for Str {
-    fn from(value: String) -> Self {
-        utility::check_full(value.len(), i32::MAX as usize);
-        Self { data: value }
-    }
-}
-
-impl From<Str> for String {
-    fn from(value: Str) -> Self {
-        value.data
     }
 }

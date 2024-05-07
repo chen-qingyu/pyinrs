@@ -197,19 +197,3 @@ impl<T> IntoIterator for Set<T> {
         self.data.into_iter()
     }
 }
-
-/*
-Transform
-*/
-
-impl<T> From<BTreeSet<T>> for Set<T> {
-    fn from(value: BTreeSet<T>) -> Self {
-        Self { data: value }
-    }
-}
-
-impl<T> From<Set<T>> for BTreeSet<T> {
-    fn from(value: Set<T>) -> Self {
-        value.data
-    }
-}

@@ -8,7 +8,7 @@ use crate::utility;
 /// Lists are mutable sequences, typically used to store collections of homogeneous items.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
 pub struct List<T> {
-    data: Vec<T>,
+    pub(crate) data: Vec<T>,
 }
 
 impl<T> List<T> {
@@ -121,6 +121,13 @@ impl<T, const N: usize> From<[T; N]> for List<T> {
     }
 }
 
+impl<T> From<Vec<T>> for List<T> {
+    fn from(value: Vec<T>) -> Self {
+        utility::check_full(value.len(), i32::MAX as usize);
+        Self { data: value }
+    }
+}
+
 /*
 Function
 */
@@ -184,22 +191,5 @@ impl<T> IntoIterator for List<T> {
 
     fn into_iter(self) -> Self::IntoIter {
         self.data.into_iter()
-    }
-}
-
-/*
-Transform
-*/
-
-impl<T> From<Vec<T>> for List<T> {
-    fn from(value: Vec<T>) -> Self {
-        utility::check_full(value.len(), i32::MAX as usize);
-        Self { data: value }
-    }
-}
-
-impl<T> From<List<T>> for Vec<T> {
-    fn from(value: List<T>) -> Self {
-        value.data
     }
 }

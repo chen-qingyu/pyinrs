@@ -173,19 +173,3 @@ impl<K, V> IntoIterator for Dict<K, V> {
         self.data.into_iter()
     }
 }
-
-/*
-Transform
-*/
-
-impl<K, V> From<BTreeMap<K, V>> for Dict<K, V> {
-    fn from(value: BTreeMap<K, V>) -> Self {
-        Self { data: value }
-    }
-}
-
-impl<K, V> From<Dict<K, V>> for BTreeMap<K, V> {
-    fn from(value: Dict<K, V>) -> Self {
-        value.data
-    }
-}

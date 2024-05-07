@@ -210,19 +210,3 @@ impl<T> IntoIterator for Deque<T> {
         self.data.into_iter()
     }
 }
-
-/*
-Transform
-*/
-
-impl<T> From<VecDeque<T>> for Deque<T> {
-    fn from(value: VecDeque<T>) -> Self {
-        Self { data: value }
-    }
-}
-
-impl<T> From<Deque<T>> for VecDeque<T> {
-    fn from(value: Deque<T>) -> Self {
-        value.data
-    }
-}
