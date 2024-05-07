@@ -151,6 +151,12 @@ impl<T> AddAssign for List<T> {
     }
 }
 
+impl<T> Extend<T> for List<T> {
+    fn extend<I: IntoIterator<Item = T>>(&mut self, iter: I) {
+        self.data.extend(iter)
+    }
+}
+
 /*
 Display
 */

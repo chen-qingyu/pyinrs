@@ -130,6 +130,12 @@ impl<K: Ord, V> IndexMut<&K> for Dict<K, V> {
     }
 }
 
+impl<K: Ord, V> Extend<(K, V)> for Dict<K, V> {
+    fn extend<I: IntoIterator<Item = (K, V)>>(&mut self, iter: I) {
+        self.data.extend(iter)
+    }
+}
+
 /*
 Display
 */

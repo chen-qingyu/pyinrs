@@ -162,6 +162,12 @@ impl<T: Ord + Clone> SubAssign for Set<T> {
     }
 }
 
+impl<T: Ord> Extend<T> for Set<T> {
+    fn extend<I: IntoIterator<Item = T>>(&mut self, iter: I) {
+        self.data.extend(iter)
+    }
+}
+
 /*
 Display
 */

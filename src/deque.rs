@@ -175,6 +175,12 @@ impl<T> Shr<usize> for Deque<T> {
     }
 }
 
+impl<T> Extend<T> for Deque<T> {
+    fn extend<I: IntoIterator<Item = T>>(&mut self, iter: I) {
+        self.data.extend(iter)
+    }
+}
+
 /*
 Display
 */
