@@ -29,6 +29,10 @@ fn basics() {
     let int3 = Int::from(123456789);
     assert_eq!(int3.digits(), 9);
     assert!(!int3.is_zero());
+
+    let int4 = Int::default();
+    assert_eq!(int4.digits(), 0);
+    assert!(int4.is_zero());
 }
 
 #[rstest]

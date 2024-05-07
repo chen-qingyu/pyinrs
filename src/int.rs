@@ -6,7 +6,7 @@ use std::{
 };
 
 /// Int provides support for big integer arithmetic.
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Default, Hash)]
 pub struct Int {
     // List of digits, represent absolute value of the integer.
     // Base 10, little endian.
@@ -322,12 +322,6 @@ impl FromStr for Int {
         }
 
         Ok(Int::from(s))
-    }
-}
-
-impl Default for Int {
-    fn default() -> Self {
-        Self::new()
     }
 }
 
