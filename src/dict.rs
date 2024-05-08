@@ -48,29 +48,14 @@ impl<K: Ord, V> Dict<K, V> {
         self.data.get(key).unwrap_or(default)
     }
 
-    /// Return a new set of the dictionary's keys.
-    pub fn keys(&self) -> crate::Set<K>
-    where
-        K: Clone,
-    {
-        self.data.keys().cloned().collect()
+    /// Get an iterator over the keys of the dictionary, in sorted order.
+    pub fn keys(&self) -> std::collections::btree_map::Keys<K, V> {
+        self.data.keys()
     }
 
-    /// Return a new set of the dictionary's values.
-    pub fn values(&self) -> crate::Set<V>
-    where
-        V: Ord + Clone,
-    {
-        self.data.values().cloned().collect()
-    }
-
-    /// Return a new set of the dictionary's items.
-    pub fn items(&self) -> crate::Set<(K, V)>
-    where
-        K: Clone,
-        V: Ord + Clone,
-    {
-        self.data.clone().into_iter().collect()
+    /// Get an iterator over the values of the dictionary, in order by key.
+    pub fn values(&self) -> std::collections::btree_map::Values<K, V> {
+        self.data.values()
     }
 
     /// Adds a value to the dictionary. Returns whether the value was newly inserted.

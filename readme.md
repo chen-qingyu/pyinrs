@@ -58,8 +58,8 @@ Set::from([1, 2, 3, 4, 5]) & Set::from([1, 3, 5, 7, 9]); // {1, 3, 5}
 
 // Dict access
 Dict::from([("one", 1), ("two", 2), ("three", 3)])[&"one"]; // 1
-// Dict get values
-Dict::from([("one", 1), ("two", 2), ("three", 3)]).values(); // {1, 2, 3}
+// Dict get values as a Set
+Dict::from([("one", 1), ("two", 2), ("three", 3)]).values().collect::<Set<&i32>>(); // {1, 2, 3}
 
 // Int modular power, very fast
 Int::from("1024").pow(&"1024".into(), &"100".into()); // 76
@@ -96,7 +96,7 @@ let dict: Dict<Str, List<Int>> = [
     ("third".into(), ["12345678987654321".into(), "5".into()].into()),
 ].into();
 print!("{dict}"); // {"first": [123, 456], "second": [789], "third": [12345678987654321, 5]}
-dict.keys(); // {"first", "second", "third"}
+dict.keys().cloned().collect::<Set<Str>>(); // {"first", "second", "third"}
 dict[&"third".into()][-1].factorial(); // 120
 
 // 2. All container types support iterators, such as:

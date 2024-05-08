@@ -15,8 +15,11 @@ fn usage() {
 
     // Dict access
     assert_eq!(Dict::from([("one", 1), ("two", 2), ("three", 3)])[&"one"], 1);
-    // Dict get values
-    assert_eq!(Dict::from([("one", 1), ("two", 2), ("three", 3)]).values(), [1, 2, 3].into());
+    // Dict get values as a Set
+    assert_eq!(
+        Dict::from([("one", 1), ("two", 2), ("three", 3)]).values().collect::<Set<&i32>>(),
+        [&1, &2, &3].into()
+    );
 
     // Int modular power, very fast
     assert_eq!(Int::from("1024").pow(&"1024".into(), &"100".into()), "76".into());
@@ -49,7 +52,7 @@ fn advantage() {
     ]
     .into();
     assert_eq!(format!("{dict}"), "{\"first\": [123, 456], \"second\": [789], \"third\": [12345678987654321, 5]}");
-    assert_eq!(dict.keys(), ["first".into(), "second".into(), "third".into()].into());
+    assert_eq!(dict.keys().cloned().collect::<Set<Str>>(), ["first".into(), "second".into(), "third".into()].into());
     assert_eq!(dict[&"third".into()][-1].factorial(), 120.into());
 
     // 2. All container types support iterators, such as:

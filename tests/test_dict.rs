@@ -93,10 +93,14 @@ fn examination(setup: Fixture) {
 }
 
 #[rstest]
-fn keys_values_items(setup: Fixture) {
-    assert_eq!(setup.some.keys(), pyinrs::Set::from([1, 2, 3]));
-    assert_eq!(setup.some.values(), pyinrs::Set::from(["one", "two", "three"]));
-    assert_eq!(setup.some.items(), pyinrs::Set::from([(1, "one"), (2, "two"), (3, "three")]));
+fn keys_values(setup: Fixture) {
+    use pyinrs::Set;
+
+    assert_eq!(setup.some.keys().collect::<Set<&i32>>(), Set::from([&1, &2, &3]));
+    assert_eq!(setup.some.keys().cloned().collect::<Set<i32>>(), Set::from([1, 2, 3]));
+
+    assert_eq!(setup.some.values().collect::<Set<&&str>>(), Set::from([&"one", &"two", &"three"]));
+    assert_eq!(setup.some.values().cloned().collect::<Set<&str>>(), Set::from(["one", "two", "three"]));
 }
 
 #[rstest]
