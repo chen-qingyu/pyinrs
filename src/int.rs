@@ -1,5 +1,6 @@
 use std::{
     cmp::Ordering,
+    collections::VecDeque,
     fmt::Display,
     ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Rem, RemAssign, Sub, SubAssign},
     str::FromStr,
@@ -15,7 +16,7 @@ pub struct Int {
     // digit: 0 0 0 5 4 3 2 1
     // index: 0 1 2 3 4 5 6 7
     // ```
-    digits: Vec<i8>,
+    digits: VecDeque<i8>,
 
     // Sign of integer, 1 is positive, -1 is negative, and 0 is zero.
     sign: i8,
@@ -33,7 +34,7 @@ impl Int {
 
     // Add leading zeros.
     fn add_leading_zeros(&mut self, n: usize) {
-        self.digits.extend([0].repeat(n));
+        self.digits.resize(self.digits.len() + n, 0)
     }
 
     // Test whether the characters represent an integer.
@@ -54,7 +55,7 @@ impl Int {
 
     // Increment the absolute value by 1 quickly.
     fn abs_inc(&mut self) {
-        self.digits.push(0); // add a leading zero
+        self.digits.push_back(0); // add a leading zero
 
         let mut i = 0;
         while self.digits[i] == 9 {
@@ -89,7 +90,7 @@ impl Int {
 
     /// Creates a new zero integer.
     pub fn new() -> Self {
-        Self { digits: Vec::new(), sign: 0 }
+        Self::default()
     }
 
     /// Count the number of digits in the integer (based 10).
@@ -138,7 +139,7 @@ impl Int {
             self.abs_dec();
         } else {
             self.sign = 1;
-            self.digits.push(1);
+            self.digits.push_back(1);
         }
         self
     }
@@ -151,7 +152,7 @@ impl Int {
             self.abs_inc();
         } else {
             self.sign = -1;
-            self.digits.push(1);
+            self.digits.push_back(1);
         }
         self
     }
@@ -273,7 +274,7 @@ Construct
 
 impl From<&str> for Int {
     fn from(value: &str) -> Self {
-        let mut obj = Self { digits: Vec::new(), sign: 0 };
+        let mut obj = Self::new();
         if !Self::is_integer(value, value.len()) {
             panic!("Error: Wrong integer literal.");
         }
@@ -297,11 +298,11 @@ impl From<i32> for Int {
         }
 
         // value != 0
-        let mut obj = Self { digits: Vec::new(), sign: 0 };
+        let mut obj = Self::new();
         obj.sign = if value > 0 { 1 } else { -1 };
         value = value.abs();
         while value > 0 {
-            obj.digits.push((value % 10) as i8);
+            obj.digits.push_back((value % 10) as i8);
             value /= 10;
         }
         obj
@@ -595,22 +596,22 @@ impl Div<&Int> for &Int {
 
         let mut num1 = self.abs();
 
-        let mut tmp = Int { digits: Vec::new(), sign: 1 }; // intermediate variable for rhs * 10^i, positive
+        // tmp = rhs * 10^(size), not size-1, since the for loop will pop at first, so tmp is rhs * 10^(size-1) at first
+        let mut digits = VecDeque::from([0i8].repeat(size));
+        digits.extend(rhs.digits.clone());
+        let mut tmp = Int { digits, sign: 1 }; // intermediate variable for rhs * 10^i, positive
 
         let mut result = Int::new();
         result.sign = if self.sign == rhs.sign { 1 } else { -1 }; // the sign is depends on the sign of operands
         result.add_leading_zeros(size);
 
         // calculation
-        let b = &rhs.digits;
-        let c = &mut result.digits;
         for i in (0..size).rev() {
-            tmp.digits = [0].repeat(i);
-            tmp.digits.extend(b.clone()); // tmp = rhs * 10^i in O(N)
+            tmp.digits.pop_front(); // tmp = rhs * 10^i in O(1)
 
             // <= 9 loops, so O(1)
             while num1 >= tmp {
-                c[i] += 1;
+                result.digits[i] += 1;
                 num1 -= &tmp;
             }
         }
