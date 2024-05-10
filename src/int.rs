@@ -1,6 +1,5 @@
 use std::{
     cmp::Ordering,
-    collections::VecDeque,
     fmt::Display,
     ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Rem, RemAssign, Sub, SubAssign},
     str::FromStr,
@@ -16,7 +15,7 @@ pub struct Int {
     // digit: 0 0 0 5 4 3 2 1
     // index: 0 1 2 3 4 5 6 7
     // ```
-    digits: VecDeque<i8>,
+    digits: Vec<i8>,
 
     // Sign of integer, 1 is positive, -1 is negative, and 0 is zero.
     sign: i8,
@@ -55,7 +54,7 @@ impl Int {
 
     // Increment the absolute value by 1 quickly.
     fn abs_inc(&mut self) {
-        self.digits.push_back(0); // add a leading zero
+        self.digits.push(0); // add a leading zero
 
         let mut i = 0;
         while self.digits[i] == 9 {
@@ -139,7 +138,7 @@ impl Int {
             self.abs_dec();
         } else {
             self.sign = 1;
-            self.digits.push_back(1);
+            self.digits.push(1);
         }
         self
     }
@@ -152,7 +151,7 @@ impl Int {
             self.abs_inc();
         } else {
             self.sign = -1;
-            self.digits.push_back(1);
+            self.digits.push(1);
         }
         self
     }
@@ -302,7 +301,7 @@ impl From<i32> for Int {
         obj.sign = if value > 0 { 1 } else { -1 };
         value = value.abs();
         while value > 0 {
-            obj.digits.push_back((value % 10) as i8);
+            obj.digits.push((value % 10) as i8);
             value /= 10;
         }
         obj
@@ -597,7 +596,7 @@ impl Div<&Int> for &Int {
         let mut num1 = self.abs();
 
         // tmp = rhs * 10^(size), not size-1, since the for loop will pop at first, so tmp is rhs * 10^(size-1) at first
-        let mut digits = VecDeque::from([0i8].repeat(size));
+        let mut digits = Vec::from([0i8].repeat(size));
         digits.extend(rhs.digits.clone());
         let mut tmp = Int { digits, sign: 1 }; // intermediate variable for rhs * 10^i, positive
 
@@ -607,9 +606,10 @@ impl Div<&Int> for &Int {
 
         // calculation
         for i in (0..size).rev() {
-            tmp.digits.pop_front(); // tmp = rhs * 10^i in O(1)
+            // tmp = rhs * 10^i
+            tmp.digits.remove(0); // faster than use VecDeque::pop_front()
 
-            // <= 9 loops, so O(1)
+            // <= 9 loops
             while num1 >= tmp {
                 result.digits[i] += 1;
                 num1 -= &tmp;

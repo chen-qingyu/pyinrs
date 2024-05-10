@@ -11,5 +11,10 @@ repository = "https://github.com/chen-qingyu/pyinrs"
 keywords = ["type", "python"]
 
 [dev-dependencies]
-rstest = "0.18.2"
-mymatrix = "0"    # for tests
+rstest = "0"
+criterion = "0"
+mymatrix = "0"
+
+[[bench]]
+name = "benchmark"
+harness = false
