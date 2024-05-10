@@ -29,6 +29,11 @@ impl Str {
         self.data.is_empty()
     }
 
+    /// Extracts a string slice containing the entire string.
+    pub fn as_str(&self) -> &str {
+        self.data.as_str()
+    }
+
     /// Returns an iterator over the chars of the string.
     pub fn chars(&self) -> std::str::Chars {
         self.data.chars()
