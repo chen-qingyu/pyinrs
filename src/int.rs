@@ -244,6 +244,27 @@ impl Int {
         result
     }
 
+    /// Return the logarithm of `integer` based on `base`.
+    pub fn log(integer: &Int, base: &Int) -> Int {
+        if integer.sign <= 0 || base < &2.into() {
+            panic!("Error: Math domain error.");
+        }
+
+        if base == &10.into() {
+            return (integer.digits() - 1).into();
+        }
+
+        let mut result = Int::new();
+        let mut value = integer / base;
+
+        while !value.is_zero() {
+            result.inc();
+            value /= base;
+        }
+
+        result
+    }
+
     /// Calculate the greatest common divisor of two integers using Euclidean algorithm.
     pub fn gcd(int1: &Int, int2: &Int) -> Int {
         let mut a = int1.clone();
