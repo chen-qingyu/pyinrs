@@ -167,28 +167,6 @@ impl Int {
         }
     }
 
-    /// Return (self**exp) % module (module = 0 means does not perform module).
-    pub fn pow(&self, exp: &Int, module: &Int) -> Self {
-        if exp.is_negative() {
-            return Self::new();
-        }
-
-        // fast power algorithm
-
-        let mut num = self.clone();
-        let mut n = exp.clone();
-        let mut result = Self::from(1); // self**0 == 1
-
-        while !n.is_zero() {
-            if n.is_odd() {
-                result = if module.is_zero() { &result * &num } else { &(&result * &num) % module };
-            }
-            num = if module.is_zero() { &num * &num } else { &(&num * &num) % module };
-            n /= &Int::from(2); // integer divide
-        }
-        result
-    }
-
     /// Return the factorial of self.
     pub fn factorial(&self) -> Self {
         if self.sign == -1 {
@@ -205,32 +183,6 @@ impl Int {
         result
     }
 
-    /// Return the square root of self using Newton's method.
-    pub fn sqrt(&self) -> Self {
-        if self.sign == -1 {
-            panic!("Error: Cannot compute square root of a negative integer.");
-        }
-
-        if self.is_zero() {
-            return Self::new();
-        }
-        // can not be omitted, otherwise will enter an infinite loop due to precision problem
-        else if self < &Self::from(4) {
-            return Self::from(1);
-        }
-
-        // as far as possible to reduce the number of iterations
-        let mut cur_sqrt = self / &Int::from(2);
-        let mut pre_sqrt = Int::from(2);
-
-        while cur_sqrt != pre_sqrt {
-            pre_sqrt = cur_sqrt.clone();
-            cur_sqrt = &(&cur_sqrt + &(self / &cur_sqrt)) / &Int::from(2);
-        }
-
-        cur_sqrt
-    }
-
     /// Convert the integer to some integer of type T.
     pub fn to_integer<T: AddAssign + MulAssign + std::convert::From<i8>>(&self) -> T {
         let mut result: T = 0.into();
@@ -241,6 +193,78 @@ impl Int {
         }
 
         result *= self.sign.into();
+        result
+    }
+
+    /// Return the square root of `integer`.
+    pub fn sqrt(integer: &Int) -> Int {
+        if integer.sign == -1 {
+            panic!("Error: Cannot compute square root of a negative integer.");
+        }
+
+        if integer.is_zero() {
+            return Self::new();
+        }
+        // can not be omitted, otherwise will enter an infinite loop due to precision problem
+        else if integer < &Self::from(4) {
+            return Self::from(1);
+        }
+
+        // using Newton's method
+
+        // as far as possible to reduce the number of iterations
+        let mut cur_sqrt = integer / &Int::from(2);
+        let mut pre_sqrt = Int::from(2);
+
+        while cur_sqrt != pre_sqrt {
+            pre_sqrt = cur_sqrt.clone();
+            cur_sqrt = &(&cur_sqrt + &(integer / &cur_sqrt)) / &Int::from(2);
+        }
+
+        cur_sqrt
+    }
+
+    /// Return (base**exp) % module.
+    pub fn pow(base: &Int, exp: &Int) -> Self {
+        if exp.is_negative() {
+            return Self::new();
+        }
+
+        // fast power algorithm
+
+        let mut num = base.clone();
+        let mut n = exp.clone();
+        let mut result = Self::from(1); // base**0 == 1
+
+        while !n.is_zero() {
+            if n.is_odd() {
+                result *= &num;
+            }
+            num *= &num.clone();
+            n /= &2.into(); // integer divide
+        }
+        result
+    }
+
+    /// Return (base**exp) % module faster.
+    pub fn pow_mod(base: &Int, exp: &Int, module: &Int) -> Self {
+        if exp.is_negative() {
+            return Self::new();
+        }
+
+        // fast power algorithm
+
+        let mut num = base.clone();
+        let mut n = exp.clone();
+        let mut result = Self::from(1); // base**0 == 1
+
+        while !n.is_zero() {
+            if n.is_odd() {
+                result = &(&result * &num) % module;
+            }
+            num = &(&num * &num) % module;
+            n /= &2.into(); // integer divide
+        }
         result
     }
 

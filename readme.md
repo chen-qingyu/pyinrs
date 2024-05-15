@@ -62,7 +62,7 @@ Dict::from([("one", 1), ("two", 2), ("three", 3)])[&"one"]; // 1
 Dict::from([("one", 1), ("two", 2), ("three", 3)]).values().collect::<Set<&i32>>(); // {1, 2, 3}
 
 // Int modular power, very fast
-Int::from("1024").pow(&"1024".into(), &"100".into()); // 76
+Int::pow_mod(&"1024".into(), &"1024".into(), &"100".into()); // 76
 // Int factorial
 Int::from("5").factorial().factorial(); // 66895029134491270575881180540903725867527463...
 

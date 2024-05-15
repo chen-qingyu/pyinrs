@@ -229,39 +229,6 @@ fn rem(setup: Fixture, #[case] case: i32) {
 }
 
 #[rstest]
-fn pow() {
-    // 0^0 == 1
-    assert_eq!(Int::from("0").pow(&"0".into(), &"0".into()), Int::from("1"));
-
-    // 0^1 == 0
-    assert_eq!(Int::from("0").pow(&"1".into(), &"0".into()), Int::from("0"));
-
-    // 1^0 == 1
-    assert_eq!(Int::from("1").pow(&"0".into(), &"0".into()), Int::from("1"));
-
-    // 1^1 == 1
-    assert_eq!(Int::from("1").pow(&"1".into(), &"0".into()), Int::from("1"));
-
-    // 2^3 == 8
-    assert_eq!(Int::from("2").pow(&"3".into(), &"0".into()), Int::from("8"));
-
-    // 2^100 == 1267650600228229401496703205376
-    assert_eq!(Int::from("2").pow(&"100".into(), &"0".into()), Int::from("1267650600228229401496703205376"));
-
-    // (9^9)^9 == 196627050475552913618075908526912116283103450944214766927315415537966391196809
-    assert_eq!(
-        Int::from("9").pow(&"9".into(), &"0".into()).pow(&"9".into(), &"0".into()),
-        Int::from("196627050475552913618075908526912116283103450944214766927315415537966391196809")
-    );
-
-    // 1024^1024 % 100 == 76
-    assert_eq!(Int::from("1024").pow(&"1024".into(), &"100".into()), Int::from("76"));
-
-    // 9999^1001 % 100 == 99
-    assert_eq!(Int::from("9999").pow(&"1001".into(), &"100".into()), Int::from("99"));
-}
-
-#[rstest]
 fn factorial() {
     // 0! == 1
     assert_eq!(Int::from("0").factorial(), "1".into());
@@ -293,44 +260,62 @@ fn bad_factorial() {
 }
 
 #[rstest]
-fn gcd_lcm() {
-    // gcd()
-    assert_eq!(Int::gcd(&"0".into(), &"1".into()), "1".into());
-    assert_eq!(Int::gcd(&"6".into(), &"12".into()), "6".into());
-    assert_eq!(Int::gcd(&"6".into(), &"11".into()), "1".into());
-    assert_eq!(Int::gcd(&"12345".into(), &"54321".into()), "3".into());
-
-    // lcm()
-    assert_eq!(Int::lcm(&"0".into(), &"1".into()), "0".into());
-    assert_eq!(Int::lcm(&"6".into(), &"12".into()), "12".into());
-    assert_eq!(Int::lcm(&"6".into(), &"11".into()), "66".into());
-    assert_eq!(Int::lcm(&"12345".into(), &"54321".into()), "223530915".into());
-}
-
-#[rstest]
-fn sqrt() {
-    assert_eq!(Int::from("0").sqrt(), "0".into());
-    assert_eq!(Int::from("1").sqrt(), "1".into());
-    assert_eq!(Int::from("2").sqrt(), "1".into());
-    assert_eq!(Int::from("3").sqrt(), "1".into());
-    assert_eq!(Int::from("4").sqrt(), "2".into());
-    assert_eq!(Int::from("5").sqrt(), "2".into());
-    assert_eq!(Int::from("9").sqrt(), "3".into());
-    assert_eq!(Int::from("9801").sqrt(), "99".into());
-}
-
-#[rstest]
-#[should_panic(expected = "Error: Cannot compute square root of a negative integer.")]
-fn bad_sqrt() {
-    Int::from("-1").sqrt();
-}
-
-#[rstest]
 fn to_integer(setup: Fixture) {
     assert_eq!(setup.zero.to_integer::<i32>(), 0i32);
     assert_eq!(setup.zero.to_integer::<i8>(), 0i8);
     assert_eq!(setup.positive.to_integer::<i128>(), 18446744073709551617);
     assert_eq!(setup.negative.to_integer::<i128>(), -18446744073709551617);
+}
+
+#[rstest]
+fn sqrt() {
+    assert_eq!(Int::sqrt(&"0".into()), "0".into());
+    assert_eq!(Int::sqrt(&"1".into()), "1".into());
+    assert_eq!(Int::sqrt(&"2".into()), "1".into());
+    assert_eq!(Int::sqrt(&"3".into()), "1".into());
+    assert_eq!(Int::sqrt(&"4".into()), "2".into());
+    assert_eq!(Int::sqrt(&"5".into()), "2".into());
+    assert_eq!(Int::sqrt(&"9".into()), "3".into());
+    assert_eq!(Int::sqrt(&"9801".into()), "99".into());
+}
+
+#[rstest]
+#[should_panic(expected = "Error: Cannot compute square root of a negative integer.")]
+fn bad_sqrt() {
+    Int::sqrt(&"-1".into());
+}
+
+#[rstest]
+fn pow() {
+    // 0^0 == 1
+    assert_eq!(Int::pow(&"0".into(), &"0".into()), Int::from("1"));
+
+    // 0^1 == 0
+    assert_eq!(Int::pow(&"0".into(), &"1".into()), Int::from("0"));
+
+    // 1^0 == 1
+    assert_eq!(Int::pow(&"1".into(), &"0".into()), Int::from("1"));
+
+    // 1^1 == 1
+    assert_eq!(Int::pow(&"1".into(), &"1".into()), Int::from("1"));
+
+    // 2^3 == 8
+    assert_eq!(Int::pow(&"2".into(), &"3".into()), Int::from("8"));
+
+    // 2^100 == 1267650600228229401496703205376
+    assert_eq!(Int::pow(&"2".into(), &"100".into()), Int::from("1267650600228229401496703205376"));
+
+    // (9^9)^9 == 196627050475552913618075908526912116283103450944214766927315415537966391196809
+    assert_eq!(
+        Int::pow(&Int::pow(&"9".into(), &"9".into()), &"9".into()),
+        Int::from("196627050475552913618075908526912116283103450944214766927315415537966391196809")
+    );
+
+    // 1024^1024 % 100 == 76
+    assert_eq!(Int::pow_mod(&"1024".into(), &"1024".into(), &"100".into()), Int::from("76"));
+
+    // 9999^1001 % 100 == 99
+    assert_eq!(Int::pow_mod(&"9999".into(), &"1001".into(), &"100".into()), Int::from("99"));
 }
 
 #[rstest]
@@ -357,6 +342,21 @@ fn log(setup: Fixture) {
     assert_eq!(Int::log(&(&setup.positive * &2.into()), &2.into()), 65.into()); // integer: 2^65+2
 
     assert_eq!(Int::log(&"123456789000".into(), &233.into()), 4.into()); // 4.6851911360933745
+}
+
+#[rstest]
+fn gcd_lcm() {
+    // gcd()
+    assert_eq!(Int::gcd(&"0".into(), &"1".into()), "1".into());
+    assert_eq!(Int::gcd(&"6".into(), &"12".into()), "6".into());
+    assert_eq!(Int::gcd(&"6".into(), &"11".into()), "1".into());
+    assert_eq!(Int::gcd(&"12345".into(), &"54321".into()), "3".into());
+
+    // lcm()
+    assert_eq!(Int::lcm(&"0".into(), &"1".into()), "0".into());
+    assert_eq!(Int::lcm(&"6".into(), &"12".into()), "12".into());
+    assert_eq!(Int::lcm(&"6".into(), &"11".into()), "66".into());
+    assert_eq!(Int::lcm(&"12345".into(), &"54321".into()), "223530915".into());
 }
 
 #[rstest]
