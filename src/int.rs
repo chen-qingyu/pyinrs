@@ -5,6 +5,8 @@ use std::{
     str::FromStr,
 };
 
+use rand::{distributions::Uniform, Rng};
+
 /// Int provides support for big integer arithmetic.
 #[derive(Debug, Clone, PartialEq, Eq, Default, Hash)]
 pub struct Int {
@@ -264,6 +266,26 @@ impl Int {
         }
 
         (int1 * int2) / Int::gcd(int1, int2) // LCM = (int1 * int2) / GCD
+    }
+
+    /// Return a non-negative random integer with a specific number of `digits`.
+    pub fn random(digits: usize) -> Int {
+        let mut rng = rand::thread_rng();
+
+        let mut digits = Vec::with_capacity(digits);
+        digits.resize(digits.capacity(), 0); // may be 0
+        let sign = if digits.is_empty() { 0 } else { 1 };
+
+        for d in digits.iter_mut() {
+            *d = rng.sample(Uniform::from(0..=9));
+        }
+
+        // reset most significant digit if is 0
+        if digits.last() == Some(&0) {
+            *digits.last_mut().unwrap() = rng.sample(Uniform::from(1..=9));
+        }
+
+        Int { digits, sign }
     }
 }
 

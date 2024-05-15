@@ -10,6 +10,9 @@ homepage = "https://github.com/chen-qingyu/pyinrs"
 repository = "https://github.com/chen-qingyu/pyinrs"
 keywords = ["type", "python"]
 
+[dependencies]
+rand = "0.8"
+
 [dev-dependencies]
 rstest = "0"
 criterion = "0"

@@ -334,6 +334,17 @@ fn to_integer(setup: Fixture) {
 }
 
 #[rstest]
+fn random() {
+    assert_eq!(Int::random(0).digits(), 0);
+
+    assert_eq!(Int::random(1).digits(), 1);
+    assert_eq!(Int::random(2).digits(), 2);
+    assert_eq!(Int::random(3).digits(), 3);
+
+    assert_eq!(Int::random(4300).digits(), 4300);
+}
+
+#[rstest]
 fn format(setup: Fixture) {
     assert_eq!(format!("{}", setup.zero), "0");
     assert_eq!(format!("{}", setup.positive), "18446744073709551617");
