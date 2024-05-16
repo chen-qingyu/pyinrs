@@ -107,12 +107,18 @@ print!("{dict}"); // {"first": [123, 456], "second": [789], "third": [1234567898
 dict.keys().cloned().collect::<Set<Str>>(); // {"first", "second", "third"}
 dict[&"third".into()][-1].factorial(); // 120
 
-// 2. All container types support iterators, such as:
+// 2. All container types are iterable:
 for (k, v) in Dict::from([(1, 1), (2, 4), (3, 9)]) {
     assert_eq!(k * k, v);
 }
 
-// 3. Using pyinrs::Fraction in mymatrix to display accurate matrix.
+// 3. All immutable types are hashable:
+use std::collections::HashSet;
+let _set1: HashSet<Int> = HashSet::from(["1".into(), "2".into(), "3".into(), "18446744073709551617".into()]);
+let _set2: HashSet<Str> = HashSet::from(["hello".into(), "pyincpp".into()]);
+let _set3: HashSet<Fraction> = HashSet::from([(1, 2).into(), (3, 4).into()]);
+
+// 4. Using pyinrs::Fraction in mymatrix to display accurate matrix.
 use mymatrix::Matrix;
 
 let a = Matrix::from([[1, 2], [3, 4]]);
