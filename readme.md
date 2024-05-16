@@ -61,10 +61,18 @@ Dict::from([("one", 1), ("two", 2), ("three", 3)])[&"one"]; // 1
 // Dict get values as a Set
 Dict::from([("one", 1), ("two", 2), ("three", 3)]).values().collect::<Set<&i32>>(); // {1, 2, 3}
 
+// Int basic operation, support +, -, *, /, % and compare
+Int::from("18446744073709551617") + Int::from("18446744073709551617"); // 36893488147419103234
+// Int increment, after my optimization, much faster than `+= 1`
+Int::from("99999999999999").inc(); // 100000000000000
 // Int modular power, very fast
 Int::pow_mod(&"1024".into(), &"1024".into(), &"100".into()); // 76
 // Int factorial
 Int::from("5").factorial().factorial(); // 66895029134491270575881180540903725867527463...
+// get random Int, using hardware device to generate true random integer if possible
+Int::random(4300); // 23795759214348387514699522496327832510939573336290225099601421311...
+// calculate the next prime that greater than self
+Int::new().next_prime();// 2
 
 // Str split
 Str::from("one, two, three").split(", "); // ["one", "two", "three"]

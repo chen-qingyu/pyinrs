@@ -21,10 +21,18 @@ fn usage() {
         [&1, &2, &3].into()
     );
 
+    // Int basic operation, support +, -, *, /, % and compare
+    assert_eq!(Int::from("18446744073709551617") + Int::from("18446744073709551617"), "36893488147419103234".into());
+    // Int increment, after my optimization, much faster than `+= 1`
+    assert_eq!(Int::from("99999999999999").inc(), &"100000000000000".into());
     // Int modular power, very fast
     assert_eq!(Int::pow_mod(&"1024".into(), &"1024".into(), &"100".into()), "76".into());
     // Int factorial
     assert_eq!(Int::from("5").factorial().factorial(), "6689502913449127057588118054090372586752746333138029810295671352301633557244962989366874165271984981308157637893214090552534408589408121859898481114389650005964960521256960000000000000000000000000000".into());
+    // get random Int, using hardware device to generate true random integer if possible
+    assert_eq!(Int::random(4300).digits(), 4300);
+    // calculate the next prime that greater than self
+    assert_eq!(Int::new().next_prime(), "2".into());
 
     // Str split
     assert_eq!(Str::from("one, two, three").split(", "), ["one", "two", "three"].into());
