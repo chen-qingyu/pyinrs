@@ -281,9 +281,20 @@ impl Int {
         cur_sqrt
     }
 
-    /// Return (base**exp) % module.
+    /// Return base**exp.
     pub fn pow(base: &Int, exp: &Int) -> Self {
+        // check if base.abs() is 1
+        // if base.abs() is 1, only when base is negative and exp is odd return -1, otherwise return 1
+        if base.digits() == 1 && base.digits[0] == 1 {
+            return if base.sign == -1 && exp.is_odd() { (-1).into() } else { 1.into() };
+        }
+
+        // then, check if exp is negative
         if exp.is_negative() {
+            if base.is_zero() {
+                panic!("Error: Math domain error.");
+            }
+
             return Self::new();
         }
 
@@ -305,7 +316,17 @@ impl Int {
 
     /// Return (base**exp) % module faster.
     pub fn pow_mod(base: &Int, exp: &Int, module: &Int) -> Self {
+        // check if base.abs() is 1
+        // if base.abs() is 1, only when base is negative and exp is odd return -1, otherwise return 1
+        if base.digits() == 1 && base.digits[0] == 1 {
+            return if base.sign == -1 && exp.is_odd() { (-1).into() } else { 1.into() };
+        }
+
         if exp.is_negative() {
+            if base.is_zero() {
+                panic!("Error: Math domain error.");
+            }
+
             return Self::new();
         }
 

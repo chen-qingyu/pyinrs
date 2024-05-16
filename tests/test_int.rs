@@ -349,16 +349,15 @@ fn bad_sqrt() {
 
 #[rstest]
 fn pow() {
-    // 0^0 == 1
+    // special situations
+    assert_eq!(Int::pow(&"-1".into(), &"-1".into()), Int::from("-1"));
+    assert_eq!(Int::pow(&"-1".into(), &"0".into()), Int::from("1"));
+    assert_eq!(Int::pow(&"-1".into(), &"1".into()), Int::from("-1"));
+    // assert_eq!(Int::pow(&"0".into(), &"-1".into())); // Error: Math domain error.
     assert_eq!(Int::pow(&"0".into(), &"0".into()), Int::from("1"));
-
-    // 0^1 == 0
     assert_eq!(Int::pow(&"0".into(), &"1".into()), Int::from("0"));
-
-    // 1^0 == 1
+    assert_eq!(Int::pow(&"1".into(), &"-1".into()), Int::from("1"));
     assert_eq!(Int::pow(&"1".into(), &"0".into()), Int::from("1"));
-
-    // 1^1 == 1
     assert_eq!(Int::pow(&"1".into(), &"1".into()), Int::from("1"));
 
     // 2^3 == 8
