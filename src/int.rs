@@ -55,8 +55,10 @@ impl Int {
     }
 
     // Increment the absolute value by 1 quickly.
+    // Require this != 0
     fn abs_inc(&mut self) {
-        self.digits.push(0); // add a leading zero
+        // add a leading zero for carry
+        self.digits.push(0);
 
         let mut i = 0;
         while self.digits[i] == 9 {
@@ -69,9 +71,12 @@ impl Int {
         }
 
         self.remove_leading_zeros();
+
+        // keep sign unchanged
     }
 
     // Decrement the absolute value by 1 quickly.
+    // Require this != 0
     fn abs_dec(&mut self) {
         let mut i = 0;
         while self.digits[i] == 0 {
@@ -119,7 +124,7 @@ impl Int {
         if self.is_zero() {
             true
         } else {
-            self.digits[0] % 2 == 0
+            self.digits[0] & 1 == 0
         }
     }
 
@@ -128,7 +133,7 @@ impl Int {
         if self.is_zero() {
             false
         } else {
-            self.digits[0] % 2 == 1
+            self.digits[0] & 1 == 1
         }
     }
 
@@ -191,11 +196,13 @@ impl Int {
 
         let mut result = Int::from(1); // 0! == 1
         let mut i = self.clone();
+
         // fast judgement, fast decrement
         while i.is_positive() {
             result *= &i;
-            i.dec();
+            i.abs_dec();
         }
+
         result
     }
 
