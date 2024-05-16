@@ -55,7 +55,7 @@ impl Int {
     }
 
     // Increment the absolute value by 1 quickly.
-    // Require this != 0
+    // Require self != 0
     fn abs_inc(&mut self) {
         // add a leading zero for carry
         self.digits.push(0);
@@ -76,7 +76,7 @@ impl Int {
     }
 
     // Decrement the absolute value by 1 quickly.
-    // Require this != 0
+    // Require self != 0
     fn abs_dec(&mut self) {
         let mut i = 0;
         while self.digits[i] == 0 {
@@ -700,8 +700,8 @@ impl Div<&Int> for &Int {
             panic!("Error: Divide by zero.");
         }
 
-        // if self is zero or self.abs() < rhs.abs(), just return zero
-        if self.sign == 0 || self.digits.len() < rhs.digits.len() {
+        // if self.abs() < rhs.abs(), just return 0
+        if self.digits.len() < rhs.digits.len() {
             return Int::new();
         }
 
@@ -756,7 +756,47 @@ impl Rem<&Int> for &Int {
     type Output = Int;
 
     fn rem(self, rhs: &Int) -> Self::Output {
-        self - &(&(self / rhs) * rhs)
+        // if rhs is zero, panic
+        if rhs.sign == 0 {
+            panic!("Error: Divide by zero.");
+        }
+
+        // if self.abs() < rhs.abs(), just return self
+        if self.digits.len() < rhs.digits.len() {
+            return self.clone();
+        }
+
+        // the sign of two integers is not zero
+
+        // prepare variables
+        let size = self.digits.len() - rhs.digits.len() + 1;
+
+        let mut result = self.abs();
+
+        // tmp = rhs * 10^(size), not size-1, since the for loop will pop at first, so tmp is rhs * 10^(size-1) at first
+        let mut digits = Vec::from([0i8].repeat(size));
+        digits.extend(rhs.digits.clone());
+        let mut tmp = Int { digits, sign: 1 }; // intermediate variable for rhs * 10^i, positive
+
+        // calculation
+        for _ in 0..size {
+            // tmp = rhs * 10^i
+            tmp.digits.remove(0); // faster than use VecDeque::pop_front()
+
+            // <= 9 loops
+            while result >= tmp {
+                result -= &tmp;
+            }
+        }
+
+        // remove leading zeros
+        result.remove_leading_zeros();
+
+        // if result is zero, set sign to 0, else to self's
+        result.sign = if result.digits.is_empty() { 0 } else { self.sign };
+
+        // return result
+        result
     }
 }
 
