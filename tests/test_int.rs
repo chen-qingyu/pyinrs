@@ -335,6 +335,9 @@ fn sqrt() {
     assert_eq!(Int::sqrt(&"4".into()), "2".into());
     assert_eq!(Int::sqrt(&"5".into()), "2".into());
     assert_eq!(Int::sqrt(&"9".into()), "3".into());
+    assert_eq!(Int::sqrt(&"10".into()), "3".into());
+    assert_eq!(Int::sqrt(&"16".into()), "4".into());
+    assert_eq!(Int::sqrt(&"100".into()), "10".into());
     assert_eq!(Int::sqrt(&"9801".into()), "99".into());
 }
 

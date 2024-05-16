@@ -254,17 +254,24 @@ impl Int {
 
         if integer.is_zero() {
             return Self::new();
-        }
-        // can not be omitted, otherwise will enter an infinite loop due to precision problem
-        else if integer < &Self::from(4) {
+        } else if integer < &Self::from(4) {
             return Self::from(1);
+        } else if integer < &Self::from(9) {
+            return Self::from(2);
+        } else if integer < &Self::from(16) {
+            return Self::from(3); // can not be omitted
         }
 
         // using Newton's method
 
         // as far as possible to reduce the number of iterations
-        let mut cur_sqrt = integer / &Int::from(2);
-        let mut pre_sqrt = Int::from(2);
+        // cur_sqrt = 10^(digits/2 - 1) in O(1)
+        let mut digits: Vec<i8> = Vec::new();
+        digits.resize(integer.digits.len() / 2 - 1, 0); // integer.digits() >= 2
+        digits.push(1);
+        let mut cur_sqrt = Int { digits, sign: 1 };
+
+        let mut pre_sqrt = Int::from(-1);
 
         while cur_sqrt != pre_sqrt {
             pre_sqrt = cur_sqrt.clone();
