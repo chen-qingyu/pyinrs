@@ -266,8 +266,7 @@ impl Int {
 
         // as far as possible to reduce the number of iterations
         // cur_sqrt = 10^(digits/2 - 1) in O(1)
-        let mut digits: Vec<i8> = Vec::new();
-        digits.resize(integer.digits.len() / 2 - 1, 0); // integer.digits() >= 2
+        let mut digits = vec![0; integer.digits.len() / 2 - 1]; // integer.digits() >= 2
         digits.push(1);
         let mut cur_sqrt = Int { digits, sign: 1 };
 
@@ -395,20 +394,19 @@ impl Int {
     pub fn random(digits: usize) -> Int {
         let mut rng = rand::thread_rng();
 
-        let mut digits = Vec::with_capacity(digits);
-        digits.resize(digits.capacity(), 0); // may be 0
-        let sign = if digits.is_empty() { 0 } else { 1 };
+        let mut digits_vec = vec![0; digits]; // may be 0
+        let sign = if digits_vec.is_empty() { 0 } else { 1 };
 
-        for d in digits.iter_mut() {
+        for d in digits_vec.iter_mut() {
             *d = rng.sample(Uniform::from(0..=9));
         }
 
         // reset most significant digit if is 0
-        if digits.last() == Some(&0) {
-            *digits.last_mut().unwrap() = rng.sample(Uniform::from(1..=9));
+        if digits_vec.last() == Some(&0) {
+            *digits_vec.last_mut().unwrap() = rng.sample(Uniform::from(1..=9));
         }
 
-        Int { digits, sign }
+        Int { digits: digits_vec, sign }
     }
 }
 
@@ -741,7 +739,7 @@ impl Div<&Int> for &Int {
         let mut num1 = self.abs();
 
         // tmp = rhs * 10^(size), not size-1, since the for loop will pop at first, so tmp is rhs * 10^(size-1) at first
-        let mut digits = Vec::from([0i8].repeat(size));
+        let mut digits = [0i8].repeat(size);
         digits.extend(rhs.digits.clone());
         let mut tmp = Int { digits, sign: 1 }; // intermediate variable for rhs * 10^i, positive
 
@@ -802,7 +800,7 @@ impl Rem<&Int> for &Int {
         let mut result = self.abs();
 
         // tmp = rhs * 10^(size), not size-1, since the for loop will pop at first, so tmp is rhs * 10^(size-1) at first
-        let mut digits = Vec::from([0i8].repeat(size));
+        let mut digits = [0i8].repeat(size);
         digits.extend(rhs.digits.clone());
         let mut tmp = Int { digits, sign: 1 }; // intermediate variable for rhs * 10^i, positive
 
