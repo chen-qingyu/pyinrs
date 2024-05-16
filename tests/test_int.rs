@@ -105,6 +105,26 @@ fn examination(setup: Fixture) {
 }
 
 #[rstest]
+fn is_prime() {
+    assert!(!Int::from("-1").is_prime());
+    assert!(!Int::from("0").is_prime());
+    assert!(!Int::from("1").is_prime());
+    assert!(Int::from("2").is_prime());
+    assert!(Int::from("3").is_prime());
+    assert!(!Int::from("4").is_prime());
+    assert!(Int::from("5").is_prime());
+    assert!(!Int::from("6").is_prime());
+    assert!(Int::from("7").is_prime());
+    assert!(!Int::from("8").is_prime());
+    assert!(!Int::from("9").is_prime());
+    assert!(!Int::from("10").is_prime());
+
+    assert!(Int::from("2147483629").is_prime()); // maximum prime number that < i32::MAX
+    assert!(Int::from("2147483647").is_prime()); // i32::MAX is a prime number
+    assert!(Int::from("2147483659").is_prime()); // minimum prime number that > i32::MAX
+}
+
+#[rstest]
 fn inc_dec() {
     // inc()
     assert_eq!(Int::from("-1").inc(), &Int::from("0"));
@@ -257,6 +277,45 @@ fn factorial() {
 #[should_panic(expected = "Error: Negative integer have no factorial.")]
 fn bad_factorial() {
     Int::from("-1").factorial();
+}
+
+#[rstest]
+fn next_prime() {
+    let mut number = Int::new(); // 0
+
+    let primes: Vec<Int> = vec![
+        2.into(),
+        3.into(),
+        5.into(),
+        7.into(),
+        11.into(),
+        13.into(),
+        17.into(),
+        19.into(),
+        23.into(),
+        29.into(),
+        31.into(),
+        37.into(),
+        41.into(),
+        43.into(),
+        47.into(),
+        53.into(),
+        59.into(),
+        61.into(),
+        67.into(),
+        71.into(),
+    ];
+
+    for prime in primes {
+        number = number.next_prime();
+        assert_eq!(number, prime);
+    }
+
+    assert_eq!(Int::from(104728).next_prime(), 104729.into()); // the 10000th prime
+
+    assert_eq!(Int::from("2147483628").next_prime(), "2147483629".into()); // maximum prime number that < i32::MAX
+    assert_eq!(Int::from("2147483629").next_prime(), "2147483647".into()); // i32::MAX is a prime number
+    assert_eq!(Int::from("2147483647").next_prime(), "2147483659".into()); // minimum prime number that > i32::MAX
 }
 
 #[rstest]

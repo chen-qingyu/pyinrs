@@ -132,6 +132,22 @@ impl Int {
         }
     }
 
+    /// Determine whether the integer is prime number.
+    pub fn is_prime(&self) -> bool {
+        if self <= &1.into() {
+            return false; // prime >= 2
+        }
+
+        let mut i = Int::from(2);
+        while &i * &i <= *self {
+            if (self % &i).is_zero() {
+                return false;
+            }
+            i.abs_inc();
+        }
+        true
+    }
+
     /// Increment the value by 1 quickly.
     pub fn inc(&mut self) -> &Self {
         if self.sign == 1 {
@@ -181,6 +197,33 @@ impl Int {
             i.dec();
         }
         result
+    }
+
+    /// Calculate the next prime that greater than self.
+    pub fn next_prime(&self) -> Int {
+        if *self < 2.into() {
+            return 2.into();
+        }
+
+        let mut prime = self.clone(); // >= 2
+
+        // if prime is even, let it odd and < self, because prime > 2 is odd and while prime += 2
+        if prime.is_even() {
+            prime.abs_dec();
+        }
+
+        // prime >= 1
+        loop {
+            // faster than prime += 2
+            prime.abs_inc();
+            prime.abs_inc();
+
+            if prime.is_prime() {
+                break;
+            }
+        }
+
+        prime
     }
 
     /// Convert the integer to some integer of type T.
