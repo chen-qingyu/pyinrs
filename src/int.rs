@@ -24,18 +24,17 @@ pub struct Int {
 }
 
 impl Int {
-    // Remove leading zeros.
-    fn remove_leading_zeros(&mut self) {
+    // Remove leading zeros elegantly and correct sign.
+    fn trim(&mut self) {
         let mut i = self.digits() - 1; // i = -1 if is zero, ok
         while i >= 0 && self.digits[i as usize] == 0 {
             i -= 1;
         }
         self.digits.truncate((i + 1) as usize);
-    }
 
-    // Add leading zeros.
-    fn add_leading_zeros(&mut self, n: usize) {
-        self.digits.resize(self.digits.len() + n, 0)
+        if self.digits.is_empty() {
+            self.sign = 0;
+        }
     }
 
     // Test whether the characters represent an integer.
@@ -70,7 +69,7 @@ impl Int {
             self.digits[i] = 0;
         }
 
-        self.remove_leading_zeros();
+        self.trim();
 
         // keep sign unchanged
     }
@@ -88,10 +87,7 @@ impl Int {
             self.digits[i] = 9;
         }
 
-        self.remove_leading_zeros();
-
-        // if result is zero, set sign to 0
-        self.sign = if self.digits.is_empty() { 0 } else { self.sign };
+        self.trim();
     }
 
     /// Creates a new zero integer.
@@ -425,10 +421,7 @@ impl From<&str> for Int {
         let s = (value.as_bytes()[0] == b'+') || (value.as_bytes()[0] == b'-'); // skip symbol
         obj.digits = value.as_bytes().iter().skip(usize::from(s)).map(|d| (d - b'0') as i8).rev().collect();
 
-        obj.remove_leading_zeros();
-
-        // if result is zero, set sign to 0
-        obj.sign = if obj.digits.is_empty() { 0 } else { obj.sign };
+        obj.trim();
         obj
     }
 }
@@ -555,46 +548,9 @@ impl Add<&Int> for &Int {
     type Output = Int;
 
     fn add(self, rhs: &Int) -> Self::Output {
-        // if one of the operands is zero, just return another one
-        if self.sign == 0 || rhs.sign == 0 {
-            return if self.sign == 0 { rhs.clone() } else { self.clone() };
-        }
-
-        // if the operands are of opposite signs, perform subtraction
-        if self.sign == 1 && rhs.sign == -1 {
-            return self - &-rhs;
-        } else if self.sign == -1 && rhs.sign == 1 {
-            return rhs - &-self;
-        }
-
-        // the sign of two integers is the same and not zero
-
-        // prepare variables
-        let size = std::cmp::max(self.digits.len(), rhs.digits.len()) + 1;
-
-        let mut num1 = self.clone();
-        num1.add_leading_zeros(size - 1 - num1.digits.len());
-
-        let mut num2 = rhs.clone();
-        num2.add_leading_zeros(size - 1 - num2.digits.len());
-
-        let mut result = Int::new();
-        result.sign = self.sign; // the signs are same
-        result.add_leading_zeros(size);
-
-        // simulate the vertical calculation
-        let a = &num1.digits;
-        let b = &num2.digits;
-        let c = &mut result.digits;
-        for i in 0..(size - 1) {
-            c[i] += a[i] + b[i];
-            c[i + 1] = c[i] / 10;
-            c[i] %= 10;
-        }
-
-        // remove leading zeros and return result
-        result.remove_leading_zeros();
-        result
+        let mut x = self.clone();
+        x += rhs;
+        x
     }
 }
 
@@ -610,58 +566,9 @@ impl Sub<&Int> for &Int {
     type Output = Int;
 
     fn sub(self, rhs: &Int) -> Self::Output {
-        // if one of the operands is zero
-        if self.sign == 0 || rhs.sign == 0 {
-            return if self.sign == 0 { -rhs } else { self.clone() };
-        }
-
-        // if the operands are of opposite signs, perform addition
-        if self.sign != rhs.sign {
-            return self + &-rhs;
-        }
-
-        // the sign of two integers is the same and not zero
-
-        // prepare variables
-        let size = std::cmp::max(self.digits.len(), rhs.digits.len());
-
-        let mut num1 = self.clone();
-        num1.add_leading_zeros(size - num1.digits.len());
-
-        let mut num2 = rhs.clone();
-        num2.add_leading_zeros(size - num2.digits.len());
-
-        let mut result = Int::new();
-        result.sign = self.sign; // the signs are same
-
-        // let num1.abs() >= num2.abs()
-        if if self.sign == 1 { num1 < num2 } else { num1 > num2 } {
-            std::mem::swap(&mut num1, &mut num2);
-            result.sign = -result.sign;
-        }
-        result.add_leading_zeros(size);
-
-        // simulate the vertical calculation, assert a >= b
-        let a = &mut num1.digits;
-        let b = &num2.digits;
-        let c = &mut result.digits;
-        for i in 0..size {
-            // carry
-            if a[i] < b[i] {
-                a[i + 1] -= 1;
-                a[i] += 10;
-            }
-            c[i] = a[i] - b[i];
-        }
-
-        // remove leading zeros
-        result.remove_leading_zeros();
-
-        // if result is zero, set sign to 0
-        result.sign = if result.digits.is_empty() { 0 } else { result.sign };
-
-        // return result
-        result
+        let mut x = self.clone();
+        x -= rhs;
+        x
     }
 }
 
@@ -689,7 +596,7 @@ impl Mul<&Int> for &Int {
 
         let mut result = Int::new();
         result.sign = if self.sign == rhs.sign { 1 } else { -1 }; // the sign is depends on the sign of operands
-        result.add_leading_zeros(size);
+        result.digits.resize(size, 0);
 
         // simulate the vertical calculation
         let a = &self.digits;
@@ -703,8 +610,7 @@ impl Mul<&Int> for &Int {
             }
         }
 
-        // remove leading zeros and return
-        result.remove_leading_zeros();
+        result.trim();
         result
     }
 }
@@ -721,52 +627,9 @@ impl Div<&Int> for &Int {
     type Output = Int;
 
     fn div(self, rhs: &Int) -> Self::Output {
-        // if rhs is zero, panic
-        if rhs.sign == 0 {
-            panic!("Error: Divide by zero.");
-        }
-
-        // if self.abs() < rhs.abs(), just return 0
-        if self.digits.len() < rhs.digits.len() {
-            return Int::new();
-        }
-
-        // the sign of two integers is not zero
-
-        // prepare variables
-        let size = self.digits.len() - rhs.digits.len() + 1;
-
-        let mut num1 = self.abs();
-
-        // tmp = rhs * 10^(size), not size-1, since the for loop will pop at first, so tmp is rhs * 10^(size-1) at first
-        let mut digits = [0i8].repeat(size);
-        digits.extend(rhs.digits.clone());
-        let mut tmp = Int { digits, sign: 1 }; // intermediate variable for rhs * 10^i, positive
-
-        let mut result = Int::new();
-        result.sign = if self.sign == rhs.sign { 1 } else { -1 }; // the sign is depends on the sign of operands
-        result.add_leading_zeros(size);
-
-        // calculation
-        for i in (0..size).rev() {
-            // tmp = rhs * 10^i
-            tmp.digits.remove(0); // faster than use VecDeque::pop_front()
-
-            // <= 9 loops
-            while num1 >= tmp {
-                result.digits[i] += 1;
-                num1 -= &tmp;
-            }
-        }
-
-        // remove leading zeros
-        result.remove_leading_zeros();
-
-        // if result is zero, set sign to 0
-        result.sign = if result.digits.is_empty() { 0 } else { result.sign };
-
-        // return result
-        result
+        let mut x = self.clone();
+        x /= rhs;
+        x
     }
 }
 
@@ -782,47 +645,9 @@ impl Rem<&Int> for &Int {
     type Output = Int;
 
     fn rem(self, rhs: &Int) -> Self::Output {
-        // if rhs is zero, panic
-        if rhs.sign == 0 {
-            panic!("Error: Divide by zero.");
-        }
-
-        // if self.abs() < rhs.abs(), just return self
-        if self.digits.len() < rhs.digits.len() {
-            return self.clone();
-        }
-
-        // the sign of two integers is not zero
-
-        // prepare variables
-        let size = self.digits.len() - rhs.digits.len() + 1;
-
-        let mut result = self.abs();
-
-        // tmp = rhs * 10^(size), not size-1, since the for loop will pop at first, so tmp is rhs * 10^(size-1) at first
-        let mut digits = [0i8].repeat(size);
-        digits.extend(rhs.digits.clone());
-        let mut tmp = Int { digits, sign: 1 }; // intermediate variable for rhs * 10^i, positive
-
-        // calculation
-        for _ in 0..size {
-            // tmp = rhs * 10^i
-            tmp.digits.remove(0); // faster than use VecDeque::pop_front()
-
-            // <= 9 loops
-            while result >= tmp {
-                result -= &tmp;
-            }
-        }
-
-        // remove leading zeros
-        result.remove_leading_zeros();
-
-        // if result is zero, set sign to 0, else to self's
-        result.sign = if result.digits.is_empty() { 0 } else { self.sign };
-
-        // return result
-        result
+        let mut x = self.clone();
+        x %= rhs;
+        x
     }
 }
 
@@ -836,13 +661,93 @@ impl Rem for Int {
 
 impl AddAssign<&Int> for Int {
     fn add_assign(&mut self, rhs: &Int) {
-        *self = &*self + rhs;
+        // if one of the operands is zero, just return another one
+        if self.sign == 0 || rhs.sign == 0 {
+            return if self.sign == 0 {
+                *self = rhs.clone();
+            };
+        }
+
+        // if the operands are of opposite signs, perform subtraction
+        if self.sign != rhs.sign {
+            return *self -= &-rhs;
+        }
+
+        // the sign of two integers is the same and not zero
+
+        let size = std::cmp::max(self.digits.len(), rhs.digits.len()) + 1;
+        self.digits.resize(size, 0); // the digits is max+1
+
+        // simulate the vertical calculation, assert a.len() > b.len()
+        let a = &mut self.digits;
+        let b = &rhs.digits;
+        for i in 0..b.len() {
+            a[i] += b[i];
+            if a[i] > 9 {
+                a[i + 1] += 1;
+                a[i] %= 10;
+            }
+        }
+        for i in b.len()..a.len() {
+            if a[i] > 9 {
+                a[i + 1] += 1;
+                a[i] %= 10;
+            }
+        }
+
+        self.trim();
     }
 }
 
 impl SubAssign<&Int> for Int {
     fn sub_assign(&mut self, rhs: &Int) {
-        *self = &*self - rhs;
+        // if one of the operands is zero
+        if self.sign == 0 || rhs.sign == 0 {
+            return if self.sign == 0 {
+                *self = -rhs;
+            };
+        }
+
+        // if the operands are of opposite signs, perform addition
+        if self.sign != rhs.sign {
+            return *self += &-rhs;
+        }
+
+        // the sign of two integers is the same and not zero
+
+        // prepare variables
+        let size = std::cmp::max(self.digits.len(), rhs.digits.len());
+
+        self.digits.resize(size, 0);
+
+        let mut num = rhs.clone();
+        num.digits.resize(size, 0);
+
+        let mut result = Int::new();
+        result.sign = self.sign; // the signs are same
+
+        // let self.abs() >= num.abs()
+        if if self.sign == 1 { *self < num } else { *self > num } {
+            std::mem::swap(&mut *self, &mut num);
+            result.sign = -result.sign;
+        }
+        result.digits.resize(size, 0);
+
+        // simulate the vertical calculation, assert a >= b
+        let a = &self.digits;
+        let b = &num.digits;
+        let c = &mut result.digits;
+        for i in 0..size {
+            c[i] += a[i] - b[i];
+            // carry
+            if c[i] < 0 {
+                c[i + 1] -= 1;
+                c[i] += 10;
+            }
+        }
+
+        result.trim();
+        *self = result;
     }
 }
 
@@ -854,13 +759,85 @@ impl MulAssign<&Int> for Int {
 
 impl DivAssign<&Int> for Int {
     fn div_assign(&mut self, rhs: &Int) {
-        *self = &*self / rhs;
+        // if rhs is zero, panic
+        if rhs.sign == 0 {
+            panic!("Error: Divide by zero.");
+        }
+
+        // if self.abs() < rhs.abs(), just return 0
+        if self.digits.len() < rhs.digits.len() {
+            return *self = Int::new();
+        }
+
+        // the sign of two integers is not zero
+
+        // prepare variables
+        let size = self.digits.len() - rhs.digits.len() + 1;
+
+        // tmp = rhs * 10^(size), not size-1, since the for loop will pop at first, so tmp is rhs * 10^(size-1) at first
+        let mut digits = [0i8].repeat(size);
+        digits.extend(rhs.digits.clone());
+        let mut tmp = Int { digits, sign: 1 }; // intermediate variable for rhs * 10^i, positive
+
+        let mut result = Int::new();
+        result.sign = if self.sign == rhs.sign { 1 } else { -1 }; // the sign is depends on the sign of operands
+        result.digits.resize(size, 0);
+
+        self.sign = 1;
+
+        // calculation
+        for i in (0..size).rev() {
+            // tmp = rhs * 10^i
+            tmp.digits.remove(0); // faster than use VecDeque::pop_front()
+
+            // <= 9 loops
+            while *self >= tmp {
+                result.digits[i] += 1;
+                *self -= &tmp;
+            }
+        }
+
+        result.trim();
+        *self = result;
     }
 }
 
 impl RemAssign<&Int> for Int {
     fn rem_assign(&mut self, rhs: &Int) {
-        *self = &*self % rhs;
+        // if rhs is zero, panic
+        if rhs.sign == 0 {
+            panic!("Error: Divide by zero.");
+        }
+
+        // if self.abs() < rhs.abs(), just return self
+        if self.digits.len() < rhs.digits.len() {
+            return;
+        }
+
+        // the sign of two integers is not zero
+
+        // prepare variables
+        let size = self.digits.len() - rhs.digits.len() + 1;
+
+        self.sign = 1;
+
+        // tmp = rhs * 10^(size), not size-1, since the for loop will pop at first, so tmp is rhs * 10^(size-1) at first
+        let mut digits = [0i8].repeat(size);
+        digits.extend(rhs.digits.clone());
+        let mut tmp = Int { digits, sign: 1 }; // intermediate variable for rhs * 10^i, positive
+
+        // calculation
+        for _ in 0..size {
+            // tmp = rhs * 10^i
+            tmp.digits.remove(0); // faster than use VecDeque::pop_front()
+
+            // <= 9 loops
+            while *self >= tmp {
+                *self -= &tmp;
+            }
+        }
+
+        self.trim();
     }
 }
 

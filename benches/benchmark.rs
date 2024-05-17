@@ -17,6 +17,9 @@ pub fn criterion_benchmark(c: &mut Criterion) {
 
     c.bench_function("Int sqrt", |b| b.iter(|| Int::sqrt(&int1)));
     // cur_sqrt = integer/2 -> 10^(digits/2 - 1) in O(1): ~60% faster
+
+    c.bench_function("Int gcd", |b| b.iter(|| Int::gcd(&int1, &int2)));
+    // use in-place: ~20% faster for + - / %
 }
 
 criterion_group!(benches, criterion_benchmark);
