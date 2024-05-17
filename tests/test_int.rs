@@ -152,6 +152,8 @@ fn add(setup: Fixture) {
     assert_eq!(&setup.zero + &setup.positive, Int::from("18446744073709551617"));
     assert_eq!(&setup.zero + &setup.zero, Int::from("0"));
     assert_eq!(&setup.zero + &setup.negative, Int::from("-18446744073709551617"));
+
+    assert_eq!(Int::from(99999) + Int::from(1), 100000.into());
 }
 
 #[rstest]
@@ -167,6 +169,8 @@ fn sub(setup: Fixture) {
     assert_eq!(&setup.zero - &setup.positive, Int::from("-18446744073709551617"));
     assert_eq!(&setup.zero - &setup.zero, Int::from("0"));
     assert_eq!(&setup.zero - &setup.negative, Int::from("18446744073709551617"));
+
+    assert_eq!(Int::from(100000) - Int::from(1), 99999.into());
 }
 
 #[rstest]
@@ -182,6 +186,8 @@ fn mul(setup: Fixture) {
     assert_eq!(&setup.zero * &setup.positive, Int::from("0"));
     assert_eq!(&setup.zero * &setup.zero, Int::from("0"));
     assert_eq!(&setup.zero * &setup.negative, Int::from("0"));
+
+    assert_eq!(Int::from(100000) * Int::from(1), 100000.into());
 }
 
 #[rstest]
@@ -206,6 +212,8 @@ fn div(setup: Fixture, #[case] case: i32) {
             assert_eq!(&setup.zero / &setup.positive, Int::from(0));
             // 4
             assert_eq!(&setup.zero / &setup.negative, Int::from(0));
+
+            assert_eq!(Int::from(100000) / Int::from(1), 100000.into());
 
             Int::new() // for compatible types
         }
@@ -238,6 +246,8 @@ fn rem(setup: Fixture, #[case] case: i32) {
             assert_eq!(&setup.zero % &setup.positive, Int::from(0));
             // 4
             assert_eq!(&setup.zero % &setup.negative, Int::from(0));
+
+            assert_eq!(Int::from(100000) % Int::from(1), 0.into());
 
             Int::new() // for compatible types
         }
