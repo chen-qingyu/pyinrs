@@ -96,14 +96,14 @@ impl FromStr for Fraction {
     type Err = ParseFractionError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if let Ok(numerator) = s.trim().parse::<i32>() {
+        if let Ok(numerator) = s.trim().parse() {
             return Ok(Fraction { numerator, denominator: 1 });
         }
 
         let (numerator, denominator) = s.trim().split_once('/').ok_or(ParseFractionError)?;
 
-        let numerator = numerator.parse::<i32>().map_err(|_| ParseFractionError)?;
-        let denominator = denominator.parse::<i32>().map_err(|_| ParseFractionError)?;
+        let numerator = numerator.parse().map_err(|_| ParseFractionError)?;
+        let denominator = denominator.parse().map_err(|_| ParseFractionError)?;
 
         Ok(Fraction::from((numerator, denominator)))
     }
@@ -121,18 +121,20 @@ Function
 
 impl PartialOrd for Fraction {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Fraction {
+    fn cmp(&self, other: &Self) -> Ordering {
         // self = a/b; other = c/d;
         // so, self - other = a/b - c/d = (ad - bc)/(bd)
         // since bd is always positive, compute (ad-bc) only
-        let a = self.numerator;
-        let b = self.denominator;
-        let c = other.numerator;
-        let d = other.denominator;
 
-        match a * d - b * c {
-            ..=-1 => Some(Ordering::Less),
-            0 => Some(Ordering::Equal),
-            1.. => Some(Ordering::Greater),
+        match self.numerator * other.denominator - self.denominator * other.numerator {
+            ..=-1 => Ordering::Less,
+            0 => Ordering::Equal,
+            1.. => Ordering::Greater,
         }
     }
 }
