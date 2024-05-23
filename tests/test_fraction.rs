@@ -51,11 +51,24 @@ fn copy(mut setup: Fixture) {
 }
 
 #[rstest]
-fn unary(setup: Fixture) {
-    assert_eq!(-setup.positive, Fraction::from((-1, 2)));
-    assert_eq!(setup.positive.abs(), Fraction::from((1, 2)));
+fn examination(setup: Fixture) {
+    assert_eq!(setup.zero.numerator(), 0);
+    assert_eq!(setup.positive.numerator(), 1);
+    assert_eq!(setup.negative.numerator(), -1);
 
+    assert_eq!(setup.zero.denominator(), 1);
+    assert_eq!(setup.positive.denominator(), 2);
+    assert_eq!(setup.negative.denominator(), 2);
+}
+
+#[rstest]
+fn unary(setup: Fixture) {
+    assert_eq!(-setup.zero, Fraction::from(0));
+    assert_eq!(-setup.positive, Fraction::from((-1, 2)));
     assert_eq!(-setup.negative, Fraction::from((1, 2)));
+
+    assert_eq!(setup.zero.abs(), Fraction::from(0));
+    assert_eq!(setup.positive.abs(), Fraction::from((1, 2)));
     assert_eq!(setup.negative.abs(), Fraction::from((1, 2)));
 }
 

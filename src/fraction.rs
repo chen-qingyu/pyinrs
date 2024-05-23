@@ -49,6 +49,16 @@ impl Fraction {
             -*self
         }
     }
+
+    /// Get the numerator of self.
+    pub fn numerator(&self) -> i32 {
+        self.numerator
+    }
+
+    /// Get the denominator of self.
+    pub fn denominator(&self) -> i32 {
+        self.denominator
+    }
 }
 
 /*
