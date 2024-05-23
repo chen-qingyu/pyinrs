@@ -7,6 +7,8 @@ use std::{
 
 use rand::{distributions::Uniform, Rng};
 
+use crate::utility;
+
 /// Int provides support for big integer arithmetic.
 #[derive(Debug, Clone, PartialEq, Eq, Default, Hash)]
 pub struct Int {
@@ -762,9 +764,7 @@ impl MulAssign<&Int> for Int {
 impl DivAssign<&Int> for Int {
     fn div_assign(&mut self, rhs: &Int) {
         // if rhs is zero, panic
-        if rhs.sign == 0 {
-            panic!("Error: Divide by zero.");
-        }
+        utility::check_zero(rhs.sign);
 
         // if self.abs() < rhs.abs(), just return 0
         if self.digits.len() < rhs.digits.len() {
@@ -807,9 +807,7 @@ impl DivAssign<&Int> for Int {
 impl RemAssign<&Int> for Int {
     fn rem_assign(&mut self, rhs: &Int) {
         // if rhs is zero, panic
-        if rhs.sign == 0 {
-            panic!("Error: Divide by zero.");
-        }
+        utility::check_zero(rhs.sign);
 
         // if self.abs() < rhs.abs(), just return self
         if self.digits.len() < rhs.digits.len() {

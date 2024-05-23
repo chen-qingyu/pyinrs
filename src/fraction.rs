@@ -5,6 +5,8 @@ use std::{
     str::FromStr,
 };
 
+use crate::utility;
+
 /// Fraction provides support for rational number arithmetic.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Fraction {
@@ -76,9 +78,7 @@ impl From<i32> for Fraction {
 
 impl From<(i32, i32)> for Fraction {
     fn from(value: (i32, i32)) -> Self {
-        if value.1 == 0 {
-            panic!("Error: Zero denominator.");
-        }
+        utility::check_zero(value.1);
 
         let mut f = Self {
             numerator: value.0,
@@ -190,9 +190,7 @@ impl Rem for Fraction {
     type Output = Self;
 
     fn rem(self, rhs: Self) -> Self::Output {
-        if rhs.numerator == 0 {
-            panic!("Error: Zero denominator.");
-        }
+        utility::check_zero(rhs.numerator);
 
         Self::from((
             (self.numerator * rhs.denominator) % (rhs.numerator * self.denominator),

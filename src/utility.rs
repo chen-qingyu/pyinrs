@@ -20,6 +20,13 @@ pub fn check_full(size: usize, capacity: usize) {
 }
 
 #[inline]
+pub fn check_zero<T: Into<i32> + Copy>(number: T) {
+    if Into::<i32>::into(number) == 0 {
+        panic!("Error: Divide by zero.");
+    }
+}
+
+#[inline]
 pub fn calc_index(mut index: i32, size: usize) -> usize {
     if index < 0 {
         index += size as i32;

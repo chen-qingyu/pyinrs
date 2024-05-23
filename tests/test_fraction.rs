@@ -17,7 +17,7 @@ fn setup() -> Fixture {
 }
 
 #[rstest]
-#[should_panic(expected = "Error: Zero denominator.")]
+#[should_panic(expected = "Error: Divide by zero.")]
 fn basics() {
     let _ = Fraction::from((1, 0));
 }
@@ -119,11 +119,11 @@ fn mul(setup: Fixture) {
 
 #[rstest]
 #[case::no_panic(1)]
-#[should_panic(expected = "Error: Zero denominator.")]
+#[should_panic(expected = "Error: Divide by zero.")]
 #[case::panic_with_message(2)]
-#[should_panic(expected = "Error: Zero denominator.")]
+#[should_panic(expected = "Error: Divide by zero.")]
 #[case::panic_with_message(3)]
-#[should_panic(expected = "Error: Zero denominator.")]
+#[should_panic(expected = "Error: Divide by zero.")]
 #[case::panic_with_message(4)]
 fn div(setup: Fixture, #[case] case: i32) {
     match case {
@@ -151,11 +151,11 @@ fn div(setup: Fixture, #[case] case: i32) {
 
 #[rstest]
 #[case::no_panic(1)]
-#[should_panic(expected = "Error: Zero denominator.")]
+#[should_panic(expected = "Error: Divide by zero.")]
 #[case::panic_with_message(2)]
-#[should_panic(expected = "Error: Zero denominator.")]
+#[should_panic(expected = "Error: Divide by zero.")]
 #[case::panic_with_message(3)]
-#[should_panic(expected = "Error: Zero denominator.")]
+#[should_panic(expected = "Error: Divide by zero.")]
 #[case::panic_with_message(4)]
 fn rem(setup: Fixture, #[case] case: i32) {
     match case {
