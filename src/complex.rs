@@ -100,34 +100,27 @@ impl FromStr for Complex {
         let s = s.trim();
 
         // handle real only
-        if let Ok(real) = s.parse::<f64>() {
+        if let Ok(real) = s.parse() {
             return Ok(Complex { real, imag: 0.0 });
         }
 
         // handle imag only
-        let mut s = s.to_string();
-        if s.pop() == Some('j') {
-            if let Ok(imag) = s.parse::<f64>() {
+        if s.as_bytes().last() == Some(&b'j') {
+            if let Ok(imag) = s[..(s.len() - 1)].parse() {
                 return Ok(Complex { real: 0.0, imag });
             }
         }
 
-        // poped 'j'
-
-        let re = Regex::new(r"^([-+]?\d+\.?\d*)([-+]?\d+\.?\d*)$").unwrap();
-        if let Some(caps) = re.captures(&s) {
+        let re = Regex::new(r"^([-+]?\d+\.?\d*)([-+]?\d+\.?\d*)j$").unwrap();
+        if let Some(caps) = re.captures(s) {
             if caps.len() == 3 {
-                let real = caps.get(1).unwrap().as_str();
-                let imag = caps.get(2).unwrap().as_str();
-                let real = real.parse::<f64>().map_err(|_| ParseComplexError)?;
-                let imag = imag.parse::<f64>().map_err(|_| ParseComplexError)?;
-                Ok(Complex { real, imag })
-            } else {
-                Err(ParseComplexError)
+                let real = caps[1].parse().map_err(|_| ParseComplexError)?;
+                let imag = caps[2].parse().map_err(|_| ParseComplexError)?;
+                return Ok(Complex { real, imag });
             }
-        } else {
-            Err(ParseComplexError)
         }
+
+        Err(ParseComplexError)
     }
 }
 
