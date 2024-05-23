@@ -29,7 +29,7 @@ To use it, add the following lines to your `Cargo.toml` file:
 pyinrs = "1"
 ```
 
-There are a total of 7 classes, refer to the 7 commonly used classes in Python:
+There are a total of 8 classes, refer to commonly used classes in Python:
 
 | Type in PyInRs | Type in Python       |
 | -------------- | -------------------- |
