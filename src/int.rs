@@ -397,8 +397,9 @@ impl Int {
         let mut digits_vec = vec![0; digits]; // may be 0
         let sign = if digits_vec.is_empty() { 0 } else { 1 };
 
+        let digit = Uniform::from(0..=9);
         for d in digits_vec.iter_mut() {
-            *d = rng.sample(Uniform::from(0..=9));
+            *d = rng.sample(digit);
         }
 
         // reset most significant digit if is 0
