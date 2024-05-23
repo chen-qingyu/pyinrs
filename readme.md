@@ -38,6 +38,7 @@ There are a total of 7 classes, refer to the 7 commonly used classes in Python:
 | `Dict<K, V>`   | `dict`               |
 | `Int`          | `int`                |
 | `Str`          | `str`                |
+| `Complex`      | `complex`            |
 | `Deque<T>`     | `collections.deque`  |
 | `Fraction`     | `fractions.Fraction` |
 
@@ -78,6 +79,11 @@ Int::new().next_prime();// 2
 Str::from("one, two, three").split(", "); // ["one", "two", "three"]
 // Str join
 Str::from(".").join(["192", "168", "0", "1"].into()); // "192.168.0.1"
+
+// Complex addition
+Complex::from((1., 2.)) + Complex::from((1., 3.)); // (2+5j)
+// Complex power
+Complex::pow(&Complex::from((1., 2.)), &Complex::from((-1., 2.))); // (0.04281551979798478+0.023517649351954585j)
 
 // Deque element reference
 Deque::from([1, 2, 3, 4, 5]).front(); // 1

@@ -12,6 +12,7 @@ keywords = ["type", "python"]
 
 [dependencies]
 rand = "0.8"
+regex = "1"
 
 [dev-dependencies]
 rstest = "0"

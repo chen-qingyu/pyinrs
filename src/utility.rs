@@ -20,8 +20,8 @@ pub fn check_full(size: usize, capacity: usize) {
 }
 
 #[inline]
-pub fn check_zero<T: Into<i32> + Copy>(number: T) {
-    if Into::<i32>::into(number) == 0 {
+pub fn check_zero<T: Into<f64> + Copy>(number: T) {
+    if Into::<f64>::into(number) == 0.0 {
         panic!("Error: Divide by zero.");
     }
 }

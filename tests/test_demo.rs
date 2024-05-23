@@ -39,6 +39,14 @@ fn usage() {
     // Str join
     assert_eq!(Str::from(".").join(["192", "168", "0", "1"].into()), "192.168.0.1".into());
 
+    // Complex addition
+    assert_eq!(Complex::from((1., 2.)) + Complex::from((1., 3.)), Complex::from((2., 5.)));
+    // Complex power
+    assert_eq!(
+        Complex::pow(&Complex::from((1., 2.)), &Complex::from((-1., 2.))),
+        Complex::from((0.04281551979798478, 0.023517649351954585))
+    );
+
     // Deque element reference
     assert_eq!(Deque::from([1, 2, 3, 4, 5]).front(), Some(&1));
     // Deque rotate to right (or left), very vivid!

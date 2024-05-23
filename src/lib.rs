@@ -2,6 +2,7 @@
 
 mod utility;
 
+mod complex;
 mod deque;
 mod dict;
 mod fraction;
@@ -10,6 +11,7 @@ mod list;
 mod set;
 mod str;
 
+pub use complex::Complex;
 pub use deque::Deque;
 pub use dict::Dict;
 pub use fraction::Fraction;
