@@ -36,7 +36,7 @@ impl Fraction {
         self.denominator /= a;
     }
 
-    /// Creates a new zero fraction.
+    /// Construct a new zero fraction.
     pub fn new() -> Self {
         Self { numerator: 0, denominator: 1 }
     }

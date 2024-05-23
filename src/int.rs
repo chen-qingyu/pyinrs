@@ -90,7 +90,7 @@ impl Int {
         self.trim();
     }
 
-    /// Creates a new zero integer.
+    /// Construct a new zero integer.
     pub fn new() -> Self {
         Self::default()
     }
@@ -276,7 +276,7 @@ impl Int {
         cur_sqrt
     }
 
-    /// Return base**exp.
+    /// Return `base**exp`.
     pub fn pow(base: &Int, exp: &Int) -> Self {
         // check if base.abs() is 1
         // if base.abs() is 1, only when base is negative and exp is odd return -1, otherwise return 1
@@ -309,7 +309,7 @@ impl Int {
         result
     }
 
-    /// Return (base**exp) % module faster.
+    /// Return `(base**exp) % module` faster.
     pub fn pow_mod(base: &Int, exp: &Int, module: &Int) -> Self {
         // check if base.abs() is 1
         // if base.abs() is 1, only when base is negative and exp is odd return -1, otherwise return 1
@@ -362,8 +362,10 @@ impl Int {
         result
     }
 
-    /// Calculate the greatest common divisor of two integers using Euclidean algorithm.
+    /// Calculate the greatest common divisor of two integers.
     pub fn gcd(int1: &Int, int2: &Int) -> Int {
+        // using Euclidean algorithm
+
         let mut a = int1.clone();
         let mut b = int2.clone();
 

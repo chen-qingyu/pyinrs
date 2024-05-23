@@ -7,7 +7,7 @@ use std::{
 
 use crate::utility;
 
-/// Set is a collection of distinct objects.
+/// Set is collection of distinct objects.
 /// Common uses include membership testing, removing duplicates from a sequence, and computing mathematical operations.
 #[derive(Debug, Clone, PartialEq, Eq, Default, Hash)]
 pub struct Set<T> {
@@ -15,22 +15,22 @@ pub struct Set<T> {
 }
 
 impl<T: Ord> Set<T> {
-    /// Creates a new empty set.
+    /// Construct an empty set.
     pub fn new() -> Self {
         Self { data: BTreeSet::new() }
     }
 
-    /// Returns the number of elements in the set.
+    /// Return the number of elements in the set.
     pub fn len(&self) -> usize {
         self.data.len()
     }
 
-    /// Returns `true` if the set contains no elements.
+    /// Return `true` if the set contains no elements.
     pub fn is_empty(&self) -> bool {
         self.data.is_empty()
     }
 
-    /// Gets an iterator that visits the elements in the `Set` in ascending order.
+    /// Return an iterator that visits the elements in the `Set` in ascending order.
     pub fn iter(&self) -> std::collections::btree_set::Iter<T> {
         self.data.iter()
     }
@@ -40,7 +40,7 @@ impl<T: Ord> Set<T> {
         self.data.iter().find(|&e| e == value)
     }
 
-    /// Returns `true` if the set contains an element equal to the value.
+    /// Return `true` if the set contains an element equal to the value.
     pub fn contains(&self, value: &T) -> bool {
         self.data.contains(value)
     }
@@ -55,27 +55,27 @@ impl<T: Ord> Set<T> {
         self.data.last()
     }
 
-    /// Returns `true` if `self` has no elements in common with `other`.
+    /// Return `true` if `self` has no elements in common with `other`.
     pub fn is_disjoint(&self, other: &Self) -> bool {
         self.data.is_disjoint(&other.data)
     }
 
-    /// Adds a value to the set. Returns whether the value was newly inserted.
+    /// Add a value to the set. Return whether the value was newly inserted.
     pub fn add(&mut self, value: T) -> bool {
         self.data.insert(value)
     }
 
-    /// Removes a value from the set. Returns whether such an element was present.
+    /// Remove a value from the set. Return whether such an element was present.
     pub fn remove(&mut self, value: &T) -> bool {
         self.data.remove(value)
     }
 
-    /// Removes the first element from the set and returns it, if any.
+    /// Remove the first element from the set and returns it, if any.
     pub fn pop(&mut self) -> Option<T> {
         self.data.pop_first()
     }
 
-    /// Clears the set, removing all elements.
+    /// Clear the set, removing all elements.
     pub fn clear(&mut self) {
         self.data.clear()
     }

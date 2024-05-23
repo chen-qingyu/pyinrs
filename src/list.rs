@@ -5,29 +5,29 @@ use std::{
 
 use crate::utility;
 
-/// Lists are mutable sequences, typically used to store collections of homogeneous items.
+/// List is mutable sequence, typically used to store collection of homogeneous items.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
 pub struct List<T> {
     pub(crate) data: Vec<T>,
 }
 
 impl<T> List<T> {
-    /// Creates a new empty list.
+    /// Construct an empty list.
     pub fn new() -> Self {
         Self { data: Vec::new() }
     }
 
-    /// Returns the number of elements in the list.
+    /// Return the number of elements in the list.
     pub fn len(&self) -> i32 {
         self.data.len() as i32
     }
 
-    /// Returns true if the list contains no elements.
+    /// Return `true` if the list contains no elements.
     pub fn is_empty(&self) -> bool {
         self.data.is_empty()
     }
 
-    /// Returns an iterator over the list.
+    /// Return an iterator over the list.
     pub fn iter(&self) -> std::slice::Iter<T> {
         self.data.iter()
     }
@@ -40,7 +40,7 @@ impl<T> List<T> {
         self.data.iter().find(|&x| x == element)
     }
 
-    /// Returns `true` if the list contains `element`.
+    /// Return `true` if the list contains `element`.
     pub fn contains(&self, element: &T) -> bool
     where
         T: PartialEq,
@@ -48,7 +48,7 @@ impl<T> List<T> {
         self.data.contains(element)
     }
 
-    /// Counts the number of occurrence of the specified `element`.
+    /// Count the number of occurrence of the specified `element`.
     pub fn count(&self, element: &T) -> usize
     where
         T: PartialEq,
@@ -70,7 +70,8 @@ impl<T> List<T> {
         Self { data: buffer }
     }
 
-    /// Inserts an element at position `index (-len() <= index <= len())` within the list.
+    /// Insert the specified `element` at the specified `index` in the list.
+    /// Index can be negative.
     pub fn insert(&mut self, index: i32, element: T) {
         utility::check_full(self.data.len(), i32::MAX as usize);
         utility::check_bounds(index, -self.len(), self.len() + 1);
@@ -79,7 +80,8 @@ impl<T> List<T> {
         self.data.insert(index, element)
     }
 
-    /// Removes and returns the element at position `index (-len() <= index < len())` within the list.
+    /// Remove the `element` at the specified `index` in the list.
+    /// Index can be negative.
     pub fn remove(&mut self, index: i32) -> T {
         utility::check_empty(self.data.len());
         utility::check_bounds(index, -self.len(), self.len());
@@ -88,23 +90,23 @@ impl<T> List<T> {
         self.data.remove(index)
     }
 
-    /// Appends an element to the back of the list.
+    /// Append an element to the back of the list.
     pub fn push(&mut self, element: T) {
         utility::check_full(self.data.len(), i32::MAX as usize);
         self.data.push(element)
     }
 
-    /// Removes the last element from a list and returns it, or `None` if it is empty.
+    /// Remove the last element from a list and returns it, or `None` if it is empty.
     pub fn pop(&mut self) -> Option<T> {
         self.data.pop()
     }
 
-    /// Clears the list.
+    /// Clear the list.
     pub fn clear(&mut self) {
         self.data.clear()
     }
 
-    /// Reverses the order of elements in the list, in place.
+    /// Reverse the order of elements in the list, in place.
     pub fn reverse(&mut self) {
         self.data.reverse()
     }

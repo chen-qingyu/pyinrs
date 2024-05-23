@@ -6,29 +6,29 @@ use std::{
 
 use crate::utility;
 
-/// A Dict object maps keys to arbitrary values.
+/// Dict maps keys to arbitrary values.
 #[derive(Debug, Clone, PartialEq, Eq, Default, Hash)]
 pub struct Dict<K, V> {
     data: BTreeMap<K, V>,
 }
 
 impl<K: Ord, V> Dict<K, V> {
-    /// Creates a new empty dictionary.
+    /// Construct an empty dictionary.
     pub fn new() -> Self {
         Self { data: BTreeMap::new() }
     }
 
-    /// Returns the number of elements in the dictionary.
+    /// Return the number of elements in the dictionary.
     pub fn len(&self) -> usize {
         self.data.len()
     }
 
-    /// Returns `true` if the dictionary contains no elements.
+    /// Return `true` if the dictionary contains no elements.
     pub fn is_empty(&self) -> bool {
         self.data.is_empty()
     }
 
-    /// Gets an iterator over the entries of the dictionary, sorted by key.
+    /// Return an iterator over the entries of the dictionary, sorted by key.
     pub fn iter(&self) -> std::collections::btree_map::Iter<K, V> {
         self.data.iter()
     }
@@ -38,14 +38,14 @@ impl<K: Ord, V> Dict<K, V> {
         self.data.iter().find(|p| p.0 == key)
     }
 
-    /// Returns `true` if the dictionary contains a value for the specified key.
+    /// Return `true` if the dictionary contains a value for the specified key.
     pub fn contains(&self, key: &K) -> bool {
         self.data.contains_key(key)
     }
 
-    /// Return a reference of the value for key if key is in the dictionary, else default value.
-    pub fn get<'a>(&'a self, key: &K, default: &'a V) -> &V {
-        self.data.get(key).unwrap_or(default)
+    /// Return a reference of the value for `key` if `key` is in the dictionary, else `defaults` value.
+    pub fn get<'a>(&'a self, key: &K, defaults: &'a V) -> &V {
+        self.data.get(key).unwrap_or(defaults)
     }
 
     /// Get an iterator over the keys of the dictionary, in sorted order.
@@ -58,22 +58,22 @@ impl<K: Ord, V> Dict<K, V> {
         self.data.values()
     }
 
-    /// Adds a value to the dictionary. Returns whether the value was newly inserted.
+    /// Add the specified `key` and `value` to the dictionary. Return `true` if the `key` and `value` was newly inserted.
     pub fn add(&mut self, key: K, value: V) -> bool {
         self.data.insert(key, value).is_none()
     }
 
-    /// Removes a `key` from the dictionary. Returns `true` if such an `key` was present.
+    /// Remove `key` from the dictionary. Return `true` if such an `key` was present.
     pub fn remove(&mut self, key: &K) -> bool {
         self.data.remove(key).is_some()
     }
 
-    /// Removes the first element from the dictionary and returns it, if any.
+    /// Remove the first element from the dictionary and returns it, if any.
     pub fn pop(&mut self) -> Option<(K, V)> {
         self.data.pop_first()
     }
 
-    /// Clears the dictionary, removing all elements.
+    /// Clear the dictionary, removing all elements.
     pub fn clear(&mut self) {
         self.data.clear()
     }

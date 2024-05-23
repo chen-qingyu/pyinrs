@@ -15,54 +15,54 @@ pub struct Deque<T> {
 }
 
 impl<T> Deque<T> {
-    /// Creates a new empty deque.
+    /// Construct an empty deque.
     pub fn new() -> Self {
         Deque { data: VecDeque::new() }
     }
 
-    /// Creates an empty deque with space for at least `capacity` elements.
+    /// Create an empty deque with space for at least `capacity` elements.
     pub fn with_capacity(capacity: usize) -> Self {
         Deque {
             data: VecDeque::with_capacity(capacity),
         }
     }
 
-    /// Returns the length of the deque.
+    /// Return the number of elements in the deque.
     pub fn len(&self) -> i32 {
         self.data.len() as i32
     }
 
-    /// Returns `true` if the deque is empty.
+    /// Return `true` if the deque is empty.
     pub fn is_empty(&self) -> bool {
         self.data.is_empty()
     }
 
-    /// Provides a forward iterator.
+    /// Provide a forward iterator.
     pub fn iter(&self) -> std::collections::vec_deque::Iter<T> {
         self.data.iter()
     }
 
-    /// Provides a reference to the back element, or `None` if the deque is empty.
+    /// Provide a reference to the back element, or `None` if the deque is empty.
     pub fn back(&self) -> Option<&T> {
         self.data.back()
     }
 
-    /// Provides a reference to the front element, or `None` if the deque is empty.
+    /// Provide a reference to the front element, or `None` if the deque is empty.
     pub fn front(&self) -> Option<&T> {
         self.data.front()
     }
 
-    /// Provides a mutable reference to the back element, or `None` if the deque is empty.
+    /// Provide a mutable reference to the back element, or `None` if the deque is empty.
     pub fn back_mut(&mut self) -> Option<&mut T> {
         self.data.back_mut()
     }
 
-    /// Provides a mutable reference to the front element, or `None` if the deque is empty.
+    /// Provide a mutable reference to the front element, or `None` if the deque is empty.
     pub fn front_mut(&mut self) -> Option<&mut T> {
         self.data.front_mut()
     }
 
-    /// Appends an element to the back of the deque.
+    /// Append the given `element` to the end of the deque.
     pub fn push_back(&mut self, element: T) -> &Self {
         utility::check_full(self.data.len(), i32::MAX as usize);
 
@@ -70,7 +70,7 @@ impl<T> Deque<T> {
         self
     }
 
-    /// Adds an element first in the deque.
+    /// Prepend the given `element` to the beginning of the deque.
     pub fn push_front(&mut self, element: T) -> &Self {
         utility::check_full(self.data.len(), i32::MAX as usize);
 
@@ -78,22 +78,22 @@ impl<T> Deque<T> {
         self
     }
 
-    /// Removes the last element and returns it, or `None` if the deque is empty.
+    /// Remove the last element and returns it, or `None` if the deque is empty.
     pub fn pop_back(&mut self) -> Option<T> {
         self.data.pop_back()
     }
 
-    /// Removes the first element and returns it, or `None` if the deque is empty.
+    /// Remove the first element and returns it, or `None` if the deque is empty.
     pub fn pop_front(&mut self) -> Option<T> {
         self.data.pop_front()
     }
 
-    /// Removes all elements from the deque.
+    /// Remove all elements from the deque.
     pub fn clear(&mut self) {
         self.data.clear()
     }
 
-    /// Reserves capacity for at least `additional` more elements to be inserted in the given deque.
+    /// Reserve capacity for at least `additional` more elements to be inserted in the given deque.
     pub fn reserve(&mut self, additional: usize) {
         self.data.reserve(additional)
     }
