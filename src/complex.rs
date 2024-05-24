@@ -38,12 +38,12 @@ impl Complex {
 
     /// Return the absolute value (distance from origin) of this.
     pub fn abs(&self) -> f64 {
-        (self.real * self.real + self.imag * self.imag).sqrt()
+        f64::hypot(self.real, self.imag)
     }
 
     /// Return the phase angle (in radians) of this.
     pub fn arg(&self) -> f64 {
-        self.imag.atan2(self.real)
+        f64::atan2(self.imag, self.real)
     }
 
     /// Return the conjugate value of this.
