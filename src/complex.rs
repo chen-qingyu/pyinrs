@@ -19,7 +19,6 @@ pub struct Complex {
     imag: f64,
 }
 
-/// Complex number class.
 impl Complex {
     /// Construct a new zero complex.
     pub fn new() -> Self {
