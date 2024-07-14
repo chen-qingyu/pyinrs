@@ -2,7 +2,7 @@
 
 _A Rust type library that is as easy to use as Python built-in types._
 
-### 1. Attribute
+## 1. Attribute
 
 - Name: PyInRs.
 - Language: Rust, requires version rustc >= `1.75.0`.
@@ -13,14 +13,14 @@ _A Rust type library that is as easy to use as Python built-in types._
 - Security: There is no `unsafe` code block.
 - Document: Using `cargo doc --open` to open documents.
 
-### 2. Feature
+## 2. Feature
 
 - Simple: Stay simple, stay young. While ensuring friendly and robust, try to be concise and easy to maintain and read.
 - Friendly: With my careful design, it can be used as conveniently as Python's built-in types. Very Pythonic.
 - Robust: There are corresponding checks for the insert, remove, modify, and access of containers.
 - Efficiency: The performance of the parts with the same function as the standard library is almost the same.
 
-### 3. Usage
+## 3. Usage
 
 To use it, add the following lines to your `Cargo.toml` file:
 
@@ -96,7 +96,7 @@ Fraction::from((1, 2)) + Fraction::from((1, 3)); // 5/6
 Fraction::from((1, 2)) % Fraction::from((1, 3)); // 1/6
 ```
 
-### 4. Advantage
+## 4. Advantage
 
 The advantage of PyInRs is that it combines the high performance of Rust with the ease of use of Python, and can also be easily combined with other libraries, for example:
 
