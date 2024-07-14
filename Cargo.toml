@@ -6,7 +6,6 @@ license = "GPL-3.0-or-later"
 authors = ["Qingyu Chen <chen_qingyu@qq.com>"]
 description = "A Rust type library that is as easy to use as Python built-in types."
 readme = "readme.md"
-homepage = "https://github.com/chen-qingyu/pyinrs"
 repository = "https://github.com/chen-qingyu/pyinrs"
 keywords = ["type", "python"]
 
