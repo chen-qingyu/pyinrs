@@ -9,7 +9,7 @@ use regex::Regex;
 
 use crate::utility;
 
-/// Complex number class.
+/// Complex provides support for complex number arithmetic.
 #[derive(Debug, Clone, Copy, Default)]
 pub struct Complex {
     // Real part.
