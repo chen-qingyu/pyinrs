@@ -272,7 +272,7 @@ impl Int {
 
         while cur_sqrt != pre_sqrt {
             pre_sqrt = cur_sqrt.clone();
-            cur_sqrt = &(&cur_sqrt + &(integer / &cur_sqrt)) / &Int::from(2);
+            cur_sqrt = (&cur_sqrt + integer / &cur_sqrt) / Int::from(2);
         }
 
         cur_sqrt
@@ -305,8 +305,8 @@ impl Int {
             if n.is_odd() {
                 result *= &num;
             }
-            num *= &num.clone();
-            n /= &2.into(); // integer divide
+            num *= num.clone();
+            n /= Int::from(2); // integer divide
         }
         result
     }
@@ -335,10 +335,10 @@ impl Int {
 
         while !n.is_zero() {
             if n.is_odd() {
-                result = &(&result * &num) % module;
+                result = (&result * &num) % module;
             }
-            num = &(&num * &num) % module;
-            n /= &2.into(); // integer divide
+            num = (&num * &num) % module;
+            n /= Int::from(2); // integer divide
         }
         result
     }
@@ -374,7 +374,7 @@ impl Int {
         // a, b = b, a % b until b == 0
         while !b.is_zero() {
             let t = b.clone();
-            b = &a % &b;
+            b = a % b;
             a = t;
         }
 
@@ -471,59 +471,52 @@ Function
 */
 
 impl PartialOrd for Int {
-    fn partial_cmp(&self, that: &Self) -> Option<Ordering> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Int {
+    fn cmp(&self, that: &Self) -> Ordering {
         if self.sign != that.sign {
             // self is +, that is - or 0
             if self.sign == 1 {
-                return Some(Ordering::Greater);
+                return Ordering::Greater;
             }
             // self is -, that is + or 0
             else if self.sign == -1 {
-                return Some(Ordering::Less);
+                return Ordering::Less;
             }
             // self is 0, that is + or -
             else {
-                return if that.sign == 1 { Some(Ordering::Less) } else { Some(Ordering::Greater) };
+                return if that.sign == 1 { Ordering::Less } else { Ordering::Greater };
             }
         }
 
         // the sign of two integers is the same
 
-        if self.digits.len() != that.digits.len() {
+        let this_len = self.digits.len();
+        let that_len = that.digits.len();
+
+        if this_len != that_len {
             if self.sign == 1 {
-                return if self.digits.len() > that.digits.len() {
-                    Some(Ordering::Greater)
-                } else {
-                    Some(Ordering::Less)
-                };
+                return if this_len > that_len { Ordering::Greater } else { Ordering::Less };
             } else {
-                return if self.digits.len() > that.digits.len() {
-                    Some(Ordering::Less)
-                } else {
-                    Some(Ordering::Greater)
-                };
+                return if this_len > that_len { Ordering::Less } else { Ordering::Greater };
             }
         }
 
-        for i in (0..self.digits.len()).rev() {
+        for i in (0..this_len).rev() {
             if self.digits[i] != that.digits[i] {
                 if self.sign == 1 {
-                    return if self.digits[i] > that.digits[i] {
-                        Some(Ordering::Greater)
-                    } else {
-                        Some(Ordering::Less)
-                    };
+                    return if self.digits[i] > that.digits[i] { Ordering::Greater } else { Ordering::Less };
                 } else {
-                    return if self.digits[i] > that.digits[i] {
-                        Some(Ordering::Less)
-                    } else {
-                        Some(Ordering::Greater)
-                    };
+                    return if self.digits[i] > that.digits[i] { Ordering::Less } else { Ordering::Greater };
                 }
             }
         }
 
-        Some(Ordering::Equal)
+        Ordering::Equal
     }
 }
 
@@ -531,10 +524,7 @@ impl Neg for &Int {
     type Output = Int;
 
     fn neg(self) -> Self::Output {
-        Int {
-            digits: self.digits.clone(),
-            sign: -self.sign,
-        }
+        self.clone().neg()
     }
 }
 
