@@ -150,6 +150,7 @@ impl Neg for Fraction {
     }
 }
 
+#[auto_impl_ops::auto_ops]
 impl Add for Fraction {
     type Output = Self;
 
@@ -161,6 +162,7 @@ impl Add for Fraction {
     }
 }
 
+#[auto_impl_ops::auto_ops]
 impl Sub for Fraction {
     type Output = Self;
 
@@ -172,6 +174,7 @@ impl Sub for Fraction {
     }
 }
 
+#[auto_impl_ops::auto_ops]
 impl Mul for Fraction {
     type Output = Self;
 
@@ -180,6 +183,7 @@ impl Mul for Fraction {
     }
 }
 
+#[auto_impl_ops::auto_ops]
 impl Div for Fraction {
     type Output = Self;
 
@@ -188,6 +192,7 @@ impl Div for Fraction {
     }
 }
 
+#[auto_impl_ops::auto_ops]
 impl Rem for Fraction {
     type Output = Self;
 
@@ -198,36 +203,6 @@ impl Rem for Fraction {
             (self.numerator * rhs.denominator) % (rhs.numerator * self.denominator),
             self.denominator * rhs.denominator,
         ))
-    }
-}
-
-impl AddAssign for Fraction {
-    fn add_assign(&mut self, rhs: Self) {
-        *self = *self + rhs;
-    }
-}
-
-impl SubAssign for Fraction {
-    fn sub_assign(&mut self, rhs: Self) {
-        *self = *self - rhs;
-    }
-}
-
-impl MulAssign for Fraction {
-    fn mul_assign(&mut self, rhs: Self) {
-        *self = *self * rhs;
-    }
-}
-
-impl DivAssign for Fraction {
-    fn div_assign(&mut self, rhs: Self) {
-        *self = *self / rhs;
-    }
-}
-
-impl RemAssign for Fraction {
-    fn rem_assign(&mut self, rhs: Self) {
-        *self = *self % rhs;
     }
 }
 

@@ -154,6 +154,7 @@ impl Neg for Complex {
     }
 }
 
+#[auto_impl_ops::auto_ops]
 impl Add for Complex {
     type Output = Self;
 
@@ -162,6 +163,7 @@ impl Add for Complex {
     }
 }
 
+#[auto_impl_ops::auto_ops]
 impl Sub for Complex {
     type Output = Self;
 
@@ -170,6 +172,7 @@ impl Sub for Complex {
     }
 }
 
+#[auto_impl_ops::auto_ops]
 impl Mul for Complex {
     type Output = Self;
 
@@ -178,6 +181,7 @@ impl Mul for Complex {
     }
 }
 
+#[auto_impl_ops::auto_ops]
 impl Div for Complex {
     type Output = Self;
 
@@ -189,30 +193,6 @@ impl Div for Complex {
             (self.real * rhs.real + self.imag * rhs.imag) / den,
             (self.imag * rhs.real - self.real * rhs.imag) / den,
         ))
-    }
-}
-
-impl AddAssign for Complex {
-    fn add_assign(&mut self, rhs: Self) {
-        *self = *self + rhs;
-    }
-}
-
-impl SubAssign for Complex {
-    fn sub_assign(&mut self, rhs: Self) {
-        *self = *self - rhs;
-    }
-}
-
-impl MulAssign for Complex {
-    fn mul_assign(&mut self, rhs: Self) {
-        *self = *self * rhs;
-    }
-}
-
-impl DivAssign for Complex {
-    fn div_assign(&mut self, rhs: Self) {
-        *self = *self / rhs;
     }
 }
 
