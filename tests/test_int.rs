@@ -408,9 +408,9 @@ fn log(setup: Fixture) {
     assert_eq!(Int::log(&123456789.into(), &10.into()), 8.into());
 
     assert_eq!(Int::log(&setup.positive, &2.into()), 64.into()); // integer: 2^64+1
-    assert_eq!(Int::log(&(&setup.positive * &2.into() - 3.into()), &2.into()), 64.into()); // integer: 2^65-1
-    assert_eq!(Int::log(&(&setup.positive * &2.into() - 2.into()), &2.into()), 65.into()); // integer: 2^65
-    assert_eq!(Int::log(&(&setup.positive * &2.into()), &2.into()), 65.into()); // integer: 2^65+2
+    assert_eq!(Int::log(&(&setup.positive * Int::from(2) - Int::from(3)), &2.into()), 64.into()); // integer: 2^65-1
+    assert_eq!(Int::log(&(&setup.positive * Int::from(2) - Int::from(2)), &2.into()), 65.into()); // integer: 2^65
+    assert_eq!(Int::log(&(&setup.positive * Int::from(2)), &2.into()), 65.into()); // integer: 2^65+2
 
     assert_eq!(Int::log(&"123456789000".into(), &233.into()), 4.into()); // 4.6851911360933745
 }

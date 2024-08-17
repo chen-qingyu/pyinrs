@@ -549,121 +549,7 @@ impl Neg for Int {
     }
 }
 
-impl Add<&Int> for &Int {
-    type Output = Int;
-
-    fn add(self, rhs: &Int) -> Self::Output {
-        let mut x = self.clone();
-        x += rhs;
-        x
-    }
-}
-
-impl Add for Int {
-    type Output = Self;
-
-    fn add(self, rhs: Self) -> Self::Output {
-        &self + &rhs
-    }
-}
-
-impl Sub<&Int> for &Int {
-    type Output = Int;
-
-    fn sub(self, rhs: &Int) -> Self::Output {
-        let mut x = self.clone();
-        x -= rhs;
-        x
-    }
-}
-
-impl Sub for Int {
-    type Output = Self;
-
-    fn sub(self, rhs: Self) -> Self::Output {
-        &self - &rhs
-    }
-}
-
-impl Mul<&Int> for &Int {
-    type Output = Int;
-
-    fn mul(self, rhs: &Int) -> Self::Output {
-        // if one of the operands is zero, just return zero
-        if self.sign == 0 || rhs.sign == 0 {
-            return Int::new();
-        }
-
-        // the sign of two integers is not zero
-
-        // prepare variables
-        let size = self.digits.len() + rhs.digits.len();
-
-        let mut result = Int::new();
-        result.sign = if self.sign == rhs.sign { 1 } else { -1 }; // the sign is depends on the sign of operands
-        result.digits.resize(size, 0);
-
-        // simulate the vertical calculation
-        let a = &self.digits;
-        let b = &rhs.digits;
-        let c = &mut result.digits;
-        for i in 0..a.len() {
-            for j in 0..b.len() {
-                c[i + j] += a[i] * b[j];
-                c[i + j + 1] += c[i + j] / 10;
-                c[i + j] %= 10;
-            }
-        }
-
-        result.trim();
-        result
-    }
-}
-
-impl Mul for Int {
-    type Output = Self;
-
-    fn mul(self, rhs: Self) -> Self::Output {
-        &self * &rhs
-    }
-}
-
-impl Div<&Int> for &Int {
-    type Output = Int;
-
-    fn div(self, rhs: &Int) -> Self::Output {
-        let mut x = self.clone();
-        x /= rhs;
-        x
-    }
-}
-
-impl Div for Int {
-    type Output = Self;
-
-    fn div(self, rhs: Self) -> Self::Output {
-        &self / &rhs
-    }
-}
-
-impl Rem<&Int> for &Int {
-    type Output = Int;
-
-    fn rem(self, rhs: &Int) -> Self::Output {
-        let mut x = self.clone();
-        x %= rhs;
-        x
-    }
-}
-
-impl Rem for Int {
-    type Output = Self;
-
-    fn rem(self, rhs: Self) -> Self::Output {
-        &self % &rhs
-    }
-}
-
+#[auto_impl_ops::auto_ops]
 impl AddAssign<&Int> for Int {
     fn add_assign(&mut self, rhs: &Int) {
         // if one of the operands is zero, just return another one
@@ -704,6 +590,7 @@ impl AddAssign<&Int> for Int {
     }
 }
 
+#[auto_impl_ops::auto_ops]
 impl SubAssign<&Int> for Int {
     fn sub_assign(&mut self, rhs: &Int) {
         // if one of the operands is zero
@@ -756,12 +643,41 @@ impl SubAssign<&Int> for Int {
     }
 }
 
+#[auto_impl_ops::auto_ops]
 impl MulAssign<&Int> for Int {
     fn mul_assign(&mut self, rhs: &Int) {
-        *self = &*self * rhs;
+        // if one of the operands is zero, just return zero
+        if self.sign == 0 || rhs.sign == 0 {
+            *self = 0.into();
+        }
+
+        // the sign of two integers is not zero
+
+        // prepare variables
+        let size = self.digits.len() + rhs.digits.len();
+
+        let mut result = Int::new();
+        result.sign = if self.sign == rhs.sign { 1 } else { -1 }; // the sign is depends on the sign of operands
+        result.digits.resize(size, 0);
+
+        // simulate the vertical calculation
+        let a = &self.digits;
+        let b = &rhs.digits;
+        let c = &mut result.digits;
+        for i in 0..a.len() {
+            for j in 0..b.len() {
+                c[i + j] += a[i] * b[j];
+                c[i + j + 1] += c[i + j] / 10;
+                c[i + j] %= 10;
+            }
+        }
+
+        result.trim();
+        *self = result;
     }
 }
 
+#[auto_impl_ops::auto_ops]
 impl DivAssign<&Int> for Int {
     fn div_assign(&mut self, rhs: &Int) {
         // if rhs is zero, panic
@@ -805,6 +721,7 @@ impl DivAssign<&Int> for Int {
     }
 }
 
+#[auto_impl_ops::auto_ops]
 impl RemAssign<&Int> for Int {
     fn rem_assign(&mut self, rhs: &Int) {
         // if rhs is zero, panic
