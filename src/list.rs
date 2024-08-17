@@ -5,7 +5,7 @@ use std::{
 
 use crate::utility;
 
-/// List is mutable sequence, typically used to store collection of homogeneous items.
+/// List is collection of homogeneous objects.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
 pub struct List<T> {
     pub(crate) data: Vec<T>,

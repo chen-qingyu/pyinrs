@@ -6,9 +6,7 @@ use std::{
 
 use crate::utility;
 
-/// Deque is generalization of stack and queue.
-///
-/// Deque supports memory efficient pushes and pops from either side of the deque with approximately the same O(1) performance in either direction.
+/// Deque is generalization of stack and queue, supports memory efficient pushes and pops from either side.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
 pub struct Deque<T> {
     data: VecDeque<T>,

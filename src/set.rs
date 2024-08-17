@@ -8,7 +8,6 @@ use std::{
 use crate::utility;
 
 /// Set is collection of distinct objects.
-/// Common uses include membership testing, removing duplicates from a sequence, and computing mathematical operations.
 #[derive(Debug, Clone, PartialEq, Eq, Default, Hash)]
 pub struct Set<T> {
     data: BTreeSet<T>,
