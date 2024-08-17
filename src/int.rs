@@ -479,18 +479,13 @@ impl PartialOrd for Int {
 impl Ord for Int {
     fn cmp(&self, that: &Self) -> Ordering {
         if self.sign != that.sign {
-            // self is +, that is - or 0
-            if self.sign == 1 {
-                return Ordering::Greater;
-            }
-            // self is -, that is + or 0
-            else if self.sign == -1 {
-                return Ordering::Less;
-            }
-            // self is 0, that is + or -
-            else {
-                return if that.sign == 1 { Ordering::Less } else { Ordering::Greater };
-            }
+            return match (self.sign, that.sign) {
+                (1, _) => Ordering::Greater,  // self is +, that is - or 0
+                (-1, _) => Ordering::Less,    // self is -, that is + or 0
+                (0, 1) => Ordering::Less,     // self is 0, that is +
+                (0, -1) => Ordering::Greater, // self is 0, that is -
+                _ => unreachable!(),
+            };
         }
 
         // the sign of two integers is the same
