@@ -86,9 +86,15 @@ fn advantage() {
     use mymatrix::Matrix;
 
     let a = Matrix::from([[1, 2], [3, 4]]);
-    let b = Matrix::create(2, 2, 0.into());
-    let c = Matrix::create(2, 2, 1.into());
+    let b = Matrix::zeros(2, 2);
+    let c = Matrix::ones(2, 2);
     let d = Matrix::eye(2);
 
-    assert_eq!(format!("{}", ((a + b) * (c + d)).inv().unwrap()), "[[\n-11/6 5/6;\n5/3 -2/3;\n]]");
+    assert_eq!(
+        format!("{}", ((a + b) * (c + d)).inv().unwrap()),
+        "[
+-11/6   5/6
+  5/3  -2/3
+]"
+    );
 }

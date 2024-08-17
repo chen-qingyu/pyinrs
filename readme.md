@@ -128,16 +128,16 @@ let _set3: HashSet<Fraction> = HashSet::from([(1, 2).into(), (3, 4).into()]);
 use mymatrix::Matrix;
 
 let a = Matrix::from([[1, 2], [3, 4]]);
-let b = Matrix::create(2, 2, 0.into());
-let c = Matrix::create(2, 2, 1.into());
+let b = Matrix::zeros(2, 2);
+let c = Matrix::ones(2, 2);
 let d = Matrix::eye(2);
 
 print!("{}", ((a + b) * (c + d)).inv().unwrap());
 /*
-[[
--11/6 5/6;
-5/3 -2/3;
-]]
+[
+-11/6   5/6
+  5/3  -2/3
+]
 */
 ```
 
