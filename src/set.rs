@@ -29,7 +29,7 @@ impl<T: Ord> Set<T> {
         self.data.is_empty()
     }
 
-    /// Return an iterator that visits the elements in the `Set` in ascending order.
+    /// Return an iterator that visits the elements in the set in ascending order.
     pub fn iter(&self) -> std::collections::btree_set::Iter<T> {
         self.data.iter()
     }
@@ -109,7 +109,7 @@ impl<T: Ord + Clone> BitAnd for Set<T> {
     type Output = Self;
 
     fn bitand(self, rhs: Self) -> Self::Output {
-        Set { data: &self.data & &rhs.data }
+        Self { data: &self.data & &rhs.data }
     }
 }
 
@@ -117,7 +117,7 @@ impl<T: Ord + Clone> BitOr for Set<T> {
     type Output = Self;
 
     fn bitor(self, rhs: Self) -> Self::Output {
-        Set { data: &self.data | &rhs.data }
+        Self { data: &self.data | &rhs.data }
     }
 }
 
@@ -125,7 +125,7 @@ impl<T: Ord + Clone> BitXor for Set<T> {
     type Output = Self;
 
     fn bitxor(self, rhs: Self) -> Self::Output {
-        Set { data: &self.data ^ &rhs.data }
+        Self { data: &self.data ^ &rhs.data }
     }
 }
 
@@ -133,7 +133,7 @@ impl<T: Ord + Clone> Sub for Set<T> {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self::Output {
-        Set { data: &self.data - &rhs.data }
+        Self { data: &self.data - &rhs.data }
     }
 }
 

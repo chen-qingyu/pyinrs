@@ -15,12 +15,12 @@ pub struct Deque<T> {
 impl<T> Deque<T> {
     /// Construct an empty deque.
     pub fn new() -> Self {
-        Deque { data: VecDeque::new() }
+        Self { data: VecDeque::new() }
     }
 
     /// Create an empty deque with space for at least `capacity` elements.
     pub fn with_capacity(capacity: usize) -> Self {
-        Deque {
+        Self {
             data: VecDeque::with_capacity(capacity),
         }
     }

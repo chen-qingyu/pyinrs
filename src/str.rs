@@ -144,7 +144,7 @@ impl FromStr for Str {
     type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(Str { data: s.to_string() })
+        Ok(Self { data: s.to_string() })
     }
 }
 

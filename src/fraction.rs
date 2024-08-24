@@ -97,7 +97,7 @@ impl FromStr for Fraction {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if let Ok(numerator) = s.trim().parse() {
-            return Ok(Fraction { numerator, denominator: 1 });
+            return Ok(Self { numerator, denominator: 1 });
         }
 
         let (numerator, denominator) = s.trim().split_once('/').ok_or(ParseFractionError)?;
@@ -105,7 +105,7 @@ impl FromStr for Fraction {
         let numerator = numerator.parse().map_err(|_| ParseFractionError)?;
         let denominator = denominator.parse().map_err(|_| ParseFractionError)?;
 
-        Ok(Fraction::from((numerator, denominator)))
+        Ok(Self::from((numerator, denominator)))
     }
 }
 

@@ -141,7 +141,7 @@ impl Int {
             return false; // prime >= 2
         }
 
-        let mut i = Int::from(2);
+        let mut i = Self::from(2);
         while &i * &i <= *self {
             if (self % &i).is_zero() {
                 return false;
@@ -192,7 +192,7 @@ impl Int {
             panic!("Error: Negative integer have no factorial.");
         }
 
-        let mut result = Int::from(1); // 0! == 1
+        let mut result = Self::from(1); // 0! == 1
         let mut i = self.clone();
 
         // fast judgement, fast decrement
@@ -205,7 +205,7 @@ impl Int {
     }
 
     /// Calculate the next prime that greater than self.
-    pub fn next_prime(&self) -> Int {
+    pub fn next_prime(&self) -> Self {
         if *self < 2.into() {
             return 2.into();
         }
@@ -245,7 +245,7 @@ impl Int {
     }
 
     /// Return the square root of `integer`.
-    pub fn sqrt(integer: &Int) -> Int {
+    pub fn sqrt(integer: &Self) -> Self {
         if integer.sign == -1 {
             panic!("Error: Cannot compute square root of a negative integer.");
         }
@@ -266,20 +266,20 @@ impl Int {
         // cur_sqrt = 10^(digits/2 - 1) in O(1)
         let mut digits = vec![0; integer.digits.len() / 2 - 1]; // integer.digits() >= 2
         digits.push(1);
-        let mut cur_sqrt = Int { digits, sign: 1 };
+        let mut cur_sqrt = Self { digits, sign: 1 };
 
-        let mut pre_sqrt = Int::from(-1);
+        let mut pre_sqrt = Self::from(-1);
 
         while cur_sqrt != pre_sqrt {
             pre_sqrt = cur_sqrt.clone();
-            cur_sqrt = (&cur_sqrt + integer / &cur_sqrt) / Int::from(2);
+            cur_sqrt = (&cur_sqrt + integer / &cur_sqrt) / Self::from(2);
         }
 
         cur_sqrt
     }
 
     /// Return `base**exp`.
-    pub fn pow(base: &Int, exp: &Int) -> Self {
+    pub fn pow(base: &Self, exp: &Self) -> Self {
         // check if base.abs() is 1
         // if base.abs() is 1, only when base is negative and exp is odd return -1, otherwise return 1
         if base.digits() == 1 && base.digits[0] == 1 {
@@ -306,13 +306,13 @@ impl Int {
                 result *= &num;
             }
             num *= num.clone();
-            n /= Int::from(2); // integer divide
+            n /= Self::from(2); // integer divide
         }
         result
     }
 
     /// Return `(base**exp) % module` faster.
-    pub fn pow_mod(base: &Int, exp: &Int, module: &Int) -> Self {
+    pub fn pow_mod(base: &Self, exp: &Self, module: &Self) -> Self {
         // check if base.abs() is 1
         // if base.abs() is 1, only when base is negative and exp is odd return -1, otherwise return 1
         if base.digits() == 1 && base.digits[0] == 1 {
@@ -338,13 +338,13 @@ impl Int {
                 result = (&result * &num) % module;
             }
             num = (&num * &num) % module;
-            n /= Int::from(2); // integer divide
+            n /= Self::from(2); // integer divide
         }
         result
     }
 
     /// Return the logarithm of `integer` based on `base`.
-    pub fn log(integer: &Int, base: &Int) -> Int {
+    pub fn log(integer: &Self, base: &Self) -> Self {
         if integer.sign <= 0 || base < &2.into() {
             panic!("Error: Math domain error.");
         }
@@ -353,7 +353,7 @@ impl Int {
             return (integer.digits() - 1).into();
         }
 
-        let mut result = Int::new();
+        let mut result = Self::new();
         let mut value = integer / base;
 
         while !value.is_zero() {
@@ -365,7 +365,7 @@ impl Int {
     }
 
     /// Calculate the greatest common divisor of two integers.
-    pub fn gcd(int1: &Int, int2: &Int) -> Int {
+    pub fn gcd(int1: &Self, int2: &Self) -> Self {
         // using Euclidean algorithm
 
         let mut a = int1.clone();
@@ -382,16 +382,16 @@ impl Int {
     }
 
     /// Calculate the least common multiple of two integers.
-    pub fn lcm(int1: &Int, int2: &Int) -> Int {
+    pub fn lcm(int1: &Self, int2: &Self) -> Self {
         if int1.is_zero() || int2.is_zero() {
-            return Int::new();
+            return Self::new();
         }
 
-        (int1 * int2) / Int::gcd(int1, int2) // LCM = (int1 * int2) / GCD
+        (int1 * int2) / Self::gcd(int1, int2) // LCM = (int1 * int2) / GCD
     }
 
     /// Return a non-negative random integer with a specific number of `digits`.
-    pub fn random(digits: usize) -> Int {
+    pub fn random(digits: usize) -> Self {
         let mut rng = rand::thread_rng();
 
         let mut digits_vec = vec![0; digits]; // may be 0
@@ -407,7 +407,7 @@ impl Int {
             *digits_vec.last_mut().unwrap() = rng.sample(Uniform::from(1..=9));
         }
 
-        Int { digits: digits_vec, sign }
+        Self { digits: digits_vec, sign }
     }
 }
 
@@ -462,7 +462,7 @@ impl FromStr for Int {
             return Err(ParseIntError);
         }
 
-        Ok(Int::from(s))
+        Ok(Self::from(s))
     }
 }
 
@@ -536,7 +536,7 @@ impl Neg for Int {
 
 #[auto_impl_ops::auto_ops]
 impl AddAssign<&Int> for Int {
-    fn add_assign(&mut self, rhs: &Int) {
+    fn add_assign(&mut self, rhs: &Self) {
         // if one of the operands is zero, just return another one
         if self.sign == 0 || rhs.sign == 0 {
             return if self.sign == 0 {
@@ -577,7 +577,7 @@ impl AddAssign<&Int> for Int {
 
 #[auto_impl_ops::auto_ops]
 impl SubAssign<&Int> for Int {
-    fn sub_assign(&mut self, rhs: &Int) {
+    fn sub_assign(&mut self, rhs: &Self) {
         // if one of the operands is zero
         if self.sign == 0 || rhs.sign == 0 {
             return if self.sign == 0 {
@@ -600,7 +600,7 @@ impl SubAssign<&Int> for Int {
         let mut num = rhs.clone();
         num.digits.resize(size, 0);
 
-        let mut result = Int::new();
+        let mut result = Self::new();
         result.sign = self.sign; // the signs are same
 
         // let self.abs() >= num.abs()
@@ -630,7 +630,7 @@ impl SubAssign<&Int> for Int {
 
 #[auto_impl_ops::auto_ops]
 impl MulAssign<&Int> for Int {
-    fn mul_assign(&mut self, rhs: &Int) {
+    fn mul_assign(&mut self, rhs: &Self) {
         // if one of the operands is zero, just return zero
         if self.sign == 0 || rhs.sign == 0 {
             *self = 0.into();
@@ -641,7 +641,7 @@ impl MulAssign<&Int> for Int {
         // prepare variables
         let size = self.digits.len() + rhs.digits.len();
 
-        let mut result = Int::new();
+        let mut result = Self::new();
         result.sign = if self.sign == rhs.sign { 1 } else { -1 }; // the sign is depends on the sign of operands
         result.digits.resize(size, 0);
 
@@ -664,13 +664,13 @@ impl MulAssign<&Int> for Int {
 
 #[auto_impl_ops::auto_ops]
 impl DivAssign<&Int> for Int {
-    fn div_assign(&mut self, rhs: &Int) {
+    fn div_assign(&mut self, rhs: &Self) {
         // if rhs is zero, panic
         utility::check_zero(rhs.sign);
 
         // if self.abs() < rhs.abs(), just return 0
         if self.digits.len() < rhs.digits.len() {
-            return *self = Int::new();
+            return *self = Self::new();
         }
 
         // the sign of two integers is not zero
@@ -681,9 +681,9 @@ impl DivAssign<&Int> for Int {
         // tmp = rhs * 10^(size), not size-1, since the for loop will pop at first, so tmp is rhs * 10^(size-1) at first
         let mut digits = [0i8].repeat(size);
         digits.extend(rhs.digits.clone());
-        let mut tmp = Int { digits, sign: 1 }; // intermediate variable for rhs * 10^i, positive
+        let mut tmp = Self { digits, sign: 1 }; // intermediate variable for rhs * 10^i, positive
 
-        let mut result = Int::new();
+        let mut result = Self::new();
         result.sign = if self.sign == rhs.sign { 1 } else { -1 }; // the sign is depends on the sign of operands
         result.digits.resize(size, 0);
 
@@ -708,7 +708,7 @@ impl DivAssign<&Int> for Int {
 
 #[auto_impl_ops::auto_ops]
 impl RemAssign<&Int> for Int {
-    fn rem_assign(&mut self, rhs: &Int) {
+    fn rem_assign(&mut self, rhs: &Self) {
         // if rhs is zero, panic
         utility::check_zero(rhs.sign);
 
@@ -727,7 +727,7 @@ impl RemAssign<&Int> for Int {
         // tmp = rhs * 10^(size), not size-1, since the for loop will pop at first, so tmp is rhs * 10^(size-1) at first
         let mut digits = [0i8].repeat(size);
         digits.extend(rhs.digits.clone());
-        let mut tmp = Int { digits, sign: 1 }; // intermediate variable for rhs * 10^i, positive
+        let mut tmp = Self { digits, sign: 1 }; // intermediate variable for rhs * 10^i, positive
 
         // calculation
         for _ in 0..size {

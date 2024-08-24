@@ -46,15 +46,15 @@ impl Complex {
     }
 
     /// Return the conjugate value of this.
-    pub fn conjugate(&self) -> Complex {
-        Complex {
+    pub fn conjugate(&self) -> Self {
+        Self {
             real: self.real,
             imag: -self.imag,
         }
     }
 
     /// Return `base**exp`.
-    pub fn pow(base: &Complex, exp: &Complex) -> Complex {
+    pub fn pow(base: &Self, exp: &Self) -> Self {
         if exp == &0.0.into() {
             return 1.0.into();
         }
@@ -66,7 +66,7 @@ impl Complex {
         let coef = base.abs().powf(exp.real) * (-base.arg() * exp.imag).exp();
         let theta = base.abs().ln() * exp.imag + base.arg() * exp.real;
 
-        Complex {
+        Self {
             real: coef * theta.cos(),
             imag: coef * theta.sin(),
         }
@@ -100,13 +100,13 @@ impl FromStr for Complex {
 
         // handle real only
         if let Ok(real) = s.parse() {
-            return Ok(Complex { real, imag: 0.0 });
+            return Ok(Self { real, imag: 0.0 });
         }
 
         // handle imag only
         if s.as_bytes().last() == Some(&b'j') {
             if let Ok(imag) = s[..(s.len() - 1)].parse() {
-                return Ok(Complex { real: 0.0, imag });
+                return Ok(Self { real: 0.0, imag });
             }
         }
 
@@ -115,7 +115,7 @@ impl FromStr for Complex {
             if caps.len() == 3 {
                 let real = caps[1].parse().map_err(|_| ParseComplexError)?;
                 let imag = caps[2].parse().map_err(|_| ParseComplexError)?;
-                return Ok(Complex { real, imag });
+                return Ok(Self { real, imag });
             }
         }
 
