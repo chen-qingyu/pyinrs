@@ -149,10 +149,10 @@ fn ops() {
     let set1 = Set::from([1, 2, 3, 4, 5]);
     let set2 = Set::from([1, 3, 5, 7, 9]);
 
-    assert_eq!(set1.clone() & set2.clone(), Set::from([1, 3, 5]));
-    assert_eq!(set1.clone() | set2.clone(), Set::from([1, 2, 3, 4, 5, 7, 9]));
-    assert_eq!(set1.clone() ^ set2.clone(), Set::from([2, 4, 7, 9]));
-    assert_eq!(set1.clone() - set2.clone(), Set::from([2, 4]));
+    assert_eq!(&set1 & &set2, Set::from([1, 3, 5]));
+    assert_eq!(&set1 | &set2, Set::from([1, 2, 3, 4, 5, 7, 9]));
+    assert_eq!(&set1 ^ &set2, Set::from([2, 4, 7, 9]));
+    assert_eq!(&set1 - &set2, Set::from([2, 4]));
 
     assert_eq!(Set::<i32>::new() & Set::new(), Set::new());
     assert_eq!(Set::<i32>::new() | Set::new(), Set::new());

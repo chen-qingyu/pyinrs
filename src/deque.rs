@@ -131,6 +131,7 @@ impl<T> IndexMut<i32> for Deque<T> {
     }
 }
 
+#[auto_impl_ops::auto_ops]
 impl<T> ShlAssign<usize> for Deque<T> {
     fn shl_assign(&mut self, mut rhs: usize) {
         if self.data.len() <= 1 || rhs == 0 {
@@ -145,6 +146,7 @@ impl<T> ShlAssign<usize> for Deque<T> {
     }
 }
 
+#[auto_impl_ops::auto_ops]
 impl<T> ShrAssign<usize> for Deque<T> {
     fn shr_assign(&mut self, rhs: usize) {
         if self.data.len() <= 1 || rhs == 0 {
@@ -152,24 +154,6 @@ impl<T> ShrAssign<usize> for Deque<T> {
         }
 
         self.shl_assign(self.data.len() - rhs % self.data.len()); // avoid to subtract with overflow
-    }
-}
-
-impl<T> Shl<usize> for Deque<T> {
-    type Output = Self;
-
-    fn shl(mut self, rhs: usize) -> Self::Output {
-        self <<= rhs;
-        self
-    }
-}
-
-impl<T> Shr<usize> for Deque<T> {
-    type Output = Self;
-
-    fn shr(mut self, rhs: usize) -> Self::Output {
-        self >>= rhs;
-        self
     }
 }
 

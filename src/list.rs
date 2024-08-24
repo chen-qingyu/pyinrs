@@ -1,6 +1,6 @@
 use std::{
     fmt::Display,
-    ops::{AddAssign, Index, IndexMut},
+    ops::{Add, AddAssign, Index, IndexMut},
 };
 
 use crate::utility;
@@ -154,6 +154,7 @@ impl<T> IndexMut<i32> for List<T> {
     }
 }
 
+#[auto_impl_ops::auto_ops]
 impl<T> AddAssign for List<T> {
     fn add_assign(&mut self, rhs: Self) {
         self.data.extend(rhs.data)

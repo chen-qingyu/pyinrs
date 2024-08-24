@@ -105,56 +105,28 @@ impl<T: Ord> PartialOrd for Set<T> {
     }
 }
 
-impl<T: Ord + Clone> BitAnd for Set<T> {
-    type Output = Self;
-
-    fn bitand(self, rhs: Self) -> Self::Output {
-        Self { data: &self.data & &rhs.data }
-    }
-}
-
-impl<T: Ord + Clone> BitOr for Set<T> {
-    type Output = Self;
-
-    fn bitor(self, rhs: Self) -> Self::Output {
-        Self { data: &self.data | &rhs.data }
-    }
-}
-
-impl<T: Ord + Clone> BitXor for Set<T> {
-    type Output = Self;
-
-    fn bitxor(self, rhs: Self) -> Self::Output {
-        Self { data: &self.data ^ &rhs.data }
-    }
-}
-
-impl<T: Ord + Clone> Sub for Set<T> {
-    type Output = Self;
-
-    fn sub(self, rhs: Self) -> Self::Output {
-        Self { data: &self.data - &rhs.data }
-    }
-}
-
+#[auto_impl_ops::auto_ops]
 impl<T: Ord + Clone> BitAndAssign for Set<T> {
     fn bitand_assign(&mut self, rhs: Self) {
         self.data = &self.data & &rhs.data;
     }
 }
 
+#[auto_impl_ops::auto_ops]
 impl<T: Ord + Clone> BitOrAssign for Set<T> {
     fn bitor_assign(&mut self, rhs: Self) {
         self.data = &self.data | &rhs.data;
     }
 }
 
+#[auto_impl_ops::auto_ops]
 impl<T: Ord + Clone> BitXorAssign for Set<T> {
     fn bitxor_assign(&mut self, rhs: Self) {
         self.data = &self.data ^ &rhs.data;
     }
 }
 
+#[auto_impl_ops::auto_ops]
 impl<T: Ord + Clone> SubAssign for Set<T> {
     fn sub_assign(&mut self, rhs: Self) {
         self.data = &self.data - &rhs.data;
