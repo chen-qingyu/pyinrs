@@ -88,7 +88,7 @@ fn advantage() {
     let a = Matrix::from([[1, 2], [3, 4]]);
     let b = Matrix::zeros(2, 2);
     let c = Matrix::ones(2, 2);
-    let d = Matrix::eye(2);
+    let d = Matrix::identity(2);
 
     assert_eq!(
         format!("{}", ((a + b) * (c + d)).inv().unwrap()),

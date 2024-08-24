@@ -6,7 +6,7 @@ _A Rust type library that is as easy to use as Python built-in types._
 
 - Name: PyInRs.
 - Language: Rust, requires version rustc >= `1.75.0`.
-- Goal: Write a Rust type library that is as easy to use as Python built-in types.
+- Goal: Provide a Rust type library that is as easy to use as Python built-in types.
 - Module: List, Set, Dict, Int, Str, Complex, Deque, Fraction
 - Style: Follow Rust's official recommended style.
 - Test: Using [rstest](https://crates.io/crates/rstest) for unit testing and ensure that all tests passed.
@@ -130,7 +130,7 @@ use mymatrix::Matrix;
 let a = Matrix::from([[1, 2], [3, 4]]);
 let b = Matrix::zeros(2, 2);
 let c = Matrix::ones(2, 2);
-let d = Matrix::eye(2);
+let d = Matrix::identity(2);
 
 print!("{}", ((a + b) * (c + d)).inv().unwrap());
 /*
