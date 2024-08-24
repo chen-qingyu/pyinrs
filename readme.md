@@ -4,14 +4,11 @@ _A Rust type library that is as easy to use as Python built-in types._
 
 ## 1. Attribute
 
-- Name: PyInRs.
-- Language: Rust, requires version rustc >= `1.75.0`.
-- Goal: Provide a Rust type library that is as easy to use as Python built-in types.
+- Name: PyInRs
+- Goal: Provide a Rust type library that is as easy to use as Python built-in types
 - Module: List, Set, Dict, Int, Str, Complex, Deque, Fraction
-- Style: Follow Rust's official recommended style.
-- Test: Using [rstest](https://crates.io/crates/rstest) for unit testing and ensure that all tests passed.
-- Security: There is no `unsafe` code block.
-- Document: Using `cargo doc --open` to open documents.
+- Test: Using [rstest](https://crates.io/crates/rstest) for unit tests and ensure all tests passed
+- Security: There is no `unsafe` code block
 
 ## 2. Feature
 
