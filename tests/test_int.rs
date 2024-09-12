@@ -418,15 +418,23 @@ fn log(setup: Fixture) {
 #[rstest]
 fn gcd_lcm() {
     // gcd()
+    assert_eq!(Int::gcd(&"0".into(), &"0".into()), "0".into());
     assert_eq!(Int::gcd(&"0".into(), &"1".into()), "1".into());
-    assert_eq!(Int::gcd(&"6".into(), &"12".into()), "6".into());
-    assert_eq!(Int::gcd(&"6".into(), &"11".into()), "1".into());
+    assert_eq!(Int::gcd(&"1".into(), &"0".into()), "1".into());
+    assert_eq!(Int::gcd(&"1".into(), &"1".into()), "1".into());
+    assert_eq!(Int::gcd(&"6".into(), &"8".into()), "2".into());
+    assert_eq!(Int::gcd(&"24".into(), &"48".into()), "24".into());
+    assert_eq!(Int::gcd(&"37".into(), &"48".into()), "1".into());
     assert_eq!(Int::gcd(&"12345".into(), &"54321".into()), "3".into());
 
     // lcm()
+    assert_eq!(Int::lcm(&"0".into(), &"0".into()), "0".into());
     assert_eq!(Int::lcm(&"0".into(), &"1".into()), "0".into());
-    assert_eq!(Int::lcm(&"6".into(), &"12".into()), "12".into());
-    assert_eq!(Int::lcm(&"6".into(), &"11".into()), "66".into());
+    assert_eq!(Int::lcm(&"1".into(), &"0".into()), "0".into());
+    assert_eq!(Int::lcm(&"1".into(), &"1".into()), "1".into());
+    assert_eq!(Int::lcm(&"6".into(), &"8".into()), "24".into());
+    assert_eq!(Int::lcm(&"24".into(), &"48".into()), "48".into());
+    assert_eq!(Int::lcm(&"37".into(), &"48".into()), "1776".into());
     assert_eq!(Int::lcm(&"12345".into(), &"54321".into()), "223530915".into());
 }
 
