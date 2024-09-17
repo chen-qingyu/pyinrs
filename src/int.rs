@@ -365,29 +365,17 @@ impl Int {
     }
 
     /// Calculate the greatest common divisor of two integers.
-    pub fn gcd(int1: &Self, int2: &Self) -> Self {
-        // using Euclidean algorithm
-
-        let mut a = int1.clone();
-        let mut b = int2.clone();
-
-        // a, b = b, a % b until b == 0
-        while !b.is_zero() {
-            let t = b.clone();
-            b = a % b;
-            a = t;
-        }
-
-        a // a is GCD
+    pub fn gcd(a: &Self, b: &Self) -> Self {
+        utility::gcd(a.clone(), b.clone())
     }
 
     /// Calculate the least common multiple of two integers.
-    pub fn lcm(int1: &Self, int2: &Self) -> Self {
-        if int1.is_zero() || int2.is_zero() {
+    pub fn lcm(a: &Self, b: &Self) -> Self {
+        if a.is_zero() || b.is_zero() {
             return Self::new();
         }
 
-        (int1 * int2) / Self::gcd(int1, int2) // LCM = (int1 * int2) / GCD
+        (a * b) / Self::gcd(a, b) // LCM = (a * b) / GCD
     }
 
     /// Return a non-negative random integer with a specific number of `digits`.

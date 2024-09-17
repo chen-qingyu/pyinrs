@@ -53,3 +53,16 @@ where
         write!(f, ", ")?;
     }
 }
+
+#[inline]
+pub fn gcd<T: std::ops::Rem<Output = T> + Clone + Eq + From<i32>>(mut a: T, mut b: T) -> T {
+    // using Euclidean algorithm
+
+    // a, b = b, a % b until b == 0
+    while b != 0.into() {
+        let t = b.clone();
+        b = a % b;
+        a = t;
+    }
+    a // a is the GCD
+}

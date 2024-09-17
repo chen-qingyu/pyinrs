@@ -26,16 +26,10 @@ impl Fraction {
             self.denominator = -self.denominator;
         }
 
-        // Euclid's algorithm
-        let mut a = self.numerator.abs();
-        let mut b = self.denominator.abs();
-        while b > 0 {
-            let t = a % b;
-            a = b;
-            b = t;
-        }
-        self.numerator /= a;
-        self.denominator /= a;
+        // simplify
+        let gcd = utility::gcd(self.numerator.abs(), self.denominator.abs());
+        self.numerator /= gcd;
+        self.denominator /= gcd;
     }
 
     /// Construct a new zero fraction.
@@ -63,29 +57,17 @@ impl Fraction {
     }
 
     /// Calculate the greatest common divisor of two fractions.
-    pub fn gcd(x: Self, y: Self) -> Self {
-        // using Euclidean algorithm
-
-        let mut a = x;
-        let mut b = y;
-
-        // a, b = b, a % b until b == 0
-        while b != 0.into() {
-            let t = b; // copy
-            b = a % b;
-            a = t;
-        }
-
-        a // a is GCD
+    pub fn gcd(a: Self, b: Self) -> Self {
+        utility::gcd(a, b)
     }
 
     /// Calculate the least common multiple of two fractions.
-    pub fn lcm(x: Self, y: Self) -> Self {
-        if x == 0.into() || y == 0.into() {
+    pub fn lcm(a: Self, b: Self) -> Self {
+        if a == 0.into() || b == 0.into() {
             return Self::new();
         }
 
-        (x * y) / Self::gcd(x, y) // LCM = (x * y) / GCD
+        (a * b) / Self::gcd(a, b) // LCM = (a * b) / GCD
     }
 }
 
