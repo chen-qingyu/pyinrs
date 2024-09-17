@@ -422,6 +422,7 @@ fn gcd_lcm() {
     assert_eq!(Int::gcd(&"0".into(), &"1".into()), "1".into());
     assert_eq!(Int::gcd(&"1".into(), &"0".into()), "1".into());
     assert_eq!(Int::gcd(&"1".into(), &"1".into()), "1".into());
+
     assert_eq!(Int::gcd(&"6".into(), &"8".into()), "2".into());
     assert_eq!(Int::gcd(&"24".into(), &"48".into()), "24".into());
     assert_eq!(Int::gcd(&"37".into(), &"48".into()), "1".into());
@@ -432,6 +433,7 @@ fn gcd_lcm() {
     assert_eq!(Int::lcm(&"0".into(), &"1".into()), "0".into());
     assert_eq!(Int::lcm(&"1".into(), &"0".into()), "0".into());
     assert_eq!(Int::lcm(&"1".into(), &"1".into()), "1".into());
+
     assert_eq!(Int::lcm(&"6".into(), &"8".into()), "24".into());
     assert_eq!(Int::lcm(&"24".into(), &"48".into()), "48".into());
     assert_eq!(Int::lcm(&"37".into(), &"48".into()), "1776".into());
