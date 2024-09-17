@@ -61,6 +61,32 @@ impl Fraction {
     pub fn denominator(&self) -> i32 {
         self.denominator
     }
+
+    /// Calculate the greatest common divisor of two fractions.
+    pub fn gcd(x: Self, y: Self) -> Self {
+        // using Euclidean algorithm
+
+        let mut a = x;
+        let mut b = y;
+
+        // a, b = b, a % b until b == 0
+        while b != 0.into() {
+            let t = b; // copy
+            b = a % b;
+            a = t;
+        }
+
+        a // a is GCD
+    }
+
+    /// Calculate the least common multiple of two fractions.
+    pub fn lcm(x: Self, y: Self) -> Self {
+        if x == 0.into() || y == 0.into() {
+            return Self::new();
+        }
+
+        (x * y) / Self::gcd(x, y) // LCM = (x * y) / GCD
+    }
 }
 
 /*
