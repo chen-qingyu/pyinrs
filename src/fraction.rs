@@ -44,7 +44,7 @@ impl Fraction {
 
     /// Calculate the greatest common divisor of two fractions.
     pub fn gcd(a: Self, b: Self) -> Self {
-        utility::gcd(a, b)
+        utility::gcd(a.abs(), b.abs())
     }
 
     /// Calculate the least common multiple of two fractions.
@@ -53,7 +53,7 @@ impl Fraction {
             return Self::new();
         }
 
-        (a * b) / Self::gcd(a, b) // LCM = (a * b) / GCD
+        (a * b).abs() / Self::gcd(a, b) // LCM = |a * b| / GCD
     }
 }
 

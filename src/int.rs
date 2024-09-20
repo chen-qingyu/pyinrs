@@ -366,7 +366,7 @@ impl Int {
 
     /// Calculate the greatest common divisor of two integers.
     pub fn gcd(a: &Self, b: &Self) -> Self {
-        utility::gcd(a.clone(), b.clone())
+        utility::gcd(a.abs(), b.abs())
     }
 
     /// Calculate the least common multiple of two integers.
@@ -375,7 +375,7 @@ impl Int {
             return Self::new();
         }
 
-        (a * b) / Self::gcd(a, b) // LCM = (a * b) / GCD
+        (a * b).abs() / Self::gcd(a, b) // LCM = |a * b| / GCD
     }
 
     /// Return a non-negative random integer with a specific number of `digits`.

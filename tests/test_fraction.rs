@@ -200,7 +200,7 @@ fn gcd_lcm() {
     assert_eq!(Fraction::gcd(Fraction::from((1, 2)), Fraction::from((3, 4))), Fraction::from((1, 4)));
     assert_eq!(Fraction::gcd(Fraction::from((3, 4)), Fraction::from((1, 6))), Fraction::from((1, 12)));
     assert_eq!(Fraction::gcd(Fraction::from((233, 2333)), Fraction::from((7, 77))), Fraction::from((1, 25663)));
-    assert_eq!(Fraction::gcd(Fraction::from((-1, 2)), Fraction::from((-3, 4))), Fraction::from((-1, 4)));
+    assert_eq!(Fraction::gcd(Fraction::from((-1, 2)), Fraction::from((-3, 4))), Fraction::from((1, 4)));
 
     // lcm()
     assert_eq!(Fraction::lcm(Fraction::from(0), Fraction::from(0)), Fraction::from(0));
@@ -211,7 +211,7 @@ fn gcd_lcm() {
     assert_eq!(Fraction::lcm(Fraction::from((1, 2)), Fraction::from((3, 4))), Fraction::from((3, 2)));
     assert_eq!(Fraction::lcm(Fraction::from((3, 4)), Fraction::from((1, 6))), Fraction::from((3, 2)));
     assert_eq!(Fraction::lcm(Fraction::from((233, 2333)), Fraction::from((7, 77))), Fraction::from(233));
-    assert_eq!(Fraction::lcm(Fraction::from((-1, 2)), Fraction::from((-3, 4))), Fraction::from((-3, 2)));
+    assert_eq!(Fraction::lcm(Fraction::from((-1, 2)), Fraction::from((-3, 4))), Fraction::from((3, 2)));
 }
 
 #[rstest]
