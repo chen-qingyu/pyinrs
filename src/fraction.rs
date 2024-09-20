@@ -18,20 +18,6 @@ pub struct Fraction {
 }
 
 impl Fraction {
-    // Simplify the fraction.
-    fn simplify(&mut self) {
-        // make sure the denominator is a positive number
-        if self.denominator < 0 {
-            self.numerator = -self.numerator;
-            self.denominator = -self.denominator;
-        }
-
-        // simplify
-        let gcd = utility::gcd(self.numerator.abs(), self.denominator.abs());
-        self.numerator /= gcd;
-        self.denominator /= gcd;
-    }
-
     /// Construct a new zero fraction.
     pub fn new() -> Self {
         Self { numerator: 0, denominator: 1 }
@@ -86,14 +72,23 @@ impl From<i32> for Fraction {
 
 impl From<(i32, i32)> for Fraction {
     fn from(value: (i32, i32)) -> Self {
-        utility::check_zero(value.1);
+        let (mut numerator, mut denominator) = value;
 
-        let mut f = Self {
-            numerator: value.0,
-            denominator: value.1,
-        };
-        f.simplify();
-        f
+        // make sure the denominator is not zero
+        utility::check_zero(denominator);
+
+        // make sure the denominator is a positive number
+        if denominator < 0 {
+            numerator = -numerator;
+            denominator = -denominator;
+        }
+
+        // simplify
+        let gcd = utility::gcd(numerator.abs(), denominator.abs());
+        numerator /= gcd;
+        denominator /= gcd;
+
+        Fraction { numerator, denominator }
     }
 }
 
