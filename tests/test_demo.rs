@@ -79,7 +79,7 @@ fn advantage() {
     // 3. All immutable types are hashable:
     use std::collections::HashSet;
     let _set1: HashSet<Int> = HashSet::from(["1".into(), "2".into(), "3".into(), "18446744073709551617".into()]);
-    let _set2: HashSet<Str> = HashSet::from(["hello".into(), "pyincpp".into()]);
+    let _set2: HashSet<Str> = HashSet::from(["hello".into(), "pyinrs".into()]);
     let _set3: HashSet<Fraction> = HashSet::from([(1, 2).into(), (3, 4).into()]);
 
     // 4. Using pyinrs::Fraction in mymatrix to display accurate matrix.
