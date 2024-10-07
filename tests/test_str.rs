@@ -103,9 +103,15 @@ fn mul(setup: Fixture) {
 
 #[rstest]
 fn count(setup: Fixture) {
-    assert_eq!(setup.some.count('0'), 0);
-    assert_eq!(setup.some.count('1'), 1);
-    assert_eq!(Str::from("hello").count('l'), 2);
+    assert_eq!(setup.some.count("0"), 0);
+    assert_eq!(setup.some.count("1"), 1);
+    assert_eq!(Str::from("aaa").count("aaaa"), 0);
+    assert_eq!(Str::from("aaa").count("aaa"), 1);
+    assert_eq!(Str::from("aaa").count("aa"), 1);
+    assert_eq!(Str::from("aaa").count("a"), 3);
+    assert_eq!(Str::from("aaa").count(""), 4);
+    assert_eq!(Str::from("ababa").count("ab"), 2);
+    assert_eq!(Str::from("ababa").count("ba"), 2);
 }
 
 #[rstest]

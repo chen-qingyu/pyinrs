@@ -60,9 +60,23 @@ impl Str {
         self.data.contains(pattern)
     }
 
-    /// Count the total number of occurrences of the specified element in the string.
-    pub fn count(&self, element: char) -> usize {
-        self.data.chars().filter(|&x| x == element).count()
+    /// Count the total number of occurrences of the specified `pattern` in the string.
+    pub fn count(&self, pattern: &str) -> usize {
+        if pattern.is_empty() {
+            return self.data.len() + 1;
+        }
+
+        let patt = pattern.as_bytes();
+        let data = self.data.as_bytes();
+
+        let mut cnt = 0;
+        let mut start = 0;
+        while let Some(pos) = data[start..].windows(patt.len()).position(|x| x == patt) {
+            cnt += 1;
+            start += pos + patt.len();
+        }
+
+        cnt
     }
 
     /// Convert the string to a double-precision floating-point decimal number.
