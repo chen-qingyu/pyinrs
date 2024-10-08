@@ -66,14 +66,11 @@ impl Str {
             return self.data.len() + 1;
         }
 
-        let patt = pattern.as_bytes();
-        let data = self.data.as_bytes();
-
         let mut cnt = 0;
         let mut start = 0;
-        while let Some(pos) = data[start..].windows(patt.len()).position(|x| x == patt) {
+        while let Some(pos) = self.data[start..].find(pattern) {
             cnt += 1;
-            start += pos + patt.len();
+            start += pos + pattern.len();
         }
 
         cnt
