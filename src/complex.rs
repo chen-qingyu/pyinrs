@@ -7,7 +7,7 @@ use std::{
 
 use regex::Regex;
 
-use crate::utility;
+use crate::detail;
 
 /// Complex provides support for complex number arithmetic.
 #[derive(Debug, Clone, Copy, Default)]
@@ -187,7 +187,7 @@ impl Div for Complex {
 
     fn div(self, rhs: Self) -> Self::Output {
         let den = rhs.real * rhs.real + rhs.imag * rhs.imag;
-        utility::check_zero(den);
+        detail::check_zero(den);
 
         Self::from((
             (self.real * rhs.real + self.imag * rhs.imag) / den,

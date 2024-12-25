@@ -4,7 +4,7 @@ use std::{
     ops::{Index, IndexMut, Shl, ShlAssign, Shr, ShrAssign},
 };
 
-use crate::utility;
+use crate::detail;
 
 /// Deque is generalization of stack and queue, supports memory efficient pushes and pops from either side.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
@@ -62,7 +62,7 @@ impl<T> Deque<T> {
 
     /// Append the given `element` to the end of the deque.
     pub fn push_back(&mut self, element: T) -> &Self {
-        utility::check_full(self.data.len(), i32::MAX as usize);
+        detail::check_full(self.data.len(), i32::MAX as usize);
 
         self.data.push_back(element);
         self
@@ -70,7 +70,7 @@ impl<T> Deque<T> {
 
     /// Prepend the given `element` to the beginning of the deque.
     pub fn push_front(&mut self, element: T) -> &Self {
-        utility::check_full(self.data.len(), i32::MAX as usize);
+        detail::check_full(self.data.len(), i32::MAX as usize);
 
         self.data.push_front(element);
         self
@@ -115,18 +115,18 @@ impl<T> Index<i32> for Deque<T> {
     type Output = T;
 
     fn index(&self, index: i32) -> &Self::Output {
-        utility::check_bounds(index, -self.len(), self.len());
+        detail::check_bounds(index, -self.len(), self.len());
 
-        let index = utility::calc_index(index, self.data.len());
+        let index = detail::calc_index(index, self.data.len());
         &self.data[index]
     }
 }
 
 impl<T> IndexMut<i32> for Deque<T> {
     fn index_mut(&mut self, index: i32) -> &mut Self::Output {
-        utility::check_bounds(index, -self.len(), self.len());
+        detail::check_bounds(index, -self.len(), self.len());
 
-        let index = utility::calc_index(index, self.data.len());
+        let index = detail::calc_index(index, self.data.len());
         &mut self.data[index]
     }
 }
@@ -169,7 +169,7 @@ Display
 
 impl<T: Display> Display for Deque<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        utility::print(f, self.iter(), '<', '>')
+        detail::print(f, self.iter(), '<', '>')
     }
 }
 

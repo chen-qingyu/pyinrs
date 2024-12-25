@@ -4,7 +4,7 @@ use std::{
     ops::{Index, IndexMut},
 };
 
-use crate::utility;
+use crate::detail;
 
 /// Dict maps keys to arbitrary values.
 #[derive(Debug, Clone, PartialEq, Eq, Default, Hash)]
@@ -135,7 +135,7 @@ impl<K: Display, V: Display> Display for Pair<K, V> {
 
 impl<K: Display, V: Display> Display for Dict<K, V> {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        utility::print(f, self.data.iter().map(|p| Pair(p.0, p.1)), '{', '}')
+        detail::print(f, self.data.iter().map(|p| Pair(p.0, p.1)), '{', '}')
     }
 }
 

@@ -5,7 +5,7 @@ use std::{
     str::FromStr,
 };
 
-use crate::utility;
+use crate::detail;
 
 /// Fraction provides support for rational number arithmetic.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -44,7 +44,7 @@ impl Fraction {
 
     /// Calculate the greatest common divisor of two fractions.
     pub fn gcd(a: Self, b: Self) -> Self {
-        utility::gcd(a.abs(), b.abs())
+        detail::gcd(a.abs(), b.abs())
     }
 
     /// Calculate the least common multiple of two fractions.
@@ -75,7 +75,7 @@ impl From<(i32, i32)> for Fraction {
         let (mut numerator, mut denominator) = value;
 
         // make sure the denominator is not zero
-        utility::check_zero(denominator);
+        detail::check_zero(denominator);
 
         // make sure the denominator is a positive number
         if denominator < 0 {
@@ -84,7 +84,7 @@ impl From<(i32, i32)> for Fraction {
         }
 
         // simplify
-        let gcd = utility::gcd(numerator.abs(), denominator.abs());
+        let gcd = detail::gcd(numerator.abs(), denominator.abs());
         numerator /= gcd;
         denominator /= gcd;
 
@@ -200,7 +200,7 @@ impl Rem for Fraction {
     type Output = Self;
 
     fn rem(self, rhs: Self) -> Self::Output {
-        utility::check_zero(rhs.numerator);
+        detail::check_zero(rhs.numerator);
 
         Self::from((
             (self.numerator * rhs.denominator) % (rhs.numerator * self.denominator),

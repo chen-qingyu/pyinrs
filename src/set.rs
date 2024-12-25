@@ -5,7 +5,7 @@ use std::{
     ops::{BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Sub, SubAssign},
 };
 
-use crate::utility;
+use crate::detail;
 
 /// Set is collection of distinct objects.
 #[derive(Debug, Clone, PartialEq, Eq, Default, Hash)]
@@ -145,7 +145,7 @@ Display
 
 impl<T: Display> Display for Set<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        utility::print(f, self.data.iter(), '{', '}')
+        detail::print(f, self.data.iter(), '{', '}')
     }
 }
 

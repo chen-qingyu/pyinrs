@@ -5,7 +5,7 @@ use std::{
     string::ParseError,
 };
 
-use crate::{utility, Int, List};
+use crate::{detail, Int, List};
 
 /// Str is immutable sequence of characters.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
@@ -139,14 +139,14 @@ Construct
 
 impl From<&str> for Str {
     fn from(value: &str) -> Self {
-        utility::check_full(value.len(), i32::MAX as usize);
+        detail::check_full(value.len(), i32::MAX as usize);
         Self { data: String::from(value) }
     }
 }
 
 impl From<String> for Str {
     fn from(value: String) -> Self {
-        utility::check_full(value.len(), i32::MAX as usize);
+        detail::check_full(value.len(), i32::MAX as usize);
         Self { data: value }
     }
 }
@@ -167,9 +167,9 @@ impl Index<i32> for Str {
     type Output = u8;
 
     fn index(&self, index: i32) -> &Self::Output {
-        utility::check_bounds(index, -self.len(), self.len());
+        detail::check_bounds(index, -self.len(), self.len());
 
-        let index = utility::calc_index(index, self.data.len());
+        let index = detail::calc_index(index, self.data.len());
         &self.data.as_bytes()[index]
     }
 }

@@ -1,6 +1,6 @@
 #![doc=include_str!("../readme.md")]
 
-mod utility;
+mod detail;
 
 mod complex;
 mod deque;

@@ -7,7 +7,7 @@ use std::{
 
 use rand::{distributions::Uniform, Rng};
 
-use crate::utility;
+use crate::detail;
 
 /// Int provides support for big integer arithmetic.
 #[derive(Debug, Clone, PartialEq, Eq, Default, Hash)]
@@ -366,7 +366,7 @@ impl Int {
 
     /// Calculate the greatest common divisor of two integers.
     pub fn gcd(a: &Self, b: &Self) -> Self {
-        utility::gcd(a.abs(), b.abs())
+        detail::gcd(a.abs(), b.abs())
     }
 
     /// Calculate the least common multiple of two integers.
@@ -654,7 +654,7 @@ impl MulAssign<&Int> for Int {
 impl DivAssign<&Int> for Int {
     fn div_assign(&mut self, rhs: &Self) {
         // if rhs is zero, panic
-        utility::check_zero(rhs.sign);
+        detail::check_zero(rhs.sign);
 
         // if self.abs() < rhs.abs(), just return 0
         if self.digits.len() < rhs.digits.len() {
@@ -698,7 +698,7 @@ impl DivAssign<&Int> for Int {
 impl RemAssign<&Int> for Int {
     fn rem_assign(&mut self, rhs: &Self) {
         // if rhs is zero, panic
-        utility::check_zero(rhs.sign);
+        detail::check_zero(rhs.sign);
 
         // if self.abs() < rhs.abs(), just return self
         if self.digits.len() < rhs.digits.len() {
