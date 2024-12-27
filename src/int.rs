@@ -10,7 +10,7 @@ use rand::{distributions::Uniform, Rng};
 use crate::detail;
 
 // Base radix of digits.
-const BASE: i32 = 10_000;
+const BASE: i32 = 1_000_000_000;
 
 // Number of decimal digits per chunk.
 const DIGITS_PER_CHUNK: usize = BASE.ilog10() as usize;
@@ -22,10 +22,10 @@ pub struct Int {
     sign: i32,
 
     // List of digits, represent absolute value of the integer, little endian.
-    // Example: `123456789`
+    // Example: `123456789000`
     // ```
-    // chunk: 6789 2345 0001
-    // index: 0    1    2
+    // chunk: 456789000 123
+    // index: 0         1
     // ```
     chunks: Vec<i32>,
 }
@@ -117,9 +117,9 @@ impl Int {
 
         let mut carry = 0;
         for chunk in self.chunks.iter_mut() {
-            let tmp = *chunk * n + carry;
-            *chunk = tmp % BASE;
-            carry = tmp / BASE;
+            let tmp = *chunk as i64 * n as i64 + carry as i64;
+            *chunk = (tmp % BASE as i64) as i32; // t%b < b
+            carry = (tmp / BASE as i64) as i32; // t/b <= ((b-1)*(b-1) + (b-1))/b = b - 1 < b
         }
         self.chunks.push(carry);
 
@@ -134,13 +134,13 @@ impl Int {
 
         let mut r = 0;
         for chunk in self.chunks.iter_mut().rev() {
-            r = r * BASE + *chunk;
-            *chunk = r / n;
-            r %= n;
+            r = r * BASE as i64 + *chunk as i64;
+            *chunk = (r / n as i64) as i32; // r/n <= ((n-1)*b+(b-1))/n = (n*b - 1)/n < b
+            r %= n as i64; // r%n < r%b < b
         }
 
         self.trim();
-        r
+        r as i32
     }
 
     /// Construct a new zero integer.
@@ -712,9 +712,9 @@ impl MulAssign<&Int> for Int {
         // calculate
         for i in 0..a.len() {
             for j in 0..b.len() {
-                c[i + j] += a[i] * b[j];
-                c[i + j + 1] += c[i + j] / BASE;
-                c[i + j] %= BASE;
+                let t = a[i] as i64 * b[j] as i64 + c[i + j] as i64;
+                c[i + j] = (t % BASE as i64) as i32; // t%b < b
+                c[i + j + 1] += (t / BASE as i64) as i32; // be modulo by the previous line in the next loop, or finally c + t/b <= 0 + ((b-1)^2 + (b-1))/b = b - 1 < b
             }
         }
 
