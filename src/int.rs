@@ -325,8 +325,8 @@ impl Int {
         prime
     }
 
-    /// Convert the integer to some integer of type T.
-    pub fn to_integer<T: AddAssign + MulAssign + std::convert::From<i32>>(&self) -> T {
+    /// Attempt to convert this integer to a number of the specified type `T`.
+    pub fn to_number<T: AddAssign + MulAssign + std::convert::From<i32>>(&self) -> T {
         let mut result: T = 0.into();
 
         for i in (0..self.chunks.len()).rev() {

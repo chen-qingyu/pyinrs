@@ -329,10 +329,11 @@ fn next_prime() {
 }
 
 #[rstest]
-fn to_integer(setup: Fixture) {
-    assert_eq!(setup.zero.to_integer::<i32>(), 0i32);
-    assert_eq!(setup.positive.to_integer::<i128>(), 18446744073709551617);
-    assert_eq!(setup.negative.to_integer::<i128>(), -18446744073709551617);
+fn to_number(setup: Fixture) {
+    assert_eq!(setup.zero.to_number::<i32>(), 0i32);
+    assert_eq!(setup.positive.to_number::<i128>(), 18446744073709551617);
+    assert_eq!(setup.negative.to_number::<i128>(), -18446744073709551617);
+    assert_eq!(Int::from("2147483648").to_number::<f64>(), 2147483648.0);
 }
 
 #[rstest]
