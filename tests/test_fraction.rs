@@ -17,6 +17,28 @@ fn setup() -> Fixture {
 }
 
 #[rstest]
+fn from_f64() {
+    let f = Fraction::from(0.0);
+    assert_eq!(f.numerator(), 0);
+    assert_eq!(f.denominator(), 1);
+    let f = Fraction::from(1.1);
+    assert_eq!(f.numerator(), 11);
+    assert_eq!(f.denominator(), 10);
+    let f = Fraction::from(1234.56789);
+    assert_eq!(f.numerator(), 123456789);
+    assert_eq!(f.denominator(), 100000);
+    let f = Fraction::from(0.75);
+    assert_eq!(f.numerator(), 3);
+    assert_eq!(f.denominator(), 4);
+    let f = Fraction::from(-22.33);
+    assert_eq!(f.numerator(), -2233);
+    assert_eq!(f.denominator(), 100);
+    let f = Fraction::from(-1.2);
+    assert_eq!(f.numerator(), -6);
+    assert_eq!(f.denominator(), 5);
+}
+
+#[rstest]
 #[should_panic(expected = "Error: Divide by zero.")]
 fn basics() {
     let _ = Fraction::from((1, 0));

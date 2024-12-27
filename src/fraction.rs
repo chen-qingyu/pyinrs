@@ -70,6 +70,21 @@ impl From<i32> for Fraction {
     }
 }
 
+impl From<f64> for Fraction {
+    fn from(value: f64) -> Self {
+        let int_part = value.floor();
+        let dec_part = value - int_part;
+        let precision = 1_000_000_000; // 10^floor(log10(i32::MAX))
+
+        let gcd = detail::gcd((dec_part * precision as f64).round() as i32, precision);
+        let mut numerator = (dec_part * precision as f64).round() as i32 / gcd;
+        let denominator = precision / gcd;
+        numerator += int_part as i32 * denominator;
+
+        Self { numerator, denominator }
+    }
+}
+
 impl From<(i32, i32)> for Fraction {
     fn from(value: (i32, i32)) -> Self {
         let (mut numerator, mut denominator) = value;
