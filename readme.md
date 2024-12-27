@@ -7,15 +7,14 @@ _A Rust type library that is as easy to use as Python built-in types._
 - Name: PyInRs
 - Goal: Provide a Rust type library that is as easy to use as Python built-in types
 - Module: List, Set, Dict, Int, Str, Complex, Deque, Fraction
-- Test: Using [rstest](https://crates.io/crates/rstest) for unit tests and ensure all tests passed
-- Security: There is no `unsafe` code block
 
 ## 2. Feature
 
-- Simple: Stay simple, stay young. While ensuring friendly and robust, try to be concise and easy to maintain and read.
-- Friendly: With my careful design, it can be used as conveniently as Python's built-in types. Very Pythonic.
-- Robust: There are corresponding checks for the insert, remove, modify, and access of containers.
-- Efficiency: The performance of the parts with the same function as the standard library is almost the same.
+- Simple: Stay simple, stay young. While ensuring friendly and robust, try to be concise and easy to maintain and read
+- Friendly: With my careful design, it can be used as conveniently as Python's built-in types. Very Pythonic
+- Robust: There are corresponding checks for the insert, remove, modify, and access of containers
+- Efficient: The performance of the parts with the same function as the standard library is almost the same
+- Secure: Tested using [rstest](https://crates.io/crates/rstest) and no `unsafe` code block to ensure no security issues
 
 ## 3. Usage
 
