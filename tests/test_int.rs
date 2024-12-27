@@ -284,7 +284,7 @@ fn factorial() {
 }
 
 #[rstest]
-#[should_panic(expected = "Error: Negative integer have no factorial.")]
+#[should_panic(expected = "Error: Require this >= 0 for factorial().")]
 fn bad_factorial() {
     Int::from("-1").factorial();
 }
@@ -352,7 +352,7 @@ fn sqrt() {
 }
 
 #[rstest]
-#[should_panic(expected = "Error: Cannot compute square root of a negative integer.")]
+#[should_panic(expected = "Error: Require n >= 0 for sqrt(n).")]
 fn bad_sqrt() {
     Int::sqrt(&"-1".into());
 }

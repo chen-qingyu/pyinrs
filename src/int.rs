@@ -10,7 +10,7 @@ use rand::{distributions::Uniform, Rng};
 use crate::detail;
 
 // Base radix of digits.
-const BASE: i32 = 1_000_000_000;
+const BASE: i32 = 1_000_000_000; // 10^(floor(log10(i32::MAX)))
 
 // Number of decimal digits per chunk.
 const DIGITS_PER_CHUNK: usize = BASE.ilog10() as usize;
@@ -287,7 +287,7 @@ impl Int {
     /// Return the factorial of self.
     pub fn factorial(&self) -> Self {
         if self.sign == -1 {
-            panic!("Error: Negative integer have no factorial.");
+            panic!("Error: Require this >= 0 for factorial().");
         }
 
         // fast judgement, fast decrement
@@ -342,7 +342,7 @@ impl Int {
     /// Return the square root of integer `n`.
     pub fn sqrt(n: &Self) -> Self {
         if n.sign == -1 {
-            panic!("Error: Cannot compute square root of a negative integer.");
+            panic!("Error: Require n >= 0 for sqrt(n).");
         }
 
         // binary search
@@ -484,16 +484,16 @@ Construct
 */
 
 impl From<&str> for Int {
-    fn from(value: &str) -> Self {
-        let value = value.as_bytes();
-        if !Self::is_integer(value, value.len()) {
+    fn from(s: &str) -> Self {
+        let s = s.as_bytes();
+        if !Self::is_integer(s, s.len()) {
             panic!("Error: Wrong integer literal.");
         }
 
-        let sign = if value[0] == b'-' { -1 } else { 1 };
+        let sign = if s[0] == b'-' { -1 } else { 1 };
 
         // skip symbol
-        let digits = if value[0] == b'-' || value[0] == b'+' { &value[1..] } else { &value };
+        let digits = if s[0] == b'-' || s[0] == b'+' { &s[1..] } else { &s };
 
         let chunks_len = (digits.len() as f64 / DIGITS_PER_CHUNK as f64).ceil() as usize;
         let mut chunks = vec![0; chunks_len];
@@ -518,20 +518,20 @@ impl From<&str> for Int {
 }
 
 impl From<i32> for Int {
-    fn from(mut value: i32) -> Self {
-        if value == 0 {
+    fn from(mut n: i32) -> Self {
+        if n == 0 {
             return Self::new();
         }
 
-        // value != 0
-        let mut obj = Self::new();
-        obj.sign = if value > 0 { 1 } else { -1 };
-        value = value.abs();
-        while value > 0 {
-            obj.chunks.push(value % BASE);
-            value /= BASE;
+        // n != 0
+        let mut chunks = vec![];
+        let sign = if n > 0 { 1 } else { -1 };
+        n = n.abs();
+        while n > 0 {
+            chunks.push(n % BASE);
+            n /= BASE;
         }
-        obj
+        Self { sign, chunks }
     }
 }
 
