@@ -478,6 +478,39 @@ impl Int {
         Self { sign: 1, chunks }
     }
 
+    /// Calculate the `n`th term of the Fibonacci sequence: 0 (n=0), 1, 1, 2, 3, 5, ...
+    pub fn fibonacci(n: &Self) -> Self {
+        if n.is_negative() {
+            panic!("Error: Require n >= 0 for fibonacci(n).");
+        }
+
+        // ref: https://sicp-solutions.net/post/sicp-solution-exercise-1-19
+
+        // T_pq(a, b) = (bq + aq + ap, bp + aq)
+        // T_pq(T_pq(a, b)) = ((bp+aq)q + (bq+aq+ap)q + (bq+aq+ap)p, (bp+aq)p + (bq+aq+ap)q)
+        //                  = (b(2pq+q^2) + a(p^2+q^2) + a(2pq+q^2), b(p^2+q^2) + a(2pq+q^2))
+        //                  = T_p'q'(a, b)
+        // => p' = p^2 + q^2, q' = 2pq + q^2
+
+        let (mut a, mut b, mut p, mut q, mut cnt) = (Int::from(1), Int::from(0), Int::from(0), Int::from(1), n.clone());
+        while !cnt.is_zero() {
+            if cnt.is_even() {
+                let p_ = &p * &p + &q * &q;
+                let q_ = &p * &q * Int::from(2) + &q * &q;
+                p = p_;
+                q = q_;
+                cnt.small_div(2);
+            } else {
+                let a_ = &b * &q + &a * (&p + &q);
+                let b_ = &b * &p + &a * &q;
+                a = a_;
+                b = b_;
+                cnt.abs_dec();
+            }
+        }
+        b
+    }
+
     /// The well-known Ackermann function (perhaps not so well-known) is a rapidly growing function.
     /// Please input parameters carefully.
     /// See: https://en.wikipedia.org/wiki/Ackermann_function
