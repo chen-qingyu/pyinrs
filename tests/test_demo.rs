@@ -9,7 +9,7 @@ fn usage() {
     assert_eq!(List::from([1, 2, 3, 1, 2, 3, 1, 2, 3]).uniquify(), [1, 2, 3].into());
 
     // test whether a Set is proper subset of another Set
-    assert_eq!(Set::from([5, 1]) < Set::from([1, 2, 3, 4, 5]), true);
+    assert!(Set::from([5, 1]) < Set::from([1, 2, 3, 4, 5]));
     // intersection of Sets, support intersection, union, difference, and symmetric difference
     assert_eq!(Set::from([1, 2, 3, 4, 5]) & Set::from([1, 3, 5, 7, 9]), [1, 3, 5].into());
 

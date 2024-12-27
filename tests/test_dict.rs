@@ -88,8 +88,8 @@ fn examination(setup: Fixture) {
     assert_eq!(setup.some.find(&1), Some((&1, &"one")));
     assert_eq!(setup.some.find(&0), None);
 
-    assert_eq!(setup.some.contains(&1), true);
-    assert_eq!(setup.some.contains(&0), false);
+    assert!(setup.some.contains(&1));
+    assert!(!setup.some.contains(&0));
 }
 
 #[rstest]
@@ -105,30 +105,30 @@ fn keys_values(setup: Fixture) {
 
 #[rstest]
 fn add(mut setup: Fixture) {
-    assert_eq!(setup.empty.add(3, "three"), true);
-    assert_eq!(setup.empty.add(1, "one"), true);
-    assert_eq!(setup.empty.add(2, "two"), true);
+    assert!(setup.empty.add(3, "three"));
+    assert!(setup.empty.add(1, "one"));
+    assert!(setup.empty.add(2, "two"));
 
     assert_eq!(setup.empty, Dict::from([(1, "one"), (2, "two"), (3, "three")]));
 
-    assert_eq!(setup.empty.add(3, "three"), false);
-    assert_eq!(setup.empty.add(1, "one"), false);
-    assert_eq!(setup.empty.add(2, "two"), false);
+    assert!(!setup.empty.add(3, "three"));
+    assert!(!setup.empty.add(1, "one"));
+    assert!(!setup.empty.add(2, "two"));
 
     assert_eq!(setup.empty, Dict::from([(1, "one"), (2, "two"), (3, "three")]));
 }
 
 #[rstest]
 fn remove(mut setup: Fixture) {
-    assert_eq!(setup.some.remove(&3), true);
-    assert_eq!(setup.some.remove(&1), true);
-    assert_eq!(setup.some.remove(&2), true);
+    assert!(setup.some.remove(&3));
+    assert!(setup.some.remove(&1));
+    assert!(setup.some.remove(&2));
 
     assert_eq!(setup.some, Dict::new());
 
-    assert_eq!(setup.some.remove(&2), false);
-    assert_eq!(setup.some.remove(&1), false);
-    assert_eq!(setup.some.remove(&3), false);
+    assert!(!setup.some.remove(&2));
+    assert!(!setup.some.remove(&1));
+    assert!(!setup.some.remove(&3));
 
     assert_eq!(setup.some, Dict::new());
 }

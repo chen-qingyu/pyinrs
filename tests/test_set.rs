@@ -89,8 +89,8 @@ fn examination(setup: Fixture) {
     assert_eq!(setup.some.find(&1), Some(&1));
     assert_eq!(setup.some.find(&0), None);
 
-    assert_eq!(setup.some.contains(&1), true);
-    assert_eq!(setup.some.contains(&0), false);
+    assert!(setup.some.contains(&1));
+    assert!(!setup.some.contains(&0));
 
     assert_eq!(setup.some.min(), Some(&1));
     assert_eq!(setup.some.max(), Some(&5));
@@ -98,38 +98,38 @@ fn examination(setup: Fixture) {
 
 #[rstest]
 fn add(mut setup: Fixture) {
-    assert_eq!(setup.empty.add(3), true);
-    assert_eq!(setup.empty.add(1), true);
-    assert_eq!(setup.empty.add(2), true);
-    assert_eq!(setup.empty.add(5), true);
-    assert_eq!(setup.empty.add(4), true);
+    assert!(setup.empty.add(3));
+    assert!(setup.empty.add(1));
+    assert!(setup.empty.add(2));
+    assert!(setup.empty.add(5));
+    assert!(setup.empty.add(4));
 
     assert_eq!(setup.empty, setup.some);
 
-    assert_eq!(setup.empty.add(4), false);
-    assert_eq!(setup.empty.add(5), false);
-    assert_eq!(setup.empty.add(2), false);
-    assert_eq!(setup.empty.add(1), false);
-    assert_eq!(setup.empty.add(3), false);
+    assert!(!setup.empty.add(4));
+    assert!(!setup.empty.add(5));
+    assert!(!setup.empty.add(2));
+    assert!(!setup.empty.add(1));
+    assert!(!setup.empty.add(3));
 
     assert_eq!(setup.empty, setup.some);
 }
 
 #[rstest]
 fn remove(mut setup: Fixture) {
-    assert_eq!(setup.some.remove(&3), true);
-    assert_eq!(setup.some.remove(&1), true);
-    assert_eq!(setup.some.remove(&2), true);
-    assert_eq!(setup.some.remove(&5), true);
-    assert_eq!(setup.some.remove(&4), true);
+    assert!(setup.some.remove(&3));
+    assert!(setup.some.remove(&1));
+    assert!(setup.some.remove(&2));
+    assert!(setup.some.remove(&5));
+    assert!(setup.some.remove(&4));
 
     assert_eq!(setup.some, setup.empty);
 
-    assert_eq!(setup.some.remove(&4), false);
-    assert_eq!(setup.some.remove(&5), false);
-    assert_eq!(setup.some.remove(&2), false);
-    assert_eq!(setup.some.remove(&1), false);
-    assert_eq!(setup.some.remove(&3), false);
+    assert!(!setup.some.remove(&4));
+    assert!(!setup.some.remove(&5));
+    assert!(!setup.some.remove(&2));
+    assert!(!setup.some.remove(&1));
+    assert!(!setup.some.remove(&3));
 
     assert_eq!(setup.some, setup.empty);
 }

@@ -49,8 +49,8 @@ impl Int {
             return false;
         }
 
-        for i in usize::from(have_sign)..len {
-            if !chars[i].is_ascii_digit() {
+        for c in chars.iter().skip(usize::from(have_sign)) {
+            if !c.is_ascii_digit() {
                 return false;
             }
         }
@@ -96,7 +96,7 @@ impl Int {
     }
 
     // Compare absolute value.
-    fn abs_cmp(&self, rhs: &Vec<i32>) -> Ordering {
+    fn abs_cmp(&self, rhs: &[i32]) -> Ordering {
         if self.chunks.len() != rhs.len() {
             return if self.chunks.len() > rhs.len() { Ordering::Greater } else { Ordering::Less };
         }
@@ -107,7 +107,7 @@ impl Int {
             }
         }
 
-        return Ordering::Equal;
+        Ordering::Equal
     }
 
     // Multiply with small int. O(N)
@@ -258,7 +258,7 @@ impl Int {
         if rhs.chunks.len() == 1 {
             let mut a = self.abs();
             let r = a.small_div(rhs.chunks[0]); // this.abs divmod rhs.abs
-            return (if self.sign == rhs.sign { a } else { -a }, Int::from(self.sign as i32 * r));
+            return (if self.sign == rhs.sign { a } else { -a }, Int::from(self.sign * r));
         }
 
         // dividend, divisor, temporary quotient, accumulated quotient
@@ -281,7 +281,7 @@ impl Int {
         }
 
         // now q is the quotient.abs, a is the remainder.abs
-        return (if self.sign == rhs.sign { q } else { -q }, if self.sign == 1 { a } else { -a });
+        (if self.sign == rhs.sign { q } else { -q }, if self.sign == 1 { a } else { -a })
     }
 
     /// Return the factorial of self.
@@ -548,7 +548,7 @@ impl From<&str> for Int {
         let sign = if s[0] == b'-' { -1 } else { 1 };
 
         // skip symbol
-        let digits = if s[0] == b'-' || s[0] == b'+' { &s[1..] } else { &s };
+        let digits = if s[0] == b'-' || s[0] == b'+' { &s[1..] } else { s };
 
         let chunks_len = (digits.len() as f64 / DIGITS_PER_CHUNK as f64).ceil() as usize;
         let mut chunks = vec![0; chunks_len];
