@@ -31,7 +31,7 @@ pub struct Int {
 }
 
 impl Int {
-    // Remove leading zeros elegantly and correct sign.
+    // Remove leading zeros and correct sign.
     fn trim(&mut self) {
         while !self.chunks.is_empty() && self.chunks.last().unwrap() == &0 {
             self.chunks.pop();
@@ -58,9 +58,10 @@ impl Int {
         true
     }
 
-    // Increment the absolute value by 1 quickly.
-    // Require self != 0
+    // Increase the absolute value by 1 quickly.
     fn abs_inc(&mut self) {
+        assert!(self.sign != 0);
+
         // add a leading zero for carry
         self.chunks.push(0);
 
@@ -74,14 +75,13 @@ impl Int {
             self.chunks[i] = 0;
         }
 
-        self.trim();
-
-        // keep sign unchanged
+        self.trim(); // sign unchanged
     }
 
-    // Decrement the absolute value by 1 quickly.
-    // Require self != 0
+    // Decrease the absolute value by 1 quickly.
     fn abs_dec(&mut self) {
+        assert!(self.sign != 0);
+
         let mut i = 0;
         while self.chunks[i] == 0 {
             i += 1;
@@ -92,7 +92,7 @@ impl Int {
             self.chunks[i] = BASE - 1;
         }
 
-        self.trim();
+        self.trim(); // sign may change to zero
     }
 
     // Compare absolute value.
@@ -110,7 +110,7 @@ impl Int {
         return Ordering::Equal;
     }
 
-    // Multiply with small int, for divmod, O(N)
+    // Multiply with small int. O(N)
     fn small_mul(&mut self, n: i32) {
         assert!(self.is_positive());
         assert!(n > 0 && n < BASE);
@@ -126,7 +126,7 @@ impl Int {
         self.trim();
     }
 
-    // Divide with small int, for divmod, O(N)
+    // Divide with small int. O(N)
     // Retrun the remainder.
     fn small_div(&mut self, n: i32) -> i32 {
         assert!(self.is_positive());
@@ -196,17 +196,17 @@ impl Int {
             return false; // prime >= 2
         }
 
-        let mut i = Self::from(2);
-        while &i * &i <= *self {
-            if (self % &i).is_zero() {
+        let mut n = Self::from(2);
+        while &n * &n <= *self {
+            if (self % &n).is_zero() {
                 return false;
             }
-            i.abs_inc();
+            n.abs_inc();
         }
         true
     }
 
-    /// Increment the value by 1 quickly.
+    /// Increase the value by 1 quickly.
     pub fn inc(&mut self) -> &Self {
         if self.sign == 1 {
             self.abs_inc();
@@ -219,7 +219,7 @@ impl Int {
         self
     }
 
-    /// Decrement the value by 1 quickly.
+    /// Decrease the value by 1 quickly.
     pub fn dec(&mut self) -> &Self {
         if self.sign == 1 {
             self.abs_dec();
@@ -234,10 +234,9 @@ impl Int {
 
     /// Return the absolute value of self.
     pub fn abs(&self) -> Self {
-        if self.sign == -1 {
-            -self
-        } else {
-            self.clone()
+        Self {
+            sign: self.sign.abs(),
+            chunks: self.chunks.clone(),
         }
     }
 
@@ -290,10 +289,9 @@ impl Int {
             panic!("Error: Negative integer have no factorial.");
         }
 
+        // fast judgement, fast decrement
         let mut result = Self::from(1); // 0! == 1
         let mut i = self.clone();
-
-        // fast judgement, fast decrement
         while i.is_positive() {
             result *= &i;
             i.abs_dec();
@@ -317,9 +315,7 @@ impl Int {
 
         // prime >= 1
         loop {
-            // faster than prime += 2
-            prime.abs_inc();
-            prime.abs_inc();
+            prime += Int::from(2);
 
             if prime.is_prime() {
                 break;
@@ -378,9 +374,9 @@ impl Int {
 
     /// Return `base**exp`.
     pub fn pow(base: &Self, exp: &Self) -> Self {
-        // check if base.abs() is 1
-        // if base.abs() is 1, only when base is negative and exp is odd return -1, otherwise return 1
-        if base.digits() == 1 && base.chunks[0] == 1 {
+        // check if base.abs is 1
+        // if base.abs is 1, only when base is negative and exp is odd return -1, otherwise return 1
+        if base.chunks.len() == 1 && base.chunks[0] == 1 {
             return if base.sign == -1 && exp.is_odd() { (-1).into() } else { 1.into() };
         }
 
@@ -394,26 +390,22 @@ impl Int {
         }
 
         // fast power algorithm
-
-        let mut num = base.clone();
-        let mut n = exp.clone();
-        let mut result = Self::from(1); // base**0 == 1
-
+        let (mut num, mut n, mut res) = (base.clone(), exp.clone(), Int::from(1));
         while !n.is_zero() {
             if n.is_odd() {
-                result *= &num;
+                res *= &num;
             }
             num *= num.clone();
-            n /= Self::from(2); // integer divide
+            n.small_div(2);
         }
-        result
+        res
     }
 
     /// Return `(base**exp) % module` faster.
     pub fn pow_mod(base: &Self, exp: &Self, module: &Self) -> Self {
-        // check if base.abs() is 1
-        // if base.abs() is 1, only when base is negative and exp is odd return -1, otherwise return 1
-        if base.digits() == 1 && base.chunks[0] == 1 {
+        // check if base.abs is 1
+        // if base.abs is 1, only when base is negative and exp is odd return -1, otherwise return 1
+        if base.chunks.len() == 1 && base.chunks[0] == 1 {
             return if base.sign == -1 && exp.is_odd() { (-1).into() } else { 1.into() };
         }
 
@@ -426,40 +418,34 @@ impl Int {
         }
 
         // fast power algorithm
-
-        let mut num = base.clone();
-        let mut n = exp.clone();
-        let mut result = Self::from(1); // base**0 == 1
-
+        let (mut num, mut n, mut res) = (base.clone(), exp.clone(), Int::from(1));
         while !n.is_zero() {
             if n.is_odd() {
-                result = (&result * &num) % module;
+                res = (&res * &num) % module;
             }
             num = (&num * &num) % module;
-            n /= Self::from(2); // integer divide
+            n.small_div(2);
         }
-        result
+        res
     }
 
-    /// Return the logarithm of `integer` based on `base`.
-    pub fn log(integer: &Self, base: &Self) -> Self {
-        if integer.sign <= 0 || base < &2.into() {
+    /// Return the logarithm of integer `n` based on `base`.
+    pub fn log(n: &Self, base: &Self) -> Self {
+        if n.sign <= 0 || base < &2.into() {
             panic!("Error: Math domain error.");
         }
 
         if base == &10.into() {
-            return (integer.digits() as i32 - 1).into();
+            return (n.digits() as i32 - 1).into();
         }
 
-        let mut result = Self::new();
-        let mut value = integer / base;
-
-        while !value.is_zero() {
-            result.inc();
-            value /= base;
+        let (mut num, mut res) = (n / base, Self::new());
+        while !num.is_zero() {
+            res.inc();
+            num /= base;
         }
 
-        result
+        res
     }
 
     /// Calculate the greatest common divisor of two integers.
@@ -593,8 +579,6 @@ impl Ord for Int {
                 (..=-1) => Ordering::Less,
             };
         }
-
-        // the sign of two integers is the same
 
         if self.sign >= 0 {
             self.abs_cmp(&that.chunks)
