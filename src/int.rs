@@ -197,7 +197,8 @@ impl Int {
         }
 
         let mut n = Self::from(2);
-        while &n * &n <= *self {
+        let s = Int::sqrt(self);
+        while n <= s {
             if (self % &n).is_zero() {
                 return false;
             }
@@ -338,38 +339,29 @@ impl Int {
         result
     }
 
-    /// Return the square root of `integer`.
-    pub fn sqrt(integer: &Self) -> Self {
-        if integer.sign == -1 {
+    /// Return the square root of integer `n`.
+    pub fn sqrt(n: &Self) -> Self {
+        if n.sign == -1 {
             panic!("Error: Cannot compute square root of a negative integer.");
         }
 
-        if integer.is_zero() {
-            return Self::new();
-        } else if integer < &Self::from(4) {
-            return Self::from(1);
-        } else if integer < &Self::from(9) {
-            return Self::from(2);
-        } else if integer < &Self::from(16) {
-            return Self::from(3); // can not be omitted
+        // binary search
+        let (mut lo, mut hi, mut res) = (Int::from(0), n.clone(), Int::default());
+        while lo <= hi {
+            let mid = &lo + (&hi - &lo) / Int::from(2);
+
+            // if mid^2 <= n, update the result and search in upper half
+            if &mid * &mid <= *n {
+                res = mid.clone();
+                lo = mid + Int::from(1);
+            }
+            // else mid^2 > n, search in the lower half
+            else {
+                hi = mid - Int::from(1);
+            }
         }
 
-        // using Newton's method
-
-        // as far as possible to reduce the number of iterations
-        // cur_sqrt = 10^(digits/2 - 1) in O(1)
-        let mut digits = vec![0; integer.chunks.len() / 2]; // integer.digits() >= 2
-        digits.push(1);
-        let mut cur_sqrt = Self { chunks: digits, sign: 1 };
-
-        let mut pre_sqrt = Self::from(-1);
-
-        while cur_sqrt != pre_sqrt {
-            pre_sqrt = cur_sqrt.clone();
-            cur_sqrt = (&cur_sqrt + integer / &cur_sqrt) / Self::from(2);
-        }
-
-        cur_sqrt
+        res
     }
 
     /// Return `base**exp`.
