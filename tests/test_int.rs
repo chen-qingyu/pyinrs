@@ -476,6 +476,70 @@ fn random() {
 }
 
 #[rstest]
+fn ackermann() {
+    // https://en.wikipedia.org/wiki/Ackermann_function#Table_of_values
+    let arr: Vec<Vec<Int>> = vec![
+        vec![1.into(), 2.into(), 3.into(), 4.into(), 5.into(), 6.into(), 7.into(), 8.into(), 9.into(), 10.into()], // m=0, inc
+        vec![2.into(), 3.into(), 4.into(), 5.into(), 6.into(), 7.into(), 8.into(), 9.into(), 10.into(), 11.into()], // m=1, add
+        // m=2, mul
+        vec![
+            3.into(),
+            5.into(),
+            7.into(),
+            9.into(),
+            11.into(),
+            13.into(),
+            15.into(),
+            17.into(),
+            19.into(),
+            21.into(),
+        ],
+        // m=3, pow
+        vec![
+            5.into(),
+            13.into(),
+            29.into(),
+            61.into(),
+            125.into(),
+            253.into(),
+            509.into(),
+            1021.into(),
+            2045.into(),
+            4093.into(),
+        ],
+    ];
+
+    for m in 0..4 {
+        for n in 0..10 {
+            assert_eq!(Int::ackermann(&Int::from(m as i32), &Int::from(n as i32)), arr[m][n]);
+        }
+    }
+
+    // m=4, tetration
+    assert_eq!(Int::ackermann(&Int::from(4), &Int::from(0)), Int::from(13)); // 2^^3 - 3 = 2^4 - 3     = 13
+    assert_eq!(Int::ackermann(&Int::from(4), &Int::from(1)), Int::from(65533)); // 2^^4 - 3 = 2^16 - 3    = 65533
+    assert_eq!(Int::ackermann(&Int::from(4), &Int::from(2)).digits(), 19729); // 2^^5 - 3 = 2^65536 - 3 = 2003529930406...(19729 digits)
+
+    // A(4, 3) = 2^^6 - 3 = 2^2^65536 - 3, there is no computer can compute it...
+}
+
+#[rstest]
+fn hyperoperation() {
+    assert_eq!(Int::hyperoperation(&Int::from(0), &Int::from(0), &Int::from(0)), Int::from(1));
+    assert_eq!(Int::hyperoperation(&Int::from(1000), &Int::from(2), &Int::from(2)), Int::from(4));
+
+    assert_eq!(Int::hyperoperation(&Int::from(0), &Int::from(3), &Int::from(3)), Int::from(4)); // successor
+    assert_eq!(Int::hyperoperation(&Int::from(1), &Int::from(3), &Int::from(3)), Int::from(6)); // addition
+    assert_eq!(Int::hyperoperation(&Int::from(2), &Int::from(3), &Int::from(3)), Int::from(9)); // multiplication
+    assert_eq!(Int::hyperoperation(&Int::from(3), &Int::from(3), &Int::from(3)), Int::from(27)); // exponentiation
+
+    // tetration
+    assert_eq!(Int::hyperoperation(&Int::from(4), &Int::from(3), &Int::from(3)), Int::from("7625597484987"));
+
+    // fucking the rustfmt and type convert
+}
+
+#[rstest]
 fn format(setup: Fixture) {
     assert_eq!(format!("{}", setup.zero), "0");
     assert_eq!(format!("{}", setup.positive), "18446744073709551617");

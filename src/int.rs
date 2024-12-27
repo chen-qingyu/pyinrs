@@ -477,6 +477,61 @@ impl Int {
 
         Self { sign: 1, chunks }
     }
+
+    /// The well-known Ackermann function (perhaps not so well-known) is a rapidly growing function.
+    /// Please input parameters carefully.
+    /// See: https://en.wikipedia.org/wiki/Ackermann_function
+    pub fn ackermann(m: &Self, n: &Self) -> Self {
+        if m.is_negative() || n.is_negative() {
+            panic!("Error: Require m >= 0 and n >= 0 for ackermann(m, n).");
+        }
+
+        match m.to_number::<i32>() {
+            0 => n + Int::from(1),
+            1 => n + Int::from(2),
+            2 => n * Int::from(2) + Int::from(3),
+            3 => Int::pow(&Int::from(2), &(n + Int::from(3))) - Int::from(3),
+            _ => {
+                if n.is_zero() {
+                    Int::ackermann(&(m - Int::from(1)), &Int::from(1))
+                } else {
+                    Int::ackermann(&(m - Int::from(1)), &Int::ackermann(m, &(n - Int::from(1))))
+                }
+            }
+        }
+    }
+
+    /// The hyperoperation sequence is an infinite sequence of arithmetic operations.
+    /// This sequence starts with unary successor (n = 0), continues with addition (n = 1), multiplication (n = 2), exponentiation (n = 3), etc.
+    /// See: https://en.wikipedia.org/wiki/Hyperoperation
+    pub fn hyperoperation(n: &Self, a: &Self, b: &Self) -> Self {
+        if n.is_negative() || a.is_negative() || b.is_negative() {
+            panic!("Error: Require n >= 0 and a >= 0 and b >= 0 for hyperoperation(n, a, b).");
+        }
+
+        // special cases
+        if n > &3.into() {
+            if a.is_zero() && b.is_even() {
+                return 1.into();
+            } else if a.is_zero() && b.is_odd() {
+                return 0.into();
+            } else if a == &1.into() || b.is_zero() {
+                return 1.into();
+            } else if b == &1.into() {
+                return a.clone();
+            } else if a == &2.into() && b == &2.into() {
+                return 4.into();
+            }
+        }
+
+        match n.to_number::<i32>() {
+            0 => Int::from(1) + b,
+            1 => a + b,
+            2 => a * b,
+            3 => Int::pow(a, b),
+            _ => Int::hyperoperation(&(n - Int::from(1)), a, &Int::hyperoperation(n, a, &(b - Int::from(1)))),
+        }
+    }
 }
 
 /*
