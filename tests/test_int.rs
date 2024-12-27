@@ -441,8 +441,6 @@ fn gcd_lcm() {
 
 #[rstest]
 fn random() {
-    assert_eq!(Int::random(0).digits(), 0);
-
     assert_eq!(Int::random(1).digits(), 1);
     assert_eq!(Int::random(2).digits(), 2);
     assert_eq!(Int::random(3).digits(), 3);

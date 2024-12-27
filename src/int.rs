@@ -10,7 +10,7 @@ use rand::{distributions::Uniform, Rng};
 use crate::detail;
 
 // Base radix of digits.
-const BASE: i32 = 10;
+const BASE: i32 = 10_000;
 
 // Number of decimal digits per chunk.
 const DIGITS_PER_CHUNK: usize = BASE.ilog10() as usize;
@@ -21,12 +21,11 @@ pub struct Int {
     // Sign of integer, 1 is positive, -1 is negative, and 0 is zero.
     sign: i32,
 
-    // List of digits, represent absolute value of the integer.
-    // Base 10, little endian.
-    // Example: `12345000`
+    // List of digits, represent absolute value of the integer, little endian.
+    // Example: `123456789`
     // ```
-    // chunk: 0 0 0 5 4 3 2 1
-    // index: 0 1 2 3 4 5 6 7
+    // chunk: 6789 2345 0001
+    // index: 0    1    2
     // ```
     chunks: Vec<i32>,
 }
@@ -44,14 +43,14 @@ impl Int {
     }
 
     // Test whether the characters represent an integer.
-    fn is_integer(chars: &str, len: usize) -> bool {
-        let have_sign = chars.as_bytes()[0] == b'+' || chars.as_bytes()[0] == b'-';
+    fn is_integer(chars: &[u8], len: usize) -> bool {
+        let have_sign = chars[0] == b'+' || chars[0] == b'-';
         if len == 0 || (len == 1 && have_sign) {
             return false;
         }
 
         for i in usize::from(have_sign)..len {
-            if !chars.as_bytes()[i].is_ascii_digit() {
+            if !chars[i].is_ascii_digit() {
                 return false;
             }
         }
@@ -109,6 +108,39 @@ impl Int {
         }
 
         return Ordering::Equal;
+    }
+
+    // Multiply with small int, for divmod, O(N)
+    fn small_mul(&mut self, n: i32) {
+        assert!(self.is_positive());
+        assert!(n > 0 && n < BASE);
+
+        let mut carry = 0;
+        for chunk in self.chunks.iter_mut() {
+            let tmp = *chunk * n + carry;
+            *chunk = tmp % BASE;
+            carry = tmp / BASE;
+        }
+        self.chunks.push(carry);
+
+        self.trim();
+    }
+
+    // Divide with small int, for divmod, O(N)
+    // Retrun the remainder.
+    fn small_div(&mut self, n: i32) -> i32 {
+        assert!(self.is_positive());
+        assert!(n > 0 && n < BASE);
+
+        let mut r = 0;
+        for chunk in self.chunks.iter_mut().rev() {
+            r = r * BASE + *chunk;
+            *chunk = r / n;
+            r %= n;
+        }
+
+        self.trim();
+        r
     }
 
     /// Construct a new zero integer.
@@ -209,6 +241,49 @@ impl Int {
         }
     }
 
+    /// Return the quotient and remainder simultaneously.
+    /// `self == (self / rhs) * rhs + self % rhs`
+    pub fn divmod(&self, rhs: &Self) -> (Self, Self) {
+        // if rhs is zero, panic
+        detail::check_zero(rhs.sign);
+
+        // if this.abs < rhs.abs, just return {0, this}
+        if self.digits() < rhs.digits() {
+            return (0.into(), self.clone());
+        }
+
+        // now, the sign of two integers is not zero
+
+        // if rhs < base, then use small_div in O(N)
+        if rhs.chunks.len() == 1 {
+            let mut a = self.abs();
+            let r = a.small_div(rhs.chunks[0]); // this.abs divmod rhs.abs
+            return (if self.sign == rhs.sign { a } else { -a }, Int::from(self.sign as i32 * r));
+        }
+
+        // dividend, divisor, temporary quotient, accumulated quotient
+        let (mut a, mut b, mut t, mut q) = (self.abs(), rhs.abs(), Int::from(1), Int::new());
+
+        // double ~ left shift, O(log(2^N))) * O(N) = O(N^2)
+        while a.abs_cmp(&b.chunks).is_ge() {
+            b.small_mul(2);
+            t.small_mul(2);
+        }
+
+        // halve ~ right shift, O(log(2^N))) * O(N) = O(N^2)
+        while t.is_positive() {
+            if a.abs_cmp(&b.chunks).is_ge() {
+                a -= &b;
+                q += &t;
+            }
+            b.small_div(2);
+            t.small_div(2);
+        }
+
+        // now q is the quotient.abs, a is the remainder.abs
+        return (if self.sign == rhs.sign { q } else { -q }, if self.sign == 1 { a } else { -a });
+    }
+
     /// Return the factorial of self.
     pub fn factorial(&self) -> Self {
         if self.sign == -1 {
@@ -287,7 +362,7 @@ impl Int {
 
         // as far as possible to reduce the number of iterations
         // cur_sqrt = 10^(digits/2 - 1) in O(1)
-        let mut digits = vec![0; integer.chunks.len() / 2 - 1]; // integer.digits() >= 2
+        let mut digits = vec![0; integer.chunks.len() / 2]; // integer.digits() >= 2
         digits.push(1);
         let mut cur_sqrt = Self { chunks: digits, sign: 1 };
 
@@ -401,24 +476,28 @@ impl Int {
         (a * b).abs() / Self::gcd(a, b) // LCM = |a * b| / GCD
     }
 
-    /// Return a non-negative random integer with a specific number of `digits`.
+    /// Generate a random integer of a specified number of `digits`.
     pub fn random(digits: usize) -> Self {
+        if digits == 0 {
+            panic!("Error: Require digits > 0 for random(digits).");
+        }
+
+        // random number generator
         let mut rng = rand::thread_rng();
 
-        let mut digits_vec = vec![0; digits]; // may be 0
-        let sign = if digits_vec.is_empty() { 0 } else { 1 };
-
-        let digit = Uniform::from(0..=9);
-        for d in digits_vec.iter_mut() {
-            *d = rng.sample(digit);
+        // little chunks
+        let mut chunks = vec![0; (digits - 1) / DIGITS_PER_CHUNK];
+        let chunk = Uniform::from(0..BASE);
+        for d in chunks.iter_mut() {
+            *d = rng.sample(chunk);
         }
 
-        // reset most significant digit if is 0
-        if digits_vec.last() == Some(&0) {
-            *digits_vec.last_mut().unwrap() = rng.sample(Uniform::from(1..=9));
-        }
+        // most significant chunk
+        let n = (digits - 1) % DIGITS_PER_CHUNK + 1;
+        let most_chunk = Uniform::from(10i32.pow((n - 1) as u32)..=10i32.pow(n as u32) - 1);
+        chunks.push(rng.sample(most_chunk));
 
-        Self { chunks: digits_vec, sign }
+        Self { sign: 1, chunks }
     }
 }
 
@@ -428,11 +507,10 @@ Construct
 
 impl From<&str> for Int {
     fn from(value: &str) -> Self {
+        let value = value.as_bytes();
         if !Self::is_integer(value, value.len()) {
             panic!("Error: Wrong integer literal.");
         }
-
-        let value = value.as_bytes();
 
         let sign = if value[0] == b'-' { -1 } else { 1 };
 
@@ -488,7 +566,7 @@ impl FromStr for Int {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let s = s.trim();
 
-        if !Self::is_integer(s, s.len()) {
+        if !Self::is_integer(s.as_bytes(), s.len()) {
             return Err(ParseIntError);
         }
 
@@ -539,8 +617,8 @@ impl Neg for Int {
 
     fn neg(self) -> Self::Output {
         Self {
-            chunks: self.chunks,
             sign: -self.sign,
+            chunks: self.chunks,
         }
     }
 }
@@ -664,82 +742,14 @@ impl MulAssign<&Int> for Int {
 #[auto_impl_ops::auto_ops]
 impl DivAssign<&Int> for Int {
     fn div_assign(&mut self, rhs: &Self) {
-        // if rhs is zero, panic
-        detail::check_zero(rhs.sign);
-
-        // if self.abs() < rhs.abs(), just return 0
-        if self.chunks.len() < rhs.chunks.len() {
-            return *self = Self::new();
-        }
-
-        // the sign of two integers is not zero
-
-        // prepare variables
-        let size = self.chunks.len() - rhs.chunks.len() + 1;
-
-        // tmp = rhs * 10^(size), not size-1, since the for loop will pop at first, so tmp is rhs * 10^(size-1) at first
-        let mut chunks = [0].repeat(size);
-        chunks.extend(rhs.chunks.clone());
-        let mut tmp = Self { chunks, sign: 1 }; // intermediate variable for rhs * 10^i, positive
-
-        let mut result = Self::new();
-        result.sign = if self.sign == rhs.sign { 1 } else { -1 }; // the sign is depends on the sign of operands
-        result.chunks.resize(size, 0);
-
-        self.sign = 1;
-
-        // calculation
-        for i in (0..size).rev() {
-            // tmp = rhs * 10^i
-            tmp.chunks.remove(0); // faster than use VecDeque::pop_front()
-
-            // <= 9 loops
-            while *self >= tmp {
-                result.chunks[i] += 1;
-                *self -= &tmp;
-            }
-        }
-
-        result.trim();
-        *self = result;
+        *self = self.divmod(rhs).0;
     }
 }
 
 #[auto_impl_ops::auto_ops]
 impl RemAssign<&Int> for Int {
     fn rem_assign(&mut self, rhs: &Self) {
-        // if rhs is zero, panic
-        detail::check_zero(rhs.sign);
-
-        // if self.abs() < rhs.abs(), just return self
-        if self.chunks.len() < rhs.chunks.len() {
-            return;
-        }
-
-        // the sign of two integers is not zero
-
-        // prepare variables
-        let size = self.chunks.len() - rhs.chunks.len() + 1;
-
-        self.sign = 1;
-
-        // tmp = rhs * 10^(size), not size-1, since the for loop will pop at first, so tmp is rhs * 10^(size-1) at first
-        let mut chunks = [0].repeat(size);
-        chunks.extend(rhs.chunks.clone());
-        let mut tmp = Self { chunks, sign: 1 }; // intermediate variable for rhs * 10^i, positive
-
-        // calculation
-        for _ in 0..size {
-            // tmp = rhs * 10^i
-            tmp.chunks.remove(0); // faster than use VecDeque::pop_front()
-
-            // <= 9 loops
-            while *self >= tmp {
-                *self -= &tmp;
-            }
-        }
-
-        self.trim();
+        *self = self.divmod(rhs).1;
     }
 }
 
