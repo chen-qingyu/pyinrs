@@ -67,9 +67,11 @@ Int::pow_mod(&"1024".into(), &"1024".into(), &"100".into()); // 76
 // Int factorial
 Int::from("5").factorial().factorial(); // 66895029134491270575881180540903725867527463...
 // get random Int of specified number of digits
-Int::random(4300); // 23795759214348387514699522496327832510939573336290225099601421311...
+Int::random(1024); // 23795759214348387514699522496327832510939573336290225099601421311...
 // calculate the next prime that greater than self
-Int::new().next_prime(); // 2
+Int::from("7").next_prime(); // 11
+// calculate the tetration
+Int::hyperoperation(&"4".into(), &"3".into(), &"3".into()); // 7625597484987
 
 // Str split
 Str::from("one, two, three").split(", "); // ["one", "two", "three"]

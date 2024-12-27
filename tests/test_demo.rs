@@ -30,9 +30,11 @@ fn usage() {
     // Int factorial
     assert_eq!(Int::from("5").factorial().factorial(), "6689502913449127057588118054090372586752746333138029810295671352301633557244962989366874165271984981308157637893214090552534408589408121859898481114389650005964960521256960000000000000000000000000000".into());
     // get random Int of specified number of digits
-    assert_eq!(Int::random(4300).digits(), 4300);
+    assert_eq!(Int::random(1024).digits(), 1024);
     // calculate the next prime that greater than self
-    assert_eq!(Int::new().next_prime(), "2".into());
+    assert_eq!(Int::from("7").next_prime(), "11".into());
+    // calculate the tetration
+    assert_eq!(Int::hyperoperation(&"4".into(), &"3".into(), &"3".into()), "7625597484987".into());
 
     // Str split
     assert_eq!(Str::from("one, two, three").split(", "), ["one", "two", "three"].into());
