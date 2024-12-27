@@ -259,6 +259,32 @@ fn rem(setup: Fixture, #[case] case: i32) {
 }
 
 #[rstest]
+fn divmod(setup: Fixture) {
+    assert_eq!(Int::from(-5).divmod(&Int::from(-2)), (Int::from(2), Int::from(-1)));
+    assert_eq!(Int::from(-5).divmod(&Int::from(2)), (Int::from(-2), Int::from(-1)));
+    assert_eq!(Int::from(5).divmod(&Int::from(-2)), (Int::from(-2), Int::from(1)));
+    assert_eq!(Int::from(5).divmod(&Int::from(2)), (Int::from(2), Int::from(1)));
+
+    assert_eq!(Int::from(12345).divmod(&Int::from(54321)), (Int::from(0), Int::from(12345)));
+    assert_eq!(Int::from(54321).divmod(&Int::from(12345)), (Int::from(4), Int::from(4941)));
+    assert_eq!(Int::from(987654321).divmod(&Int::from(123456789)), (Int::from(8), Int::from(9)));
+    assert_eq!(Int::from(123456789).divmod(&Int::from(987654321)), (Int::from(0), Int::from(123456789)));
+
+    assert_eq!(setup.positive.divmod(&Int::from(100)), (Int::from("184467440737095516"), Int::from(17)));
+    assert_eq!(setup.negative.divmod(&Int::from(100)), (Int::from("-184467440737095516"), Int::from(-17)));
+    assert_eq!(setup.zero.divmod(&Int::from(100)), (Int::from(0), Int::from(0)));
+
+    for a in -100..100 {
+        for b in -100..100 {
+            if b != 0 {
+                let (q, r) = Int::from(a).divmod(&Int::from(b));
+                assert_eq!(Int::from(a), q * Int::from(b) + r);
+            }
+        }
+    }
+}
+
+#[rstest]
 fn factorial() {
     // 0! == 1
     assert_eq!(Int::from("0").factorial(), "1".into());
