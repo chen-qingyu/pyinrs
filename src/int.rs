@@ -623,6 +623,18 @@ impl From<i32> for Int {
     }
 }
 
+impl From<usize> for Int {
+    fn from(mut n: usize) -> Self {
+        let mut chunks = vec![];
+        let sign = if n > 0 { 1 } else { 0 };
+        while n > 0 {
+            chunks.push((n % BASE as usize) as i32);
+            n /= BASE as usize;
+        }
+        Self { sign, chunks }
+    }
+}
+
 #[derive(Debug, PartialEq, Eq)]
 pub struct ParseIntError;
 

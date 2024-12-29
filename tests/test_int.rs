@@ -458,7 +458,7 @@ fn fibonacci() {
     let fib = vec![0, 1, 1, 2, 3, 5, 8, 13, 21, 34];
 
     for i in 0..10 {
-        assert_eq!(Int::fibonacci(&Int::from(i as i32)), Int::from(fib[i]));
+        assert_eq!(Int::fibonacci(&Int::from(i)), Int::from(fib[i]));
     }
 
     assert_eq!(Int::fibonacci(&Int::from(100)), Int::from("354224848179261915075"));
@@ -476,7 +476,7 @@ fn ackermann() {
 
     for m in 0..4 {
         for n in 0..10 {
-            assert_eq!(Int::ackermann(&Int::from(m as i32), &Int::from(n as i32)), Int::from(arr[m][n]));
+            assert_eq!(Int::ackermann(&Int::from(m), &Int::from(n)), Int::from(arr[m][n]));
         }
     }
 
