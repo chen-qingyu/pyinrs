@@ -317,34 +317,12 @@ fn bad_factorial() {
 
 #[rstest]
 fn next_prime() {
+    let primes: Vec<i32> = vec![2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71];
+
     let mut number = Int::new(); // 0
-
-    let primes: Vec<Int> = vec![
-        2.into(),
-        3.into(),
-        5.into(),
-        7.into(),
-        11.into(),
-        13.into(),
-        17.into(),
-        19.into(),
-        23.into(),
-        29.into(),
-        31.into(),
-        37.into(),
-        41.into(),
-        43.into(),
-        47.into(),
-        53.into(),
-        59.into(),
-        61.into(),
-        67.into(),
-        71.into(),
-    ];
-
     for prime in primes {
         number = number.next_prime();
-        assert_eq!(number, prime);
+        assert_eq!(number, Int::from(prime));
     }
 
     assert_eq!(Int::from(104728).next_prime(), 104729.into()); // the 10000th prime
@@ -489,40 +467,16 @@ fn fibonacci() {
 #[rstest]
 fn ackermann() {
     // https://en.wikipedia.org/wiki/Ackermann_function#Table_of_values
-    let arr: Vec<Vec<Int>> = vec![
-        vec![1.into(), 2.into(), 3.into(), 4.into(), 5.into(), 6.into(), 7.into(), 8.into(), 9.into(), 10.into()], // m=0, inc
-        vec![2.into(), 3.into(), 4.into(), 5.into(), 6.into(), 7.into(), 8.into(), 9.into(), 10.into(), 11.into()], // m=1, add
-        // m=2, mul
-        vec![
-            3.into(),
-            5.into(),
-            7.into(),
-            9.into(),
-            11.into(),
-            13.into(),
-            15.into(),
-            17.into(),
-            19.into(),
-            21.into(),
-        ],
-        // m=3, pow
-        vec![
-            5.into(),
-            13.into(),
-            29.into(),
-            61.into(),
-            125.into(),
-            253.into(),
-            509.into(),
-            1021.into(),
-            2045.into(),
-            4093.into(),
-        ],
+    let arr: Vec<Vec<i32>> = vec![
+        vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10],                  // m=0, inc
+        vec![2, 3, 4, 5, 6, 7, 8, 9, 10, 11],                 // m=1, add
+        vec![3, 5, 7, 9, 11, 13, 15, 17, 19, 21],             // m=2, mul
+        vec![5, 13, 29, 61, 125, 253, 509, 1021, 2045, 4093], // m=3, pow
     ];
 
     for m in 0..4 {
         for n in 0..10 {
-            assert_eq!(Int::ackermann(&Int::from(m as i32), &Int::from(n as i32)), arr[m][n]);
+            assert_eq!(Int::ackermann(&Int::from(m as i32), &Int::from(n as i32)), Int::from(arr[m][n]));
         }
     }
 
