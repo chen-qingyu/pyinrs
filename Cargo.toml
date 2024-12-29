@@ -1,6 +1,6 @@
 [package]
 name = "pyinrs"
-version = "1.8.1"
+version = "1.9.0"
 edition = "2021"
 license = "MIT"
 authors = ["Chen QingYu <chen_qingyu@qq.com>"]
@@ -11,13 +11,13 @@ keywords = ["type", "python"]
 
 [dependencies]
 rand = "0.8"
-regex = "1.10"
+regex = "1.11"
 auto-impl-ops = "0.2"
 
 [dev-dependencies]
-rstest = "0.22"
+rstest = "0.23"
 criterion = "0.5"
-mymatrix = "0.6"
+mymatrix = "0.7"
 
 [[bench]]
 name = "benchmark"
