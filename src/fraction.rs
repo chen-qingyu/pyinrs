@@ -25,10 +25,9 @@ impl Fraction {
 
     /// Return the absolute value of the fraction.
     pub fn abs(&self) -> Self {
-        if self.numerator >= 0 {
-            *self
-        } else {
-            -*self
+        Self {
+            numerator: self.numerator.abs(),
+            denominator: self.denominator,
         }
     }
 
