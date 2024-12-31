@@ -11,34 +11,34 @@ use crate::detail;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Fraction {
     // Numerator.
-    numerator: i32,
+    num: i32,
 
     // Denominator.
-    denominator: i32,
+    den: i32,
 }
 
 impl Fraction {
     /// Construct a new zero fraction.
     pub fn new() -> Self {
-        Self { numerator: 0, denominator: 1 }
+        Self { num: 0, den: 1 }
     }
 
     /// Return the absolute value of the fraction.
     pub fn abs(&self) -> Self {
         Self {
-            numerator: self.numerator.abs(),
-            denominator: self.denominator,
+            num: self.num.abs(),
+            den: self.den,
         }
     }
 
     /// Get the numerator of self.
     pub fn numerator(&self) -> i32 {
-        self.numerator
+        self.num
     }
 
     /// Get the denominator of self.
     pub fn denominator(&self) -> i32 {
-        self.denominator
+        self.den
     }
 
     /// Calculate the greatest common divisor of two fractions.
@@ -62,10 +62,7 @@ Construct
 
 impl From<i32> for Fraction {
     fn from(value: i32) -> Self {
-        Self {
-            numerator: value,
-            denominator: 1,
-        }
+        Self { num: value, den: 1 }
     }
 }
 
@@ -76,33 +73,33 @@ impl From<f64> for Fraction {
         let precision = 1_000_000_000; // 10^floor(log10(i32::MAX))
 
         let gcd = detail::gcd((dec_part * precision as f64).round() as i32, precision);
-        let mut numerator = (dec_part * precision as f64).round() as i32 / gcd;
-        let denominator = precision / gcd;
-        numerator += int_part as i32 * denominator;
+        let mut num = (dec_part * precision as f64).round() as i32 / gcd;
+        let den = precision / gcd;
+        num += int_part as i32 * den;
 
-        Self { numerator, denominator }
+        Self { num, den }
     }
 }
 
 impl From<(i32, i32)> for Fraction {
     fn from(value: (i32, i32)) -> Self {
-        let (mut numerator, mut denominator) = value;
+        let (mut num, mut den) = value;
 
         // make sure the denominator is not zero
-        detail::check_zero(denominator);
+        detail::check_zero(den);
 
         // make sure the denominator is a positive number
-        if denominator < 0 {
-            numerator = -numerator;
-            denominator = -denominator;
+        if den < 0 {
+            num = -num;
+            den = -den;
         }
 
         // simplify
-        let gcd = detail::gcd(numerator.abs(), denominator.abs());
-        numerator /= gcd;
-        denominator /= gcd;
+        let gcd = detail::gcd(num.abs(), den.abs());
+        num /= gcd;
+        den /= gcd;
 
-        Fraction { numerator, denominator }
+        Fraction { num, den }
     }
 }
 
@@ -113,16 +110,16 @@ impl FromStr for Fraction {
     type Err = ParseFractionError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if let Ok(numerator) = s.trim().parse() {
-            return Ok(Self { numerator, denominator: 1 });
+        if let Ok(num) = s.trim().parse() {
+            return Ok(Self { num, den: 1 });
         }
 
-        let (numerator, denominator) = s.trim().split_once('/').ok_or(ParseFractionError)?;
+        let (num, den) = s.trim().split_once('/').ok_or(ParseFractionError)?;
 
-        let numerator = numerator.parse().map_err(|_| ParseFractionError)?;
-        let denominator = denominator.parse().map_err(|_| ParseFractionError)?;
+        let num = num.parse().map_err(|_| ParseFractionError)?;
+        let den = den.parse().map_err(|_| ParseFractionError)?;
 
-        Ok(Self::from((numerator, denominator)))
+        Ok(Self::from((num, den)))
     }
 }
 
@@ -148,7 +145,7 @@ impl Ord for Fraction {
         // so, self - other = a/b - c/d = (ad - bc)/(bd)
         // since bd is always positive, compute (ad-bc) only
 
-        match self.numerator * other.denominator - self.denominator * other.numerator {
+        match self.num * other.den - self.den * other.num {
             ..=-1 => Ordering::Less,
             0 => Ordering::Equal,
             1.. => Ordering::Greater,
@@ -160,10 +157,7 @@ impl Neg for Fraction {
     type Output = Self;
 
     fn neg(self) -> Self::Output {
-        Self {
-            numerator: -self.numerator,
-            denominator: self.denominator,
-        }
+        Self { num: -self.num, den: self.den }
     }
 }
 
@@ -172,10 +166,7 @@ impl Add for Fraction {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
-        Self::from((
-            self.numerator * rhs.denominator + self.denominator * rhs.numerator,
-            self.denominator * rhs.denominator,
-        ))
+        Self::from((self.num * rhs.den + self.den * rhs.num, self.den * rhs.den))
     }
 }
 
@@ -184,10 +175,7 @@ impl Sub for Fraction {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self::Output {
-        Self::from((
-            self.numerator * rhs.denominator - self.denominator * rhs.numerator,
-            self.denominator * rhs.denominator,
-        ))
+        Self::from((self.num * rhs.den - self.den * rhs.num, self.den * rhs.den))
     }
 }
 
@@ -196,7 +184,7 @@ impl Mul for Fraction {
     type Output = Self;
 
     fn mul(self, rhs: Self) -> Self::Output {
-        Self::from((self.numerator * rhs.numerator, self.denominator * rhs.denominator))
+        Self::from((self.num * rhs.num, self.den * rhs.den))
     }
 }
 
@@ -205,7 +193,7 @@ impl Div for Fraction {
     type Output = Self;
 
     fn div(self, rhs: Self) -> Self::Output {
-        Self::from((self.numerator * rhs.denominator, self.denominator * rhs.numerator))
+        Self::from((self.num * rhs.den, self.den * rhs.num))
     }
 }
 
@@ -214,12 +202,9 @@ impl Rem for Fraction {
     type Output = Self;
 
     fn rem(self, rhs: Self) -> Self::Output {
-        detail::check_zero(rhs.numerator);
+        detail::check_zero(rhs.num);
 
-        Self::from((
-            (self.numerator * rhs.denominator) % (rhs.numerator * self.denominator),
-            self.denominator * rhs.denominator,
-        ))
+        Self::from(((self.num * rhs.den) % (rhs.num * self.den), self.den * rhs.den))
     }
 }
 
@@ -229,10 +214,10 @@ Display
 
 impl Display for Fraction {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        if self.denominator == 1 {
-            write!(f, "{}", self.numerator)
+        if self.den == 1 {
+            write!(f, "{}", self.num)
         } else {
-            write!(f, "{}/{}", self.numerator, self.denominator)
+            write!(f, "{}/{}", self.num, self.den)
         }
     }
 }
@@ -243,6 +228,6 @@ Transform
 
 impl From<Fraction> for f64 {
     fn from(value: Fraction) -> Self {
-        value.numerator as f64 / value.denominator as f64
+        value.num as f64 / value.den as f64
     }
 }
