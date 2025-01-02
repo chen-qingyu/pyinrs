@@ -317,7 +317,7 @@ fn bad_factorial() {
 
 #[rstest]
 fn next_prime() {
-    let primes: Vec<i32> = vec![2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71];
+    let primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71];
 
     let mut number = Int::new(); // 0
     for prime in primes {
@@ -455,7 +455,7 @@ fn random() {
 
 #[rstest]
 fn fibonacci() {
-    let fib = vec![0, 1, 1, 2, 3, 5, 8, 13, 21, 34];
+    let fib = [0, 1, 1, 2, 3, 5, 8, 13, 21, 34];
 
     for i in 0..10 {
         assert_eq!(Int::fibonacci(&Int::from(i)), Int::from(fib[i]));
@@ -467,11 +467,11 @@ fn fibonacci() {
 #[rstest]
 fn ackermann() {
     // https://en.wikipedia.org/wiki/Ackermann_function#Table_of_values
-    let arr: Vec<Vec<i32>> = vec![
-        vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10],                  // m=0, inc
-        vec![2, 3, 4, 5, 6, 7, 8, 9, 10, 11],                 // m=1, add
-        vec![3, 5, 7, 9, 11, 13, 15, 17, 19, 21],             // m=2, mul
-        vec![5, 13, 29, 61, 125, 253, 509, 1021, 2045, 4093], // m=3, pow
+    let arr = [
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],                  // m=0, inc
+        [2, 3, 4, 5, 6, 7, 8, 9, 10, 11],                 // m=1, add
+        [3, 5, 7, 9, 11, 13, 15, 17, 19, 21],             // m=2, mul
+        [5, 13, 29, 61, 125, 253, 509, 1021, 2045, 4093], // m=3, pow
     ];
 
     for m in 0..4 {
