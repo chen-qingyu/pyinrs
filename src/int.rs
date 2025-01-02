@@ -605,35 +605,56 @@ impl From<&str> for Int {
     }
 }
 
-impl From<i32> for Int {
-    fn from(mut n: i32) -> Self {
-        if n == 0 {
-            return Self::new();
-        }
+macro_rules! from_signed {
+    ($T:ty) => {
+        impl From<$T> for Int {
+            fn from(mut n: $T) -> Self {
+                if n == 0 {
+                    return Self::new();
+                }
 
-        // n != 0
-        let mut chunks = vec![];
-        let sign = if n > 0 { 1 } else { -1 };
-        n = n.abs();
-        while n > 0 {
-            chunks.push(n % BASE);
-            n /= BASE;
+                let mut chunks = vec![];
+                let sign = if n > 0 { 1 } else { -1 };
+                n = n.abs();
+                while n > 0 {
+                    chunks.push((n as i128 % BASE as i128) as i32);
+                    n = (n as i128 / BASE as i128) as $T;
+                }
+                Self { sign, chunks }
+            }
         }
-        Self { sign, chunks }
-    }
+    };
 }
 
-impl From<usize> for Int {
-    fn from(mut n: usize) -> Self {
-        let mut chunks = vec![];
-        let sign = if n > 0 { 1 } else { 0 };
-        while n > 0 {
-            chunks.push((n % BASE as usize) as i32);
-            n /= BASE as usize;
+macro_rules! from_unsigned {
+    ($T:ty) => {
+        impl From<$T> for Int {
+            fn from(mut n: $T) -> Self {
+                let mut chunks = vec![];
+                let sign = if n > 0 { 1 } else { 0 };
+                while n > 0 {
+                    chunks.push((n as u128 % BASE as u128) as i32);
+                    n = (n as u128 / BASE as u128) as $T;
+                }
+                Self { sign, chunks }
+            }
         }
-        Self { sign, chunks }
-    }
+    };
 }
+
+from_signed!(i8);
+from_signed!(i16);
+from_signed!(i32);
+from_signed!(i64);
+from_signed!(i128);
+from_signed!(isize);
+
+from_unsigned!(u8);
+from_unsigned!(u16);
+from_unsigned!(u32);
+from_unsigned!(u64);
+from_unsigned!(u128);
+from_unsigned!(usize);
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct ParseIntError;
