@@ -44,7 +44,7 @@ impl<K: Ord, V> Dict<K, V> {
     }
 
     /// Return a reference of the value for `key` if `key` is in the dictionary, else `defaults` value.
-    pub fn get<'a>(&'a self, key: &K, defaults: &'a V) -> &V {
+    pub fn get<'a>(&'a self, key: &K, defaults: &'a V) -> &'a V {
         self.data.get(key).unwrap_or(defaults)
     }
 
