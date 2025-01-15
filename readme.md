@@ -4,7 +4,7 @@ _A Rust type library that is as easy to use as Python built-in types._
 
 ## 1. Attribute
 
-- Name: PyInRs
+- Name: PyInRs (means **Py**thon **in** **R**u**s**t)
 - Goal: Provide a Rust type library that is as easy to use as Python built-in types
 - Module: List, Set, Dict, Int, Str, Complex, Deque, Fraction
 
