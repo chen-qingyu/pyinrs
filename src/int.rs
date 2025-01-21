@@ -327,7 +327,7 @@ impl Int {
     }
 
     /// Attempt to convert this integer to a number of the specified type `T`.
-    pub fn to_number<T: Add<Output = T> + Mul<Output = T> + std::convert::From<i64> + std::ops::Neg<Output = T>>(&self) -> T {
+    pub fn to_number<T: Add<Output = T> + Mul<Output = T> + std::convert::From<i64>>(&self) -> T {
         let mut result: T = 0.into();
 
         for i in (0..self.chunks.len()).rev() {
