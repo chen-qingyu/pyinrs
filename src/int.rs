@@ -10,24 +10,24 @@ use rand::{distributions::Uniform, Rng};
 use crate::detail;
 
 // Base radix of digits.
-const BASE: i32 = 1_000_000_000; // 10^(floor(log10(i32::MAX)))
+const BASE: i64 = 10_i64.pow(i64::MAX.ilog10()); // 1'000'000'000'000'000'000
 
 // Number of decimal digits per chunk.
-const DIGITS_PER_CHUNK: usize = BASE.ilog10() as usize;
+const DIGITS_PER_CHUNK: usize = BASE.ilog10() as usize; // 18
 
 /// Int provides support for big integer arithmetic.
 #[derive(Debug, Clone, PartialEq, Eq, Default, Hash)]
 pub struct Int {
     // Sign of integer, 1 is positive, -1 is negative, and 0 is zero.
-    sign: i32,
+    sign: i8,
 
-    // List of digits, represent absolute value of the integer, little endian.
-    // Example: `123456789000`
+    // List of chunks, represent absolute value of the integer, little endian.
+    // Example: `12345678901234567890`
     // ```
-    // chunk: 456789000 123
-    // index: 0         1
+    // chunk: 345678901234567890 000000000000000012
+    // index: 0                  1
     // ```
-    chunks: Vec<i32>,
+    chunks: Vec<i64>,
 }
 
 impl Int {
@@ -96,7 +96,7 @@ impl Int {
     }
 
     // Compare absolute value.
-    fn abs_cmp(&self, rhs: &[i32]) -> Ordering {
+    fn abs_cmp(&self, rhs: &[i64]) -> Ordering {
         if self.chunks.len() != rhs.len() {
             return if self.chunks.len() > rhs.len() { Ordering::Greater } else { Ordering::Less };
         }
@@ -111,15 +111,15 @@ impl Int {
     }
 
     // Multiply with small int. O(N)
-    fn small_mul(&mut self, n: i32) {
+    fn small_mul(&mut self, n: i64) {
         assert!(self.is_positive());
         assert!(n > 0 && n < BASE);
 
         let mut carry = 0;
         for chunk in self.chunks.iter_mut() {
-            let tmp = *chunk as i64 * n as i64 + carry as i64;
-            *chunk = (tmp % BASE as i64) as i32; // t%b < b
-            carry = (tmp / BASE as i64) as i32; // t/b <= ((b-1)*(b-1) + (b-1))/b = b - 1 < b
+            let tmp = *chunk as i128 * n as i128 + carry as i128;
+            *chunk = (tmp % BASE as i128) as i64; // t%b < b
+            carry = (tmp / BASE as i128) as i64; // t/b <= ((b-1)*(b-1) + (b-1))/b = b - 1 < b
         }
         self.chunks.push(carry);
 
@@ -128,19 +128,19 @@ impl Int {
 
     // Divide with small int. O(N)
     // Retrun the remainder.
-    fn small_div(&mut self, n: i32) -> i32 {
+    fn small_div(&mut self, n: i64) -> i64 {
         assert!(self.is_positive());
         assert!(n > 0 && n < BASE);
 
         let mut r = 0;
         for chunk in self.chunks.iter_mut().rev() {
-            r = r * BASE as i64 + *chunk as i64;
-            *chunk = (r / n as i64) as i32; // r/n <= ((n-1)*b+(b-1))/n = (n*b - 1)/n < b
-            r %= n as i64; // r%n < r%b < b
+            r = r * BASE as i128 + *chunk as i128;
+            *chunk = (r / n as i128) as i64; // r/n <= ((n-1)*b+(b-1))/n = (n*b - 1)/n < b
+            r %= n as i128; // r%n < r%b < b
         }
 
         self.trim();
-        r as i32
+        r as i64
     }
 
     /// Construct a new zero integer.
@@ -154,7 +154,7 @@ impl Int {
             return 0;
         }
 
-        return (self.chunks.len() as u32 - 1) * DIGITS_PER_CHUNK as u32 + self.chunks.last().unwrap().ilog10() + 1;
+        (self.chunks.len() as u32 - 1) * DIGITS_PER_CHUNK as u32 + self.chunks.last().unwrap().ilog10() + 1
     }
 
     /// Determine whether the integer is zero quickly.
@@ -258,7 +258,7 @@ impl Int {
         if rhs.chunks.len() == 1 {
             let mut a = self.abs();
             let r = a.small_div(rhs.chunks[0]); // this.abs divmod rhs.abs
-            return (if self.sign == rhs.sign { a } else { -a }, Int::from(self.sign * r));
+            return (if self.sign == rhs.sign { a } else { -a }, Int::from(self.sign as i64 * r));
         }
 
         // dividend, divisor, temporary quotient, accumulated quotient
@@ -327,16 +327,14 @@ impl Int {
     }
 
     /// Attempt to convert this integer to a number of the specified type `T`.
-    pub fn to_number<T: AddAssign + MulAssign + std::convert::From<i32>>(&self) -> T {
+    pub fn to_number<T: Add<Output = T> + Mul<Output = T> + std::convert::From<i64> + std::ops::Neg<Output = T>>(&self) -> T {
         let mut result: T = 0.into();
 
         for i in (0..self.chunks.len()).rev() {
-            result *= BASE.into();
-            result += self.chunks[i].into();
+            result = result * BASE.into() + self.chunks[i].into();
         }
 
-        result *= self.sign.into();
-        result
+        result * (self.sign as i64).into()
     }
 
     /// Return the square root of integer `n`.
@@ -472,7 +470,7 @@ impl Int {
 
         // most significant chunk
         let n = (digits - 1) % DIGITS_PER_CHUNK + 1;
-        let most_chunk = Uniform::from(10i32.pow((n - 1) as u32)..=10i32.pow(n as u32) - 1);
+        let most_chunk = Uniform::from(10i64.pow((n - 1) as u32)..=10i64.pow(n as u32) - 1);
         chunks.push(rng.sample(most_chunk));
 
         Self { sign: 1, chunks }
@@ -519,7 +517,7 @@ impl Int {
             panic!("Error: Require m >= 0 and n >= 0 for ackermann(m, n).");
         }
 
-        match m.to_number::<i32>() {
+        match m.to_number::<i64>() {
             0 => n + Int::from(1),
             1 => n + Int::from(2),
             2 => n * Int::from(2) + Int::from(3),
@@ -557,7 +555,7 @@ impl Int {
             }
         }
 
-        match n.to_number::<i32>() {
+        match n.to_number::<i64>() {
             0 => Int::from(1) + b,
             1 => a + b,
             2 => a * b,
@@ -590,7 +588,7 @@ impl From<&str> for Int {
         let mut chunk = 0;
         let mut idx = chunks_len;
         for i in 0..digits.len() {
-            chunk = chunk * 10 + (digits[i] - b'0') as i32;
+            chunk = chunk * 10 + (digits[i] - b'0') as i64;
             // I think maybe it's not the fastest, but it's the most elegant
             if (i + 1) % DIGITS_PER_CHUNK == digits.len() % DIGITS_PER_CHUNK {
                 idx -= 1;
@@ -617,7 +615,7 @@ macro_rules! from_signed {
                 let sign = if n > 0 { 1 } else { -1 };
                 n = n.abs();
                 while n > 0 {
-                    chunks.push((n as i128 % BASE as i128) as i32);
+                    chunks.push((n as i128 % BASE as i128) as i64);
                     n = (n as i128 / BASE as i128) as $T;
                 }
                 Self { sign, chunks }
@@ -633,7 +631,7 @@ macro_rules! from_unsigned {
                 let mut chunks = vec![];
                 let sign = if n > 0 { 1 } else { 0 };
                 while n > 0 {
-                    chunks.push((n as u128 % BASE as u128) as i32);
+                    chunks.push((n as u128 % BASE as u128) as i64);
                     n = (n as u128 / BASE as u128) as $T;
                 }
                 Self { sign, chunks }
@@ -789,8 +787,8 @@ impl SubAssign<&Int> for Int {
         // calculate
         for i in 0..b.len() {
             let t = a[i] - b[i];
-            a[i] = i32::rem_euclid(t, BASE);
-            a[i + 1] += i32::div_euclid(t, BASE);
+            a[i] = i64::rem_euclid(t, BASE);
+            a[i + 1] += i64::div_euclid(t, BASE);
         }
         for i in b.len()..a.len() {
             if a[i] < 0 {
@@ -825,9 +823,9 @@ impl MulAssign<&Int> for Int {
         // calculate
         for i in 0..a.len() {
             for j in 0..b.len() {
-                let t = a[i] as i64 * b[j] as i64 + c[i + j] as i64;
-                c[i + j] = (t % BASE as i64) as i32; // t%b < b
-                c[i + j + 1] += (t / BASE as i64) as i32; // be modulo by the previous line in the next loop, or finally c + t/b <= 0 + ((b-1)^2 + (b-1))/b = b - 1 < b
+                let t = a[i] as i128 * b[j] as i128 + c[i + j] as i128;
+                c[i + j] = (t % BASE as i128) as i64; // t%b < b
+                c[i + j + 1] += (t / BASE as i128) as i64; // be modulo by the previous line in the next loop, or finally c + t/b <= 0 + ((b-1)^2 + (b-1))/b = b - 1 < b
             }
         }
 
