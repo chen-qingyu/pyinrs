@@ -80,7 +80,7 @@ impl<T> List<T> {
         self.data.insert(index, element)
     }
 
-    /// Remove the `element` at the specified `index` in the list.
+    /// Remove and return the `element` at the specified `index` in the list.
     /// Index can be negative.
     pub fn remove(&mut self, index: i32) -> T {
         detail::check_empty(self.data.len());
@@ -96,7 +96,7 @@ impl<T> List<T> {
         self.data.push(element)
     }
 
-    /// Remove the last element from a list and returns it, or `None` if it is empty.
+    /// Remove the last element from a list and return it, or `None` if it is empty.
     pub fn pop(&mut self) -> Option<T> {
         self.data.pop()
     }
