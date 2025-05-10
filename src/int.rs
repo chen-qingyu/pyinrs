@@ -5,7 +5,7 @@ use std::{
     str::FromStr,
 };
 
-use rand::{distributions::Uniform, Rng};
+use rand::{distr::Uniform, Rng};
 
 use crate::detail;
 
@@ -469,18 +469,18 @@ impl Int {
         }
 
         // random number generator
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
 
         // little chunks
         let mut chunks = vec![0; (digits - 1) / DIGITS_PER_CHUNK];
-        let chunk = Uniform::from(0..BASE);
+        let chunk = Uniform::try_from(0..BASE).unwrap();
         for d in chunks.iter_mut() {
             *d = rng.sample(chunk);
         }
 
         // most significant chunk
         let n = (digits - 1) % DIGITS_PER_CHUNK + 1;
-        let most_chunk = Uniform::from(10i64.pow((n - 1) as u32)..=10i64.pow(n as u32) - 1);
+        let most_chunk = Uniform::try_from(10i64.pow((n - 1) as u32)..=10i64.pow(n as u32) - 1).unwrap();
         chunks.push(rng.sample(most_chunk));
 
         Self { sign: 1, chunks }
