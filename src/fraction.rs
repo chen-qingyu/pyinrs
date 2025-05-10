@@ -68,6 +68,10 @@ impl From<i32> for Fraction {
 
 impl From<f64> for Fraction {
     fn from(value: f64) -> Self {
+        if !value.is_finite() {
+            panic!("Error: Invalid floating-point number.");
+        }
+
         let int_part = value.floor();
         let dec_part = value - int_part;
         let precision = 1_000_000_000; // 10^floor(log10(i32::MAX))
