@@ -445,11 +445,87 @@ fn gcd_lcm() {
 
 #[rstest]
 fn random() {
-    assert_eq!(Int::random(1).digits(), 1);
-    assert_eq!(Int::random(2).digits(), 2);
-    assert_eq!(Int::random(3).digits(), 3);
+    // 测试 random_range 函数
 
-    assert_eq!(Int::random(4300).digits(), 4300);
+    // 测试边界情况
+    assert_eq!(Int::random_range(&Int::from(0), &Int::from(0)), Int::from(0));
+    assert_eq!(Int::random_range(&Int::from(1), &Int::from(1)), Int::from(1));
+    assert_eq!(Int::random_range(&Int::from(-1), &Int::from(-1)), Int::from(-1));
+    assert_eq!(
+        Int::random_range(&"9999999999999999999999".into(), &"9999999999999999999999".into()),
+        Int::from("9999999999999999999999")
+    );
+
+    let loops = 1000;
+
+    // 测试小范围
+    for _ in 0..loops {
+        let r = Int::random_range(&Int::from(1), &Int::from(10));
+        assert!(Int::from(1) <= r && r <= Int::from(10));
+    }
+
+    // 测试大范围
+    for _ in 0..loops {
+        let r = Int::random_range(&Int::from("1000000000000"), &Int::from("2000000000000"));
+        assert!(Int::from("1000000000000") <= r && r <= Int::from("2000000000000"));
+    }
+
+    // 测试负数范围
+    for _ in 0..loops {
+        let r = Int::random_range(&Int::from(-10), &Int::from(-1));
+        assert!(Int::from(-10) <= r && r <= Int::from(-1));
+    }
+
+    // 测试跨零范围
+    for _ in 0..loops {
+        let r = Int::random_range(&Int::from(-5), &Int::from(5));
+        assert!(Int::from(-5) <= r && r <= Int::from(5));
+    }
+
+    // 统计测试 - 0到1的均匀分布
+    let mut sum = Int::new();
+    for _ in 0..loops {
+        sum += Int::random_range(&Int::from(0), &Int::from(1));
+    }
+    assert!(Int::from((loops as f64 / 2.0 * 0.9) as i32) < sum && sum < Int::from((loops as f64 / 2.0 * 1.1) as i32)); // 期望值500，允许10%误差
+
+    // 统计测试 - 1到6的均匀分布
+    let mut counts = vec![0; 6];
+    for _ in 0..(loops * 6) {
+        let val = Int::random_range(&Int::from(1), &Int::from(6)).to_number::<i64>() - 1;
+        counts[val as usize] += 1;
+    }
+    for count in counts {
+        // 期望值1000，允许10%误差
+        assert!(((loops as f64 * 0.9) as i32) < count && count < ((loops as f64 * 1.1) as i32));
+    }
+
+    // 统计测试 - 大范围均匀分布
+    let min_val = Int::from("1000000000000");
+    let max_val = Int::from("2000000000000");
+    let range = &max_val - &min_val + Int::from(1);
+    let mut sum_big = Int::new();
+    for _ in 0..loops {
+        sum_big += Int::random_range(&min_val, &max_val);
+    }
+    let expected_mean = (&min_val + &max_val) / Int::from(2);
+    let actual_mean = &sum_big / Int::from(loops);
+    assert!((&actual_mean - &expected_mean).abs() < &range / Int::from(50)); // 允许2%的误差
+
+    // 测试 random 函数
+
+    for d in 1..10 {
+        assert_eq!(Int::random(d).digits(), d);
+    }
+
+    assert_eq!(Int::random(1024).digits(), 1024);
+
+    let mut sum = Int::new();
+    for _ in 0..loops {
+        // sum should ~= 5 * 1000 = 5000
+        sum += Int::random(1); // mean = 5
+    }
+    assert!(Int::from(5000 * 9 / 10) < sum && sum < Int::from(5000 * 11 / 10)); // 允许10%的误差
 }
 
 #[rstest]

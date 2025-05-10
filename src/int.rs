@@ -149,12 +149,12 @@ impl Int {
     }
 
     /// Count the number of digits in the integer (based 10).
-    pub fn digits(&self) -> u32 {
+    pub fn digits(&self) -> usize {
         if self.chunks.is_empty() {
             return 0;
         }
 
-        (self.chunks.len() as u32 - 1) * DIGITS_PER_CHUNK as u32 + self.chunks.last().unwrap().ilog10() + 1
+        (self.chunks.len() - 1) * DIGITS_PER_CHUNK + self.chunks.last().unwrap().ilog10() as usize + 1
     }
 
     /// Determine whether the integer is zero quickly.
@@ -460,6 +460,34 @@ impl Int {
         }
 
         (a * b).abs() / Self::gcd(a, b) // LCM = |a * b| / GCD
+    }
+
+    /// Generate a random integer in [`a`, `b`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use pyinrs::Int;
+    /// Int::random_range(&Int::from(0), &Int::from(9)); // x in [0, 9]
+    /// Int::random_range(&Int::from(1), &Int::from(6)); // y in [1, 6]
+    /// ```
+    pub fn random_range(a: &Self, b: &Self) -> Self {
+        if a > b {
+            panic!("Error: Require a <= b for random_range(a, b).");
+        }
+
+        let mut rng = rand::rng();
+        let range = b - a + Int::from(1);
+        let mut result = Self::new();
+        let mut remaining = range.clone();
+        while !remaining.is_zero() {
+            let chunk_size = if remaining.chunks.len() > 1 { BASE - 1 } else { remaining.chunks[0] };
+            let dist = Uniform::try_from(0..chunk_size).unwrap();
+            result = result * Int::from(BASE) + Int::from(rng.sample(dist));
+            remaining /= Int::from(BASE);
+        }
+
+        result % range + a
     }
 
     /// Generate a random integer of a specified number of `digits`.
