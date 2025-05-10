@@ -14,8 +14,8 @@ pub fn criterion_benchmark(c: &mut Criterion) {
     c.bench_function("Int %", |b| b.iter(|| &int1 % &int2));
 
     c.bench_function("Int gcd", |b| b.iter(|| Int::gcd(&int1, &int2)));
-
-    c.bench_function("Int fac", |b| b.iter(|| Int::from("200").factorial()));
+    c.bench_function("Int factorial", |b| b.iter(|| Int::from("200").factorial()));
+    c.bench_function("Int is_prime", |b| b.iter(|| int1.is_prime()));
 }
 
 criterion_group!(benches, criterion_benchmark);
@@ -73,10 +73,17 @@ Found 6 outliers among 100 measurements (6.00%)
   1 (1.00%) high mild
   5 (5.00%) high severe
 
-Int fac                 time:   [18.696 µs 18.746 µs 18.801 µs]
+Int factorial           time:   [18.696 µs 18.746 µs 18.801 µs]
                         change: [-40.968% -40.535% -40.081%] (p = 0.00 < 0.05)
                         Performance has improved.
 Found 9 outliers among 100 measurements (9.00%)
   6 (6.00%) high mild
   3 (3.00%) high severe
+
+Int is_prime            time:   [77.474 ns 77.845 ns 78.286 ns]
+                        change: [-99.757% -99.755% -99.753%] (p = 0.00 < 0.05)
+                        Performance has improved.
+Found 7 outliers among 100 measurements (7.00%)
+  3 (3.00%) high mild
+  4 (4.00%) high severe
 */

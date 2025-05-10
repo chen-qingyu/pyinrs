@@ -196,14 +196,23 @@ impl Int {
             return false; // prime >= 2
         }
 
-        let mut n = Self::from(2);
+        if self == &2.into() || self == &3.into() {
+            return true;
+        }
+
+        if self.is_even() {
+            return false;
+        }
+
         let s = Int::sqrt(self);
+        let mut n = Int::from(3);
         while n <= s {
             if (self % &n).is_zero() {
                 return false;
             }
-            n.abs_inc();
+            n += Int::from(2);
         }
+
         true
     }
 
