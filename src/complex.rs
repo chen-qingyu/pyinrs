@@ -98,25 +98,15 @@ impl FromStr for Complex {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let s = s.trim();
 
-        // handle real only
-        if let Ok(real) = s.parse() {
-            return Ok(Self { real, imag: 0.0 });
-        }
-
-        // handle imag only
-        if s.as_bytes().last() == Some(&b'j') {
-            if let Ok(imag) = s[..(s.len() - 1)].parse() {
-                return Ok(Self { real: 0.0, imag });
-            }
-        }
-
-        let re = Regex::new(r"^([-+]?\d*\.?\d*)([-+]?\d*\.?\d*)j$").unwrap();
+        let re = Regex::new(r"^([-+]?\d*\.?\d*)([-+]?\d*\.?\d*)j?$").unwrap();
         if let Some(caps) = re.captures(s) {
-            if caps.len() == 3 {
-                let real = caps[1].parse().map_err(|_| ParseComplexError)?;
-                let imag = caps[2].parse().map_err(|_| ParseComplexError)?;
-                return Ok(Self { real, imag });
+            let mut real = caps[1].parse().unwrap_or_default();
+            let mut imag = caps[2].parse().unwrap_or_default();
+            if s.ends_with('j') && caps[2].is_empty() {
+                imag = real;
+                real = 0.0;
             }
+            return Ok(Self { real, imag });
         }
 
         Err(ParseComplexError)
