@@ -186,6 +186,11 @@ fn parse() {
     assert_eq!(Complex::from((-1234., -4321.)), "-1234-4321j".parse().unwrap());
     assert_eq!(Complex::from((0., 3.)), "   3j   ".parse().unwrap());
 
+    assert_eq!(Complex::from((0.1, 0.2)), ".1+.2j".parse().unwrap());
+    assert_eq!(Complex::from((0.1, 2.0)), ".1+2.j".parse().unwrap());
+    assert_eq!(Complex::from((1.0, 0.2)), "1.+.2j".parse().unwrap());
+    assert_eq!(Complex::from((1.0, 2.0)), "1.+2.j".parse().unwrap());
+
     assert!("z1+2j".parse::<Complex>().is_err());
     assert!("1z+2j".parse::<Complex>().is_err());
     assert!("1+z2j".parse::<Complex>().is_err());

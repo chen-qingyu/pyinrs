@@ -110,7 +110,7 @@ impl FromStr for Complex {
             }
         }
 
-        let re = Regex::new(r"^([-+]?\d+\.?\d*)([-+]?\d+\.?\d*)j$").unwrap();
+        let re = Regex::new(r"^([-+]?\d*\.?\d*)([-+]?\d*\.?\d*)j$").unwrap();
         if let Some(caps) = re.captures(s) {
             if caps.len() == 3 {
                 let real = caps[1].parse().map_err(|_| ParseComplexError)?;
