@@ -1,6 +1,6 @@
 [package]
 name = "pyinrs"
-version = "1.9.1-dev"
+version = "1.9.2"
 edition = "2021"
 license = "MIT"
 authors = ["Chen QingYu <chen_qingyu@qq.com>"]
