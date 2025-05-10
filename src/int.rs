@@ -290,12 +290,13 @@ impl Int {
             panic!("Error: Require this >= 0 for factorial().");
         }
 
-        // fast judgement, fast decrement
+        if self.chunks.len() > 1 {
+            panic!("Error: This integer is too large to calculate for factorial().");
+        }
+
         let mut result = Self::from(1); // 0! == 1
-        let mut i = self.clone();
-        while i.is_positive() {
-            result *= &i;
-            i.abs_dec();
+        for i in 1..=self.to_number::<i64>() {
+            result.small_mul(i);
         }
 
         result
