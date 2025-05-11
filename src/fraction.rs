@@ -103,7 +103,7 @@ impl From<(i32, i32)> for Fraction {
         num /= gcd;
         den /= gcd;
 
-        Fraction { num, den }
+        Self { num, den }
     }
 }
 
@@ -114,11 +114,12 @@ impl FromStr for Fraction {
     type Err = ParseFractionError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if let Ok(num) = s.trim().parse() {
+        let s = s.trim();
+        if let Ok(num) = s.parse() {
             return Ok(Self { num, den: 1 });
         }
 
-        let (num, den) = s.trim().split_once('/').ok_or(ParseFractionError)?;
+        let (num, den) = s.split_once('/').ok_or(ParseFractionError)?;
 
         let num = num.parse().map_err(|_| ParseFractionError)?;
         let den = den.parse().map_err(|_| ParseFractionError)?;
@@ -149,11 +150,7 @@ impl Ord for Fraction {
         // so, self - other = a/b - c/d = (ad - bc)/(bd)
         // since bd is always positive, compute (ad-bc) only
 
-        match self.num * other.den - self.den * other.num {
-            ..=-1 => Ordering::Less,
-            0 => Ordering::Equal,
-            1.. => Ordering::Greater,
-        }
+        (self.num * other.den - self.den * other.num).cmp(&0)
     }
 }
 
