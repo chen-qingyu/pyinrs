@@ -33,7 +33,7 @@ pub struct Int {
 impl Int {
     // Remove leading zeros and correct sign.
     fn trim(&mut self) {
-        while !self.chunks.is_empty() && self.chunks.last().unwrap() == &0 {
+        while let Some(&0) = self.chunks.last() {
             self.chunks.pop();
         }
 
@@ -44,25 +44,23 @@ impl Int {
 
     // Test whether the characters represent an integer.
     fn is_integer(chars: &[u8], len: usize) -> bool {
-        let have_sign = chars[0] == b'+' || chars[0] == b'-';
-        if len == 0 || (len == 1 && have_sign) {
+        if len == 0 {
             return false;
         }
 
-        for c in chars.iter().skip(usize::from(have_sign)) {
-            if !c.is_ascii_digit() {
-                return false;
-            }
+        let have_sign = chars.first().map_or(false, |&c| c == b'+' || c == b'-');
+        let start = if have_sign { 1 } else { 0 };
+
+        if start == len {
+            return false;
         }
 
-        true
+        chars[start..].iter().all(|&c| c.is_ascii_digit())
     }
 
     // Increase the absolute value by 1 quickly.
     fn abs_inc(&mut self) {
         assert!(self.sign != 0);
-
-        // add a leading zero for carry
         self.chunks.push(0);
 
         let mut i = 0;
@@ -70,75 +68,59 @@ impl Int {
             i += 1;
         }
         self.chunks[i] += 1;
-        while i != 0 {
-            i -= 1;
-            self.chunks[i] = 0;
-        }
-
-        self.trim(); // sign unchanged
+        self.chunks[..i].fill(0);
+        self.trim();
     }
 
     // Decrease the absolute value by 1 quickly.
     fn abs_dec(&mut self) {
         assert!(self.sign != 0);
-
         let mut i = 0;
         while self.chunks[i] == 0 {
             i += 1;
         }
         self.chunks[i] -= 1;
-        while i != 0 {
-            i -= 1;
-            self.chunks[i] = BASE - 1;
-        }
-
-        self.trim(); // sign may change to zero
+        self.chunks[..i].fill(BASE - 1);
+        self.trim();
     }
 
     // Compare absolute value.
     fn abs_cmp(&self, rhs: &[i64]) -> Ordering {
-        if self.chunks.len() != rhs.len() {
-            return if self.chunks.len() > rhs.len() { Ordering::Greater } else { Ordering::Less };
+        match self.chunks.len().cmp(&rhs.len()) {
+            Ordering::Equal => self
+                .chunks
+                .iter()
+                .rev()
+                .zip(rhs.iter().rev())
+                .find_map(|(&a, &b)| (a != b).then_some(a.cmp(&b)))
+                .unwrap_or(Ordering::Equal),
+            ord => ord,
         }
-
-        for (&this, &that) in self.chunks.iter().rev().zip(rhs.iter().rev()) {
-            if this != that {
-                return if this > that { Ordering::Greater } else { Ordering::Less };
-            }
-        }
-
-        Ordering::Equal
     }
 
     // Multiply with small int. O(N)
     fn small_mul(&mut self, n: i64) {
-        assert!(self.is_positive());
-        assert!(n > 0 && n < BASE);
-
+        assert!(self.is_positive() && n > 0 && n < BASE);
         let mut carry = 0;
-        for chunk in self.chunks.iter_mut() {
+        for chunk in &mut self.chunks {
             let tmp = *chunk as i128 * n as i128 + carry as i128;
-            *chunk = (tmp % BASE as i128) as i64; // t%b < b
-            carry = (tmp / BASE as i128) as i64; // t/b <= ((b-1)*(b-1) + (b-1))/b = b - 1 < b
+            *chunk = (tmp % BASE as i128) as i64;
+            carry = (tmp / BASE as i128) as i64;
         }
         self.chunks.push(carry);
-
         self.trim();
     }
 
     // Divide with small int. O(N)
     // Retrun the remainder.
     fn small_div(&mut self, n: i64) -> i64 {
-        assert!(self.is_positive());
-        assert!(n > 0 && n < BASE);
-
+        assert!(self.is_positive() && n > 0 && n < BASE);
         let mut r = 0;
         for chunk in self.chunks.iter_mut().rev() {
             r = r * BASE as i128 + *chunk as i128;
-            *chunk = (r / n as i128) as i64; // r/n <= ((n-1)*b+(b-1))/n = (n*b - 1)/n < b
-            r %= n as i128; // r%n < r%b < b
+            *chunk = (r / n as i128) as i64;
+            r %= n as i128;
         }
-
         self.trim();
         r as i64
     }
@@ -150,11 +132,9 @@ impl Int {
 
     /// Count the number of digits in the integer (based 10).
     pub fn digits(&self) -> usize {
-        if self.chunks.is_empty() {
-            return 0;
-        }
-
-        (self.chunks.len() - 1) * DIGITS_PER_CHUNK + self.chunks.last().unwrap().ilog10() as usize + 1
+        self.chunks
+            .last()
+            .map_or(0, |&x| (self.chunks.len() - 1) * DIGITS_PER_CHUNK + x.ilog10() as usize + 1)
     }
 
     /// Determine whether the integer is zero quickly.
@@ -174,36 +154,25 @@ impl Int {
 
     /// Determine whether the integer is even quickly.
     pub fn is_even(&self) -> bool {
-        if self.is_zero() {
-            true
-        } else {
-            self.chunks[0] & 1 == 0
-        }
+        self.is_zero() || self.chunks[0] & 1 == 0
     }
 
     /// Determine whether the integer is odd quickly.
     pub fn is_odd(&self) -> bool {
-        if self.is_zero() {
-            false
-        } else {
-            self.chunks[0] & 1 == 1
-        }
+        !self.is_zero() && self.chunks[0] & 1 == 1
     }
 
     /// Determine whether the integer is prime number.
     pub fn is_prime(&self) -> bool {
         if self <= &1.into() {
-            return false; // prime >= 2
+            return false;
         }
-
         if self == &2.into() || self == &3.into() {
             return true;
         }
-
         if self.is_even() {
             return false;
         }
-
         let s = Int::sqrt(self);
         let mut n = Int::from(3);
         while n <= s {
@@ -212,32 +181,31 @@ impl Int {
             }
             n += Int::from(2);
         }
-
         true
     }
 
     /// Increase the value by 1 quickly.
     pub fn inc(&mut self) -> &Self {
-        if self.sign == 1 {
-            self.abs_inc();
-        } else if self.sign == -1 {
-            self.abs_dec();
-        } else {
-            self.sign = 1;
-            self.chunks.push(1);
+        match self.sign {
+            1 => self.abs_inc(),
+            -1 => self.abs_dec(),
+            _ => {
+                self.sign = 1;
+                self.chunks.push(1);
+            }
         }
         self
     }
 
     /// Decrease the value by 1 quickly.
     pub fn dec(&mut self) -> &Self {
-        if self.sign == 1 {
-            self.abs_dec();
-        } else if self.sign == -1 {
-            self.abs_inc();
-        } else {
-            self.sign = -1;
-            self.chunks.push(1);
+        match self.sign {
+            1 => self.abs_dec(),
+            -1 => self.abs_inc(),
+            _ => {
+                self.sign = -1;
+                self.chunks.push(1);
+            }
         }
         self
     }
@@ -609,35 +577,42 @@ Construct
 
 impl From<&str> for Int {
     fn from(s: &str) -> Self {
-        let s = s.as_bytes();
+        let s = s.trim().as_bytes();
         if !Self::is_integer(s, s.len()) {
             panic!("Error: Wrong integer literal.");
         }
 
-        let sign = if s[0] == b'-' { -1 } else { 1 };
+        let (sign, digits) = match s.first() {
+            Some(&b'-') => (-1, &s[1..]),
+            Some(&b'+') => (1, &s[1..]),
+            _ => (1, s),
+        };
 
-        // skip symbol
-        let digits = if s[0] == b'-' || s[0] == b'+' { &s[1..] } else { s };
+        if digits.is_empty() {
+            return Self::new();
+        }
 
-        let chunks_len = (digits.len() as f64 / DIGITS_PER_CHUNK as f64).ceil() as usize;
-        let mut chunks = vec![0; chunks_len];
-
-        // every DIGITS_PER_CHUNK digits into a chunk (align right)
+        let mut chunks = Vec::new();
         let mut chunk = 0;
-        let mut idx = chunks_len;
-        for i in 0..digits.len() {
-            chunk = chunk * 10 + (digits[i] - b'0') as i64;
-            // I think maybe it's not the fastest, but it's the most elegant
-            if (i + 1) % DIGITS_PER_CHUNK == digits.len() % DIGITS_PER_CHUNK {
-                idx -= 1;
-                chunks[idx] = chunk;
+        let mut count = 0u32;
+
+        for &c in digits.iter().rev() {
+            chunk += (c - b'0') as i64 * 10i64.pow(count);
+            count += 1;
+            if count == DIGITS_PER_CHUNK as u32 {
+                chunks.push(chunk);
                 chunk = 0;
+                count = 0;
             }
         }
 
-        let mut r = Self { sign, chunks };
-        r.trim();
-        r
+        if count > 0 {
+            chunks.push(chunk);
+        }
+
+        let mut result = Self { sign, chunks };
+        result.trim();
+        result
     }
 }
 
@@ -648,14 +623,18 @@ macro_rules! from_signed {
                 if n == 0 {
                     return Self::new();
                 }
-
-                let mut chunks = vec![];
                 let sign = if n > 0 { 1 } else { -1 };
                 n = n.abs();
-                while n > 0 {
-                    chunks.push((n as i128 % BASE as i128) as i64);
-                    n = (n as i128 / BASE as i128) as $T;
-                }
+                let chunks = std::iter::from_fn(move || {
+                    if n > 0 {
+                        let chunk = (n as i128 % BASE as i128) as i64;
+                        n = (n as i128 / BASE as i128) as $T;
+                        Some(chunk)
+                    } else {
+                        None
+                    }
+                })
+                .collect();
                 Self { sign, chunks }
             }
         }
@@ -666,12 +645,17 @@ macro_rules! from_unsigned {
     ($T:ty) => {
         impl From<$T> for Int {
             fn from(mut n: $T) -> Self {
-                let mut chunks = vec![];
                 let sign = if n > 0 { 1 } else { 0 };
-                while n > 0 {
-                    chunks.push((n as u128 % BASE as u128) as i64);
-                    n = (n as u128 / BASE as u128) as $T;
-                }
+                let chunks = std::iter::from_fn(move || {
+                    if n > 0 {
+                        let chunk = (n as u128 % BASE as u128) as i64;
+                        n = (n as u128 / BASE as u128) as $T;
+                        Some(chunk)
+                    } else {
+                        None
+                    }
+                })
+                .collect();
                 Self { sign, chunks }
             }
         }
@@ -700,11 +684,9 @@ impl FromStr for Int {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let s = s.trim();
-
         if !Self::is_integer(s.as_bytes(), s.len()) {
             return Err(ParseIntError);
         }
-
         Ok(Self::from(s))
     }
 }
@@ -721,25 +703,21 @@ impl PartialOrd for Int {
 
 impl Ord for Int {
     fn cmp(&self, that: &Self) -> Ordering {
-        if self.sign != that.sign {
-            return match self.sign - that.sign {
-                (1..) => Ordering::Greater,
-                0 => Ordering::Equal,
-                (..=-1) => Ordering::Less,
-            };
-        }
-
-        if self.sign >= 0 {
-            self.abs_cmp(&that.chunks)
-        } else {
-            self.abs_cmp(&that.chunks).reverse()
+        match self.sign.cmp(&that.sign) {
+            Ordering::Equal => {
+                if self.sign >= 0 {
+                    self.abs_cmp(&that.chunks)
+                } else {
+                    self.abs_cmp(&that.chunks).reverse()
+                }
+            }
+            ord => ord,
         }
     }
 }
 
 impl Neg for &Int {
     type Output = Int;
-
     fn neg(self) -> Self::Output {
         self.clone().neg()
     }
@@ -747,7 +725,6 @@ impl Neg for &Int {
 
 impl Neg for Int {
     type Output = Self;
-
     fn neg(self) -> Self::Output {
         Self {
             sign: -self.sign,
@@ -759,31 +736,28 @@ impl Neg for Int {
 #[auto_impl_ops::auto_ops]
 impl AddAssign<&Int> for Int {
     fn add_assign(&mut self, rhs: &Self) {
-        // if one of the operands is zero, just return another one
         if self.sign == 0 || rhs.sign == 0 {
-            return if self.sign == 0 {
+            if self.sign == 0 {
                 *self = rhs.clone();
-            };
+            }
+            return;
         }
 
-        // if the operands are of opposite signs, perform subtraction
         if self.sign != rhs.sign {
-            return *self -= &-rhs;
+            *self -= &-rhs;
+            return;
         }
 
-        // now, the sign of two integers is the same and not zero
-
-        // normalize
         let a = &mut self.chunks;
         let b = &rhs.chunks;
-        a.resize(a.len().max(rhs.chunks.len()) + 1, 0); // a.len is max+1
+        a.resize(a.len().max(rhs.chunks.len()) + 1, 0);
 
-        // calculate
-        for i in 0..b.len() {
-            let t = a[i] + b[i];
+        for (i, &b_i) in b.iter().enumerate() {
+            let t = a[i] + b_i;
             a[i] = t % BASE;
             a[i + 1] += t / BASE;
         }
+
         for i in b.len()..a.len() {
             if a[i] >= BASE {
                 a[i + 1] += 1;
@@ -798,21 +772,18 @@ impl AddAssign<&Int> for Int {
 #[auto_impl_ops::auto_ops]
 impl SubAssign<&Int> for Int {
     fn sub_assign(&mut self, rhs: &Self) {
-        // if one of the operands is zero
         if self.sign == 0 || rhs.sign == 0 {
-            return if self.sign == 0 {
+            if self.sign == 0 {
                 *self = -rhs;
-            };
+            }
+            return;
         }
 
-        // if the operands are of opposite signs, perform addition
         if self.sign != rhs.sign {
-            return *self += &-rhs;
+            *self += &-rhs;
+            return;
         }
 
-        // now, the sign of two integers is the same and not zero
-
-        // normalize
         let mut rhs = rhs.chunks.clone();
         if self.abs_cmp(&rhs) == Ordering::Less {
             self.sign = -self.sign;
@@ -822,12 +793,12 @@ impl SubAssign<&Int> for Int {
         let b = &rhs;
         a.push(0);
 
-        // calculate
-        for i in 0..b.len() {
-            let t = a[i] - b[i];
+        for (i, &b_i) in b.iter().enumerate() {
+            let t = a[i] - b_i;
             a[i] = i64::rem_euclid(t, BASE);
             a[i + 1] += i64::div_euclid(t, BASE);
         }
+
         for i in b.len()..a.len() {
             if a[i] < 0 {
                 a[i + 1] -= 1;
@@ -842,14 +813,11 @@ impl SubAssign<&Int> for Int {
 #[auto_impl_ops::auto_ops]
 impl MulAssign<&Int> for Int {
     fn mul_assign(&mut self, rhs: &Self) {
-        // if one of the operands is zero, just return zero
         if self.sign == 0 || rhs.sign == 0 {
             *self = 0.into();
+            return;
         }
 
-        // now, the sign of two integers is not zero
-
-        // normalize
         let a = &self.chunks;
         let b = &rhs.chunks;
         let mut result = Self {
@@ -858,12 +826,11 @@ impl MulAssign<&Int> for Int {
         };
         let c = &mut result.chunks;
 
-        // calculate
-        for i in 0..a.len() {
-            for j in 0..b.len() {
-                let t = a[i] as i128 * b[j] as i128 + c[i + j] as i128;
-                c[i + j] = (t % BASE as i128) as i64; // t%b < b
-                c[i + j + 1] += (t / BASE as i128) as i64; // be modulo by the previous line in the next loop, or finally c + t/b <= 0 + ((b-1)^2 + (b-1))/b = b - 1 < b
+        for (i, &a_i) in a.iter().enumerate() {
+            for (j, &b_j) in b.iter().enumerate() {
+                let t = a_i as i128 * b_j as i128 + c[i + j] as i128;
+                c[i + j] = (t % BASE as i128) as i64;
+                c[i + j + 1] += (t / BASE as i128) as i64;
             }
         }
 
