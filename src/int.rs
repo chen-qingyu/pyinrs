@@ -44,7 +44,7 @@ impl Int {
 
     // Test whether the characters represent an integer.
     fn is_integer(chars: &[u8]) -> bool {
-        if chars.len() == 0 {
+        if chars.is_empty() {
             return false;
         }
 
@@ -597,7 +597,7 @@ impl From<&str> for Int {
         };
 
         // every DIGITS_PER_CHUNK digits into a chunk (align right)
-        let chunks_len = (digits.len() + DIGITS_PER_CHUNK - 1) / DIGITS_PER_CHUNK;
+        let chunks_len = digits.len().div_ceil(DIGITS_PER_CHUNK);
         let mut chunks = vec![0; chunks_len];
         let mut chunk = 0;
         let mut idx = chunks_len;
