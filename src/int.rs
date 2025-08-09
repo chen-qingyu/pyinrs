@@ -525,7 +525,7 @@ impl Int {
 
     /// The well-known Ackermann function (perhaps not so well-known) is a rapidly growing function.
     /// Please input parameters carefully.
-    /// See: https://en.wikipedia.org/wiki/Ackermann_function
+    /// See: <https://en.wikipedia.org/wiki/Ackermann_function>
     pub fn ackermann(m: &Self, n: &Self) -> Self {
         if m.is_negative() || n.is_negative() {
             panic!("Error: Require m >= 0 and n >= 0 for ackermann(m, n).");
@@ -548,7 +548,7 @@ impl Int {
 
     /// The hyperoperation sequence is an infinite sequence of arithmetic operations.
     /// This sequence starts with unary successor (n = 0), continues with addition (n = 1), multiplication (n = 2), exponentiation (n = 3), etc.
-    /// See: https://en.wikipedia.org/wiki/Hyperoperation
+    /// See: <https://en.wikipedia.org/wiki/Hyperoperation>
     pub fn hyperoperation(n: &Self, a: &Self, b: &Self) -> Self {
         if n.is_negative() || a.is_negative() || b.is_negative() {
             panic!("Error: Require n >= 0 and a >= 0 and b >= 0 for hyperoperation(n, a, b).");
