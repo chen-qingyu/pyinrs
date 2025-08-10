@@ -1,7 +1,7 @@
 #[inline]
 pub fn check_bounds(pos: i32, begin: i32, end: i32) {
     if pos < begin || pos >= end {
-        panic!("Error: Index out of range: {} not in {}..{}.", pos, begin, end);
+        panic!("Error: Index out of range: {pos} not in {begin}..{end}.");
     }
 }
 
@@ -15,7 +15,7 @@ pub fn check_empty(size: usize) {
 #[inline]
 pub fn check_full(size: usize, capacity: usize) {
     if size >= capacity {
-        panic!("Error: The container has reached the maximum size: {}.", capacity);
+        panic!("Error: The container has reached the maximum size: {capacity}.");
     }
 }
 
