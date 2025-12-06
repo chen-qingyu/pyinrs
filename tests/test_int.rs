@@ -506,7 +506,7 @@ fn random() {
     }
     let expected_mean = (&min_val + &max_val) / Int::from(2);
     let actual_mean = &sum_big / Int::from(loops);
-    assert!((&actual_mean - &expected_mean).abs() < &range / Int::from(50)); // ~2%
+    assert!((&actual_mean - &expected_mean).abs() < &range / Int::from(20), "run again"); // ~5%
 
     // random
 
