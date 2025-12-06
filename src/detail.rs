@@ -20,8 +20,8 @@ pub fn check_full(size: usize, capacity: usize) {
 }
 
 #[inline]
-pub fn check_zero<T: Into<f64> + Copy>(number: T) {
-    if Into::<f64>::into(number) == 0.0 {
+pub fn check_zero<T: PartialEq + Default>(number: T) {
+    if number == T::default() {
         panic!("Error: Divide by zero.");
     }
 }
@@ -55,11 +55,11 @@ where
 }
 
 #[inline]
-pub fn gcd<T: std::ops::Rem<Output = T> + Clone + Eq + From<i32>>(mut a: T, mut b: T) -> T {
+pub fn gcd<T: std::ops::Rem<Output = T> + Clone + Eq + Default>(mut a: T, mut b: T) -> T {
     // using Euclidean algorithm
 
     // a, b = b, a % b until b == 0
-    while b != 0.into() {
+    while b != T::default() {
         let t = b.clone();
         b = a % b;
         a = t;

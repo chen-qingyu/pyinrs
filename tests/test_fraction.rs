@@ -17,28 +17,6 @@ fn setup() -> Fixture {
 }
 
 #[rstest]
-fn from_f64() {
-    let f = Fraction::from(0.0);
-    assert_eq!(f.numerator(), 0);
-    assert_eq!(f.denominator(), 1);
-    let f = Fraction::from(1.1);
-    assert_eq!(f.numerator(), 11);
-    assert_eq!(f.denominator(), 10);
-    let f = Fraction::from(1234.56789);
-    assert_eq!(f.numerator(), 123456789);
-    assert_eq!(f.denominator(), 100000);
-    let f = Fraction::from(0.75);
-    assert_eq!(f.numerator(), 3);
-    assert_eq!(f.denominator(), 4);
-    let f = Fraction::from(-22.33);
-    assert_eq!(f.numerator(), -2233);
-    assert_eq!(f.denominator(), 100);
-    let f = Fraction::from(-1.2);
-    assert_eq!(f.numerator(), -6);
-    assert_eq!(f.denominator(), 5);
-}
-
-#[rstest]
 #[should_panic(expected = "Error: Divide by zero.")]
 fn basics() {
     let _ = Fraction::from((1, 0));
@@ -204,11 +182,70 @@ fn rem(setup: Fixture, #[case] case: i32) {
 }
 
 #[rstest]
-fn transform() {
-    assert_eq!(f64::from(Fraction::from((0, 2))), 0.0);
-    assert_eq!(f64::from(Fraction::from((1, 2))), 0.5);
-    assert_eq!(f64::from(Fraction::from((2, 3))), 2.0 / 3.0);
-    assert_eq!(f64::from(Fraction::from((1, -2))), -0.5);
+fn from_integer() {
+    let zero = Fraction::from(0);
+    assert_eq!(zero.numerator(), 0);
+    assert_eq!(zero.denominator(), 1);
+
+    let one = Fraction::from(1);
+    assert_eq!(one, Fraction::from(1i8));
+    assert_eq!(one, Fraction::from(1i16));
+    assert_eq!(one, Fraction::from(1i32));
+    assert_eq!(one, Fraction::from(1i64));
+    assert_eq!(one, Fraction::from(1i128));
+    assert_eq!(one, Fraction::from(1u8));
+    assert_eq!(one, Fraction::from(1u16));
+    assert_eq!(one, Fraction::from(1u32));
+    assert_eq!(one, Fraction::from(1u64));
+
+    let small_pos = Fraction::from(1);
+    assert!(small_pos.numerator() == 1);
+    assert!(small_pos.denominator() == 1);
+
+    let small_neg = Fraction::from(-1);
+    assert_eq!(small_neg.numerator(), -1);
+    assert_eq!(small_neg.denominator(), 1);
+
+    let big_pos = Fraction::from(i128::MAX);
+    assert_eq!(big_pos.numerator(), i128::MAX);
+    assert_eq!(big_pos.denominator(), 1);
+
+    let big_neg = Fraction::from(i128::MIN);
+    assert_eq!(big_neg.numerator(), i128::MIN);
+    assert_eq!(big_neg.denominator(), 1);
+
+    let reduced = Fraction::from((12, -4));
+    assert_eq!(reduced, Fraction::from((-3, 1)));
+
+    let unity = Fraction::from((42, 42));
+    assert_eq!(unity, Fraction::from(1));
+}
+
+#[rstest]
+fn from_float() {
+    assert_eq!(Fraction::from(0.0), Fraction::from((0, 1)));
+    assert_eq!(Fraction::from(1.1), Fraction::from((11, 10)));
+    assert_eq!(Fraction::from(0.75), Fraction::from((3, 4)));
+    assert_eq!(Fraction::from(-1.2), Fraction::from((-6, 5)));
+    assert_eq!(Fraction::from(std::f64::consts::PI), Fraction::from((3141592653589793i128, 1000000000000000)));
+}
+
+#[rstest]
+fn to_float() {
+    let zero = Fraction::from((0, 2));
+    let half = Fraction::from((1, 2));
+    let thirds = Fraction::from((2, 3));
+    let neg_half = Fraction::from((1, -2));
+
+    assert_eq!(f64::from(zero), 0.0);
+    assert_eq!(f64::from(half), 0.5);
+    assert_eq!(f64::from(thirds), 2.0 / 3.0);
+    assert_eq!(f64::from(neg_half), -0.5);
+
+    assert_eq!(f32::from(zero), 0.0);
+    assert_eq!(f32::from(half), 0.5);
+    assert_eq!(f32::from(thirds), 2.0 / 3.0);
+    assert_eq!(f32::from(neg_half), -0.5);
 }
 
 #[rstest]

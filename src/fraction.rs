@@ -11,10 +11,10 @@ use crate::detail;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Fraction {
     // Numerator.
-    num: i32,
+    num: i128,
 
     // Denominator.
-    den: i32,
+    den: i128,
 }
 
 impl Fraction {
@@ -32,12 +32,12 @@ impl Fraction {
     }
 
     /// Get the numerator of self.
-    pub fn numerator(&self) -> i32 {
+    pub fn numerator(&self) -> i128 {
         self.num
     }
 
     /// Get the denominator of self.
-    pub fn denominator(&self) -> i32 {
+    pub fn denominator(&self) -> i128 {
         self.den
     }
 
@@ -54,40 +54,13 @@ impl Fraction {
 
         (a * b).abs() / Self::gcd(a, b) // LCM = |a * b| / GCD
     }
-}
 
-/*
-Construct
-*/
-
-impl From<i32> for Fraction {
-    fn from(value: i32) -> Self {
-        Self { num: value, den: 1 }
+    fn from_integer<T: Into<i128>>(value: T) -> Self {
+        Self { num: value.into(), den: 1 }
     }
-}
 
-impl From<f64> for Fraction {
-    fn from(value: f64) -> Self {
-        if !value.is_finite() {
-            panic!("Error: Invalid floating-point number.");
-        }
-
-        let int_part = value.floor();
-        let dec_part = value - int_part;
-        let precision = 1_000_000_000; // 10^floor(log10(i32::MAX))
-
-        let gcd = detail::gcd((dec_part * precision as f64).round() as i32, precision);
-        let mut num = (dec_part * precision as f64).round() as i32 / gcd;
-        let den = precision / gcd;
-        num += int_part as i32 * den;
-
-        Self { num, den }
-    }
-}
-
-impl From<(i32, i32)> for Fraction {
-    fn from(value: (i32, i32)) -> Self {
-        let (mut num, mut den) = value;
+    fn from_ratio<T: Into<i128>>(num: T, den: T) -> Self {
+        let (mut num, mut den) = (num.into(), den.into());
 
         // make sure the denominator is not zero
         detail::check_zero(den);
@@ -107,6 +80,56 @@ impl From<(i32, i32)> for Fraction {
     }
 }
 
+/*
+Construct
+*/
+
+macro_rules! impl_from_integer {
+    ($($t:ty),+ $(,)?) => {
+        $(
+            impl From<$t> for Fraction {
+                fn from(value: $t) -> Self {
+                    Fraction::from_integer(value)
+                }
+            }
+
+            impl From<($t, $t)> for Fraction {
+                fn from(value: ($t, $t)) -> Self {
+                    Fraction::from_ratio(value.0, value.1)
+                }
+            }
+        )+
+    };
+}
+
+// Implement `From` for integer types, u128 is not included because it may overflow when negated
+impl_from_integer!(i8, i16, i32, i64, i128, u8, u16, u32, u64);
+
+impl From<f64> for Fraction {
+    fn from(value: f64) -> Self {
+        if !value.is_finite() {
+            panic!("Error: Invalid floating-point number.");
+        }
+
+        let int_part = value.floor();
+        let dec_part = value - int_part;
+        let precision = i128::pow(10, 15); // precision as f64 may lose accuracy for very large numbers
+
+        let gcd = detail::gcd((dec_part * (precision as f64)).round() as i128, precision);
+        let mut num = (dec_part * precision as f64).round() as i128 / gcd;
+        let den = precision / gcd;
+        num += int_part as i128 * den;
+
+        Self { num, den }
+    }
+}
+
+impl From<f32> for Fraction {
+    fn from(value: f32) -> Self {
+        Fraction::from(value as f64)
+    }
+}
+
 #[derive(Debug, PartialEq, Eq)]
 pub struct ParseFractionError;
 
@@ -121,8 +144,8 @@ impl FromStr for Fraction {
 
         let (num, den) = s.split_once('/').ok_or(ParseFractionError)?;
 
-        let num = num.parse().map_err(|_| ParseFractionError)?;
-        let den = den.parse().map_err(|_| ParseFractionError)?;
+        let num = num.parse::<i128>().map_err(|_| ParseFractionError)?;
+        let den = den.parse::<i128>().map_err(|_| ParseFractionError)?;
 
         Ok(Self::from((num, den)))
     }
@@ -230,5 +253,11 @@ Transform
 impl From<Fraction> for f64 {
     fn from(value: Fraction) -> Self {
         value.num as f64 / value.den as f64
+    }
+}
+
+impl From<Fraction> for f32 {
+    fn from(value: Fraction) -> Self {
+        value.num as f32 / value.den as f32
     }
 }
