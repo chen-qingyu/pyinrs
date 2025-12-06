@@ -3,6 +3,7 @@
 mod detail;
 
 mod complex;
+mod decimal;
 mod deque;
 mod dict;
 mod fraction;
@@ -12,6 +13,7 @@ mod set;
 mod str;
 
 pub use complex::Complex;
+pub use decimal::Decimal;
 pub use deque::Deque;
 pub use dict::Dict;
 pub use fraction::Fraction;

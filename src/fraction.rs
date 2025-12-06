@@ -5,7 +5,7 @@ use std::{
     str::FromStr,
 };
 
-use crate::detail;
+use crate::{detail, Decimal};
 
 /// Fraction provides support for rational number arithmetic.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -39,6 +39,11 @@ impl Fraction {
     /// Get the denominator of self.
     pub fn denominator(&self) -> i128 {
         self.den
+    }
+
+    /// Convert to decimal.
+    pub fn as_decimal(&self) -> Decimal {
+        (*self).into()
     }
 
     /// Calculate the greatest common divisor of two fractions.
@@ -129,6 +134,12 @@ impl From<f64> for Fraction {
 impl From<f32> for Fraction {
     fn from(value: f32) -> Self {
         Fraction::from(value as f64)
+    }
+}
+
+impl From<Decimal> for Fraction {
+    fn from(value: Decimal) -> Self {
+        value.as_fraction()
     }
 }
 

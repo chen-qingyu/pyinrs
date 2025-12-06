@@ -6,7 +6,7 @@ _A Rust type library that is as easy to use as Python built-in types._
 
 - Name: PyInRs (means **Py**thon **in** **R**u**s**t)
 - Goal: Provide a Rust type library that is as easy to use as Python built-in types
-- Module: List, Set, Dict, Int, Str, Complex, Deque, Fraction
+- Module: List, Set, Dict, Int, Str, Complex, Deque, Fraction, Decimal
 
 ## 2. Feature
 
@@ -25,7 +25,7 @@ To use it, add the following lines to your `Cargo.toml` file:
 pyinrs = "1"
 ```
 
-There are a total of 8 classes, refer to commonly used classes in Python:
+There are a total of 9 classes, refer to commonly used classes in Python:
 
 | Type in PyInRs | Type in Python       |
 | -------------- | -------------------- |
@@ -37,6 +37,7 @@ There are a total of 8 classes, refer to commonly used classes in Python:
 | `Complex`      | `complex`            |
 | `Deque<T>`     | `collections.deque`  |
 | `Fraction`     | `fractions.Fraction` |
+| `Decimal`      | `decimal.Decimal`    |
 
 Some simple examples:
 
@@ -92,6 +93,11 @@ Deque::from([1, 2, 3, 4, 5]) >> 1; // <5, 1, 2, 3, 4>
 Fraction::from("1/2") + Fraction::from("1/3"); // 5/6
 // Fraction modulo
 Fraction::from("1/2") % Fraction::from("1/3"); // 1/6
+
+// Decimal calculate exact result
+Decimal::from("0.1") + Decimal::from("0.2"); // "0.3"
+// Decimal keeps repeating parts exactly
+Decimal::from("0.~3").as_fraction() == Fraction::from((1, 3)); // true
 ```
 
 ## 4. Advantage
@@ -121,6 +127,8 @@ use std::collections::HashSet;
 let _set1: HashSet<Int> = HashSet::from(["1".into(), "2".into(), "3".into(), "18446744073709551617".into()]);
 let _set2: HashSet<Str> = HashSet::from(["hello".into(), "pyinrs".into()]);
 let _set3: HashSet<Fraction> = HashSet::from(["1/2".into(), "3/4".into()]);
+let _set4: HashSet<Complex> = HashSet::from([(1., 2.).into(), (3., 4.).into()]);
+let _set5: HashSet<Decimal> = HashSet::from(["0.5".into(), "0.~3".into()]);
 
 // 4. Using pyinrs::Fraction in mymatrix to display accurate matrix.
 use mymatrix::Matrix;
@@ -137,6 +145,10 @@ print!("{}", ((a + b) * (c + d)).inv().unwrap());
   5/3  -2/3
 ]
 */
+
+// 5. Using pyinrs::Decimal to calculate infinite cyclic decimals.
+Decimal::from("0.~3") + Decimal::from("0.~6"); // 1.0
+Decimal::from("0.~9") == Decimal::from("1.0"); // true
 ```
 
 If you want to use a similar library in C++, please see: [PyInCpp](https://github.com/chen-qingyu/pyincpp).
