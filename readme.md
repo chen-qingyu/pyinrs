@@ -89,9 +89,9 @@ Deque::from([1, 2, 3, 4, 5]).front(); // 1
 Deque::from([1, 2, 3, 4, 5]) >> 1; // <5, 1, 2, 3, 4>
 
 // Fraction addition
-Fraction::from((1, 2)) + Fraction::from((1, 3)); // 5/6
+Fraction::from("1/2") + Fraction::from("1/3"); // 5/6
 // Fraction modulo
-Fraction::from((1, 2)) % Fraction::from((1, 3)); // 1/6
+Fraction::from("1/2") % Fraction::from("1/3"); // 1/6
 ```
 
 ## 4. Advantage
@@ -120,7 +120,7 @@ for (k, v) in Dict::from([(1, 1), (2, 4), (3, 9)]) {
 use std::collections::HashSet;
 let _set1: HashSet<Int> = HashSet::from(["1".into(), "2".into(), "3".into(), "18446744073709551617".into()]);
 let _set2: HashSet<Str> = HashSet::from(["hello".into(), "pyinrs".into()]);
-let _set3: HashSet<Fraction> = HashSet::from([(1, 2).into(), (3, 4).into()]);
+let _set3: HashSet<Fraction> = HashSet::from(["1/2".into(), "3/4".into()]);
 
 // 4. Using pyinrs::Fraction in mymatrix to display accurate matrix.
 use mymatrix::Matrix;

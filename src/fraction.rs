@@ -78,6 +78,10 @@ impl Fraction {
 
         Self { num, den }
     }
+
+    pub const MAX: Fraction = Fraction { num: i128::MAX, den: 1 };
+    pub const MIN: Fraction = Fraction { num: i128::MIN, den: 1 };
+    pub const EPSILON: Fraction = Fraction { num: 1, den: i128::MAX };
 }
 
 /*
@@ -85,21 +89,19 @@ Construct
 */
 
 macro_rules! impl_from_integer {
-    ($($t:ty),+ $(,)?) => {
-        $(
-            impl From<$t> for Fraction {
-                fn from(value: $t) -> Self {
-                    Fraction::from_integer(value)
-                }
+    ($($t:ty),+ $(,)?) => { $(
+        impl From<$t> for Fraction {
+            fn from(value: $t) -> Self {
+                Fraction::from_integer(value)
             }
+        }
 
-            impl From<($t, $t)> for Fraction {
-                fn from(value: ($t, $t)) -> Self {
-                    Fraction::from_ratio(value.0, value.1)
-                }
+        impl From<($t, $t)> for Fraction {
+            fn from(value: ($t, $t)) -> Self {
+                Fraction::from_ratio(value.0, value.1)
             }
-        )+
-    };
+        }
+    )+ };
 }
 
 // Implement `From` for integer types, u128 is not included because it may overflow when negated
@@ -127,6 +129,14 @@ impl From<f64> for Fraction {
 impl From<f32> for Fraction {
     fn from(value: f32) -> Self {
         Fraction::from(value as f64)
+    }
+}
+
+impl From<&str> for Fraction {
+    fn from(value: &str) -> Self {
+        value
+            .parse::<Fraction>()
+            .unwrap_or_else(|_| panic!("expect format `numerator/denominator` but got `{}`", value))
     }
 }
 
