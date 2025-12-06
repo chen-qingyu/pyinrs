@@ -228,6 +228,7 @@ fn from_float() {
     assert_eq!(Fraction::from(0.75), Fraction::from((3, 4)));
     assert_eq!(Fraction::from(-1.2), Fraction::from((-6, 5)));
     assert_eq!(Fraction::from(std::f64::consts::PI), Fraction::from((3141592653589793i128, 1000000000000000)));
+    assert_eq!(Fraction::from(std::f32::consts::E), Fraction::from((2718281745910645i128, 1000000000000000)));
 }
 
 #[rstest]

@@ -113,7 +113,7 @@ impl From<f64> for Fraction {
 
         let int_part = value.floor();
         let dec_part = value - int_part;
-        let precision = i128::pow(10, 15); // precision as f64 may lose accuracy for very large numbers
+        let precision = i128::pow(10, f64::DIGITS);
 
         let gcd = detail::gcd((dec_part * (precision as f64)).round() as i128, precision);
         let mut num = (dec_part * precision as f64).round() as i128 / gcd;
