@@ -30,7 +30,7 @@ impl<T: Ord> Set<T> {
     }
 
     /// Return an iterator that visits the elements in the set in ascending order.
-    pub fn iter(&self) -> std::collections::btree_set::Iter<T> {
+    pub fn iter(&self) -> std::collections::btree_set::Iter<'_, T> {
         self.data.iter()
     }
 

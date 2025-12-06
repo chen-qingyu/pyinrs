@@ -29,7 +29,7 @@ impl<K: Ord, V> Dict<K, V> {
     }
 
     /// Return an iterator over the entries of the dictionary, sorted by key.
-    pub fn iter(&self) -> std::collections::btree_map::Iter<K, V> {
+    pub fn iter(&self) -> std::collections::btree_map::Iter<'_, K, V> {
         self.data.iter()
     }
 
@@ -49,12 +49,12 @@ impl<K: Ord, V> Dict<K, V> {
     }
 
     /// Get an iterator over the keys of the dictionary, in sorted order.
-    pub fn keys(&self) -> std::collections::btree_map::Keys<K, V> {
+    pub fn keys(&self) -> std::collections::btree_map::Keys<'_, K, V> {
         self.data.keys()
     }
 
     /// Get an iterator over the values of the dictionary, in order by key.
-    pub fn values(&self) -> std::collections::btree_map::Values<K, V> {
+    pub fn values(&self) -> std::collections::btree_map::Values<'_, K, V> {
         self.data.values()
     }
 

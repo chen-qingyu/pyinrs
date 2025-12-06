@@ -35,7 +35,7 @@ impl Str {
     }
 
     /// Return an iterator over the chars of the string.
-    pub fn chars(&self) -> std::str::Chars {
+    pub fn chars(&self) -> std::str::Chars<'_> {
         self.data.chars()
     }
 

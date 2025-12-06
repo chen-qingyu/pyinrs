@@ -28,7 +28,7 @@ impl<T> List<T> {
     }
 
     /// Return an iterator over the list.
-    pub fn iter(&self) -> std::slice::Iter<T> {
+    pub fn iter(&self) -> std::slice::Iter<'_, T> {
         self.data.iter()
     }
 

@@ -36,7 +36,7 @@ impl<T> Deque<T> {
     }
 
     /// Provide a forward iterator.
-    pub fn iter(&self) -> std::collections::vec_deque::Iter<T> {
+    pub fn iter(&self) -> std::collections::vec_deque::Iter<'_, T> {
         self.data.iter()
     }
 
