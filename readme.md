@@ -45,59 +45,59 @@ Some simple examples:
 use pyinrs::*;
 
 // List support negative index
-List::from([1, 2, 3, 4, 5])[-1]; // 5
+assert_eq!(List::from([1, 2, 3, 4, 5])[-1], 5);
 // List uniquify
-List::from([1, 2, 3, 1, 2, 3, 1, 2, 3]).uniquify(); // [1, 2, 3]
+assert_eq!(List::from([1, 2, 3, 1, 2, 3, 1, 2, 3]).uniquify(), List::from([1, 2, 3]));
 
 // test whether a Set is proper subset of another Set
-Set::from([5, 1]) < Set::from([1, 2, 3, 4, 5]); // true
+assert_eq!(Set::from([5, 1]) < Set::from([1, 2, 3, 4, 5]), true);
 // intersection of Sets, support intersection, union, difference, and symmetric difference
-Set::from([1, 2, 3, 4, 5]) & Set::from([1, 3, 5, 7, 9]); // {1, 3, 5}
+assert_eq!(Set::from([1, 2, 3, 4, 5]) & Set::from([1, 3, 5, 7, 9]), Set::from([1, 3, 5]));
 
 // Dict access
-Dict::from([("one", 1), ("two", 2), ("three", 3)])[&"one"]; // 1
+assert_eq!(Dict::from([("one", 1), ("two", 2), ("three", 3)])[&"one"], 1);
 // Dict get values as a Set
-Dict::from([("one", 1), ("two", 2), ("three", 3)]).values().collect::<Set<&i32>>(); // {1, 2, 3}
+assert_eq!(Dict::from([("one", 1), ("two", 2), ("three", 3)]).values().collect::<Set<&i32>>(), Set::from([&1, &2, &3]));
 
 // Int basic operation, support +, -, *, /, % and compare
-Int::from("18446744073709551617") + Int::from("18446744073709551617"); // 36893488147419103234
+assert_eq!(Int::from("18446744073709551617") + Int::from("18446744073709551617"), Int::from("36893488147419103234"));
 // Int increment, after my optimization, much faster than `+= 1`
-Int::from("99999999999999").inc(); // 100000000000000
+assert_eq!(Int::from("99999999999999").inc(), &Int::from("100000000000000"));
 // Int modular power, very fast
-Int::pow_mod(&"1024".into(), &"1024".into(), &"100".into()); // 76
+assert_eq!(Int::pow_mod(&"1024".into(), &"1024".into(), &"100".into()), Int::from("76"));
 // Int factorial
-Int::from("5").factorial().factorial(); // 66895029134491270575881180540903725867527463...
+assert_eq!(Int::from("5").factorial().factorial(), Int::from("6689502913449127057588118054090372586752746333138029810295671352301633557244962989366874165271984981308157637893214090552534408589408121859898481114389650005964960521256960000000000000000000000000000"));
 // get random Int of specified number of digits
-Int::random(1024); // 23795759214348387514699522496327832510939573336290225099601421311...
+assert_eq!(Int::random(1024).digits(), 1024);
 // calculate the next prime that greater than self
-Int::from("7").next_prime(); // 11
+assert_eq!(Int::from("7").next_prime(), Int::from("11"));
 // calculate the tetration
-Int::hyperoperation(&"4".into(), &"3".into(), &"3".into()); // 7625597484987
+assert_eq!(Int::hyperoperation(&"4".into(), &"3".into(), &"3".into()), Int::from("7625597484987"));
 
 // Str split
-Str::from("one, two, three").split(", "); // ["one", "two", "three"]
+assert_eq!(Str::from("one, two, three").split(", "), List::from(["one", "two", "three"]));
 // Str join
-Str::from(".").join(["192", "168", "0", "1"].into()); // "192.168.0.1"
+assert_eq!(Str::from(".").join(List::from(["192", "168", "0", "1"])), Str::from("192.168.0.1"));
 
 // Complex addition
-Complex::from((1., 2.)) + Complex::from((1., 3.)); // (2+5j)
+assert_eq!(Complex::from((1., 2.)) + Complex::from((1., 3.)), Complex::from((2., 5.)));
 // Complex power
-Complex::pow(&Complex::from((1., 2.)), &Complex::from((-1., 2.))); // (0.04281551979798478+0.023517649351954585j)
+assert_eq!(Complex::pow(&Complex::from((1., 2.)), &Complex::from((-1., 2.))), Complex::from((0.04281551979798478, 0.023517649351954585)));
 
 // Deque element reference
-Deque::from([1, 2, 3, 4, 5]).front(); // 1
+assert_eq!(Deque::from([1, 2, 3, 4, 5]).front(), Some(&1));
 // Deque rotate to right (or left), very vivid!
-Deque::from([1, 2, 3, 4, 5]) >> 1; // <5, 1, 2, 3, 4>
+assert_eq!(Deque::from([1, 2, 3, 4, 5]) >> 1, Deque::from([5, 1, 2, 3, 4]));
 
 // Fraction addition
-Fraction::from("1/2") + Fraction::from("1/3"); // 5/6
+assert_eq!(Fraction::from("1/2") + Fraction::from("1/3"), Fraction::from("5/6"));
 // Fraction modulo
-Fraction::from("1/2") % Fraction::from("1/3"); // 1/6
+assert_eq!(Fraction::from("1/2") % Fraction::from("1/3"), Fraction::from("1/6"));
 
 // Decimal calculate exact result
-Decimal::from("0.1") + Decimal::from("0.2"); // "0.3"
+assert_eq!(Decimal::from("0.1") + Decimal::from("0.2"), Decimal::from("0.3"));
 // Decimal keeps repeating parts exactly
-Decimal::from("0.~3").as_fraction() == Fraction::from((1, 3)); // true
+assert_eq!(Decimal::from("0.~3").as_fraction(), Fraction::from((1, 3)));
 ```
 
 ## 4. Advantage
@@ -113,9 +113,9 @@ let dict: Dict<Str, List<Int>> = [
     ("second".into(), ["789".into()].into()),
     ("third".into(), ["12345678987654321".into(), "5".into()].into()),
 ].into();
-print!("{dict}"); // {"first": [123, 456], "second": [789], "third": [12345678987654321, 5]}
-dict.keys().cloned().collect::<Set<Str>>(); // {"first", "second", "third"}
-dict[&"third".into()][-1].factorial(); // 120
+assert_eq!(format!("{dict}"), "{\"first\": [123, 456], \"second\": [789], \"third\": [12345678987654321, 5]}");
+assert_eq!(dict.keys().collect::<Set<&Str>>(), Set::from([&"first".into(), &"second".into(), &"third".into()]));
+assert_eq!(dict[&"third".into()][-1].factorial(), Int::from(120));
 
 // 2. All container types are iterable:
 for (k, v) in Dict::from([(1, 1), (2, 4), (3, 9)]) {
@@ -138,17 +138,16 @@ let b = Matrix::zeros(2, 2);
 let c = Matrix::ones(2, 2);
 let d = Matrix::identity(2);
 
-print!("{}", ((a + b) * (c + d)).inv().unwrap());
-/*
-[
+assert_eq!(format!("{}", ((a + b) * (c + d)).inv().unwrap()),
+"[
 -11/6   5/6
   5/3  -2/3
-]
-*/
+]"
+);
 
 // 5. Using pyinrs::Decimal to calculate infinite cyclic decimals.
-Decimal::from("0.~3") + Decimal::from("0.~6"); // 1.0
-Decimal::from("0.~9") == Decimal::from("1.0"); // true
+assert_eq!(Decimal::from("0.~3") + Decimal::from("0.~6"), Decimal::from("1.0"));
+assert_eq!(Decimal::from("0.~9"), Decimal::from("1.0"));
 ```
 
 If you want to use a similar library in C++, please see: [PyInCpp](https://github.com/chen-qingyu/pyincpp).
