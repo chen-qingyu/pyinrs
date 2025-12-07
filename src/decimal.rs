@@ -35,36 +35,6 @@ impl Decimal {
         Self::from(self.value.abs())
     }
 
-    fn from_str(input: &str) -> Result<Self, ParseDecimalError> {
-        let re_dec = Regex::new(r"^([-+])?(\d+)\.?(\d+)?~?(\d+)?#?(\d+)?$").unwrap();
-        let caps = re_dec.captures(input).ok_or(ParseDecimalError)?;
-
-        let sign = caps.get(1).map_or("+", |m| m.as_str());
-        let radix = caps.get(5).map_or(10, |m| m.as_str().parse::<u32>().unwrap());
-        let integral = i128::from_str_radix(&caps[2], radix).unwrap();
-        let decimal = caps.get(3).map(|x| i128::from_str_radix(x.as_str(), radix).unwrap());
-        let cyclic = caps.get(4).map(|x| i128::from_str_radix(x.as_str(), radix).unwrap());
-
-        // x = c/((base^len(c)-1)*(base^len(d))) = c/(base^len(c+d)-base^len(d))
-        let decimal_len = caps.get(3).map_or(0, |m| m.len()) as u32;
-        let cyclic_len = caps.get(4).map_or(0, |m| m.len()) as u32;
-        let scale = i128::pow(radix as i128, decimal_len);
-        let repeat = i128::pow(radix as i128, decimal_len + cyclic_len) - scale;
-
-        let value = match (integral, decimal, cyclic) {
-            // integer only
-            (i, None, None) => Fraction::from(i),
-            // integer + decimal
-            (i, Some(d), None) => Fraction::from((i * scale + d, scale)),
-            // integer + cyclic
-            (i, None, Some(c)) => Fraction::from(i) + Fraction::from((c, repeat)),
-            // integer + decimal + cyclic
-            (i, Some(d), Some(c)) => Fraction::from((i * scale + d, scale)) + Fraction::from((c, repeat)),
-        };
-
-        Ok(if sign == "-" { -Self { value } } else { Self { value } })
-    }
-
     // a is numerator, b is denominator, return (start_index, length)
     fn find_cyclic(a: i128, b: i128) -> Option<(usize, usize)> {
         let mut remainders = Vec::new();
@@ -123,7 +93,7 @@ impl From<Fraction> for Decimal {
 
 impl From<&str> for Decimal {
     fn from(value: &str) -> Self {
-        Self::from_str(value.trim()).unwrap_or_else(|_| panic!("expect format: `[+-]integer[.decimal][~cyclic][#radix]` but got `{}`", value))
+        Self::from_str(value).unwrap_or_else(|_| panic!("expect format: `[+-]integer[.decimal][~cyclic][#radix]` but got `{}`", value))
     }
 }
 
@@ -134,7 +104,34 @@ impl FromStr for Decimal {
     type Err = ParseDecimalError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Self::from_str(s.trim())
+        let s = s.trim();
+        let re_dec = Regex::new(r"^([-+])?(\d+)\.?(\d+)?~?(\d+)?#?(\d+)?$").unwrap();
+        let caps = re_dec.captures(s).ok_or(ParseDecimalError)?;
+
+        let sign = caps.get(1).map_or("+", |m| m.as_str());
+        let radix = caps.get(5).map_or(10, |m| m.as_str().parse::<u32>().unwrap());
+        let integral = i128::from_str_radix(&caps[2], radix).unwrap();
+        let decimal = caps.get(3).map(|x| i128::from_str_radix(x.as_str(), radix).unwrap());
+        let cyclic = caps.get(4).map(|x| i128::from_str_radix(x.as_str(), radix).unwrap());
+
+        // x = c/((base^len(c)-1)*(base^len(d))) = c/(base^len(c+d)-base^len(d))
+        let decimal_len = caps.get(3).map_or(0, |m| m.len()) as u32;
+        let cyclic_len = caps.get(4).map_or(0, |m| m.len()) as u32;
+        let scale = i128::pow(radix as i128, decimal_len);
+        let repeat = i128::pow(radix as i128, decimal_len + cyclic_len) - scale;
+
+        let value = match (integral, decimal, cyclic) {
+            // integer only
+            (i, None, None) => Fraction::from(i),
+            // integer + decimal
+            (i, Some(d), None) => Fraction::from((i * scale + d, scale)),
+            // integer + cyclic
+            (i, None, Some(c)) => Fraction::from(i) + Fraction::from((c, repeat)),
+            // integer + decimal + cyclic
+            (i, Some(d), Some(c)) => Fraction::from((i * scale + d, scale)) + Fraction::from((c, repeat)),
+        };
+
+        Ok(if sign == "-" { -Self { value } } else { Self { value } })
     }
 }
 

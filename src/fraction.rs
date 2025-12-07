@@ -145,9 +145,7 @@ impl From<Decimal> for Fraction {
 
 impl From<&str> for Fraction {
     fn from(value: &str) -> Self {
-        value
-            .parse::<Fraction>()
-            .unwrap_or_else(|_| panic!("expect format `numerator/denominator` but got `{}`", value))
+        Self::from_str(value).unwrap_or_else(|_| panic!("expect format `numerator/denominator` but got `{}`", value))
     }
 }
 
