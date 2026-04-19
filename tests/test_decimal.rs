@@ -122,6 +122,7 @@ fn from_string() {
     assert_eq!(Decimal::from("-1.~9").as_fraction().to_string(), "-2"); // -1.999... = -2
     assert_eq!(Decimal::from("-1.1~9").as_fraction().to_string(), "-6/5"); // -1.1999... = -1.2
 
+    assert_eq!(Decimal::from("A#16").as_fraction().to_string(), "10"); // A(16) = 10(10)
     assert_eq!(Decimal::from("11").as_fraction().to_string(), "11"); // 11
     assert_eq!(Decimal::from("11#10").as_fraction().to_string(), "11"); // 11(10) = 11(10)
     assert_eq!(Decimal::from("11#2").as_fraction().to_string(), "3"); // 11(2) = 3(10)
@@ -167,9 +168,9 @@ fn parse(setup: Fixture) {
     assert_eq!(setup.positive, "  0.3\t\n".parse().unwrap());
     assert_eq!(setup.negative, "\t-0.3\n\n".parse().unwrap());
 
-    assert!("z0.3".parse::<Decimal>().is_err());
-    assert!("0z.3".parse::<Decimal>().is_err());
-    assert!("0.z3".parse::<Decimal>().is_err());
-    assert!("0.3z".parse::<Decimal>().is_err());
+    assert!("|0.3".parse::<Decimal>().is_err());
+    assert!("0|.3".parse::<Decimal>().is_err());
+    assert!("0.|3".parse::<Decimal>().is_err());
+    assert!("0.3|".parse::<Decimal>().is_err());
     assert!("0|3".parse::<Decimal>().is_err());
 }

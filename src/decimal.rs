@@ -105,7 +105,7 @@ impl FromStr for Decimal {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let s = s.trim();
-        let re_dec = Regex::new(r"^([-+])?(\d+)\.?(\d+)?~?(\d+)?#?(\d+)?$").unwrap();
+        let re_dec = Regex::new(r"^([-+])?([0-9A-Za-z]+)\.?([0-9A-Za-z]+)?~?([0-9A-Za-z]+)?#?(\d+)?$").unwrap();
         let caps = re_dec.captures(s).ok_or(ParseDecimalError)?;
 
         let sign = caps.get(1).map_or("+", |m| m.as_str());
